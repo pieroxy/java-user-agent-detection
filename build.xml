@@ -1,0 +1,23 @@
+<project name="user-agent-tools" default="compile" basedir=".">
+  <property name="src" value="src"/>
+  <property name="dst" value="build"/>
+
+  <target name="clean" description="clean">
+    <delete dir="${dst}"/>
+  </target>
+
+
+  <target name="compile">
+    <mkdir dir="${dst}"/>
+    <mkdir dir="${dst}/classes"/>
+    <javac debug="true" srcdir="${src}" destdir="${dst}/classes" includes="**/*.java"/>
+
+    <jar destfile="${dst}/user-agent-detector.jar" basedir="${dst}/classes"/>
+  </target>
+
+
+  <target name="release" depends="compile">
+    <copy todir="release/" file="${dst}/user-agent-detector.jar" overwrite="yes"/>
+  </target>
+
+</project>
