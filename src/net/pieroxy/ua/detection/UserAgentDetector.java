@@ -3182,6 +3182,12 @@ public class UserAgentDetector {
         }
     }
 
+    /**
+     * Parse a user-agent string
+     *
+     * @param ua The user agent string as sent by the browser
+     * @return   The result of the detection
+     */
     public static UserAgentDetectionResult parseUserAgent(String ua) {
         UserAgentContext context = new UserAgentContext(ua);
 

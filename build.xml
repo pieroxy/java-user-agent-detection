@@ -10,14 +10,22 @@
   <target name="compile">
     <mkdir dir="${dst}"/>
     <mkdir dir="${dst}/classes"/>
+    <mkdir dir="${dst}/doc"/>
     <javac debug="true" srcdir="${src}" destdir="${dst}/classes" includes="**/*.java"/>
 
     <jar destfile="${dst}/user-agent-detector.jar" basedir="${dst}/classes"/>
+    <javadoc sourcepath="${src}" destdir="${dst}/doc" access="public"/>
   </target>
 
 
   <target name="release" depends="compile">
+    <delete dir="release"/>
+    <mkdir dir="release"/>
+    <mkdir dir="release/doc"/>
     <copy todir="release/" file="${dst}/user-agent-detector.jar" overwrite="yes"/>
+    <copy todir="release/doc" overwrite="yes">
+      <fileset dir="${dst}/doc"/>
+    </copy>
   </target>
 
 </project>

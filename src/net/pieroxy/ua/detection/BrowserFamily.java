@@ -33,15 +33,27 @@ BrowserFamily(String _label, boolean _gecko, boolean _trident, boolean _webkit, 
     this.label = _label;
 }
 
+/**
+* @return true if the browser is based on Gecko - Firefox's rendering engine.
+*/
 public boolean isGecko() {
     return gecko;
 }
+/**
+* @return true if the browser is based on Trident - Internet Explorer's rendering engine.
+*/
 public boolean isTrident() {
     return trident;
 }
+/**
+* @return true if the browser is based on WebKit or Blink - Chrome, Safari, new Opera
+*/
 public boolean isWebKit() {
     return webkit;
 }
+/**
+* @return true if the browser is a robot - not operated by a human being
+*/
 public boolean isRobot() {
     return robot;
 }
