@@ -30,7 +30,7 @@ public class UserAgentTester {
   }
 
   public static void main(String[] args) throws IOException {
-    if (args.length!=2) {
+    if (args.length != 2) {
       printUsage();
       return;
     }
@@ -50,21 +50,25 @@ public class UserAgentTester {
     Reader r = new InputStreamReader(is);
     BufferedReader br = new BufferedReader(r);
 
-    br.readLine(); // Discard header
-    String line;
+    try {
+      br.readLine(); // Discard header
+      String line;
 
-    int nbTests = 0;
-    int nbFailures = 0;
-    while ((line = br.readLine()) != null) {
-      if (!test(new UserAgentDetection(line))) {
-        nbFailures++;
+      int nbTests = 0;
+      int nbFailures = 0;
+      while ((line = br.readLine()) != null) {
+        if (!test(new UserAgentDetection(line))) {
+          nbFailures++;
+        }
+        nbTests++;
       }
-      nbTests++;
+      if (nbFailures > 0)
+        System.out.println(nbFailures + "/" + nbTests + " FAILURES.");
+      else
+        System.out.println("100% of " + nbTests + " succeeded.");
+    } finally {
+      br.close();
     }
-    if (nbFailures>0)
-      System.out.println(nbFailures + "/" + nbTests + " FAILURES.");
-    else
-      System.out.println("100% of " + nbTests + " succeeded.");
   }
 
   public static void perf(String fileName) throws IOException {
@@ -74,72 +78,88 @@ public class UserAgentTester {
     BufferedReader br = new BufferedReader(r);
     List<String> allElements = new ArrayList<String>();
 
-    br.readLine(); // Discard header
-    String line;
-
     int nbTests = 0;
-    while ((line = br.readLine()) != null) { // Dry run to preload the JVM and the data
-      UserAgentDetection a = new UserAgentDetection(line);
-      allElements.add(a.string);
-      perfOne(a.string);
-      nbTests++;
+
+    try {
+      br.readLine(); // Discard header
+      String line;
+
+      while ((line = br.readLine()) != null) { // Dry run to preload the JVM and
+                                               // the data
+        UserAgentDetection a = new UserAgentDetection(line);
+        allElements.add(a.string);
+        perfOne(a.string);
+        nbTests++;
+      }
+    } finally {
+      br.close();
     }
+
     long begin = System.currentTimeMillis();
-    for (String s : allElements) perfOne(s);
+    for (String s : allElements)
+      perfOne(s);
     long end = System.currentTimeMillis();
+
     System.out.println(nbTests + " tests run, avg of " + (end - begin + 0.0)
         / nbTests + " ms");
   }
 
   private static boolean test(UserAgentDetection uad) {
-    UserAgentDetector detector = new UserAgentDetector();
     UserAgentDetectionResult detection = UserAgentDetector
         .parseUserAgent(uad.string);
     String result = compare(uad.getDetectionResult(), detection);
     if (result != null) {
       String prefix = "";
-      for (int i=0 ; i<uad.id.length()+2 ; i++)
+      for (int i = 0; i < uad.id.length() + 2; i++)
         prefix += " ";
-      result=result.replaceAll("\t", prefix);
-      result=result.replaceFirst(prefix, uad.id + ": ");
+      result = result.replaceAll("\t", prefix);
+      result = result.replaceFirst(prefix, uad.id + ": ");
       System.out.print(result);
     }
     return result == null;
   }
 
   private static void perfOne(String s) {
-    UserAgentDetector detector = new UserAgentDetector();
-    UserAgentDetectionResult detection = UserAgentDetector
-        .parseUserAgent(s);
+    UserAgentDetector.parseUserAgent(s);
   }
 
   private static String compare(UserAgentDetectionResult a,
       UserAgentDetectionResult b) {
-    if (a.equals(b)) return null;
+    if (a.equals(b))
+      return null;
     StringBuilder result = new StringBuilder();
     addErrorReport(result, "browser", a.browser, b.browser);
-    addErrorReport(result, "browser description", a.browser.description, b.browser.description);
+    addErrorReport(result, "browser description", a.browser.description,
+        b.browser.description);
     addErrorReport(result, "browser family", a.browser.family, b.browser.family);
-    addErrorReport(result, "browser rendering engine", a.browser.renderingEngine, b.browser.renderingEngine);
+    addErrorReport(result, "browser rendering engine",
+        a.browser.renderingEngine, b.browser.renderingEngine);
     addErrorReport(result, "browser vendor", a.browser.vendor, b.browser.vendor);
 
     addErrorReport(result, "device", a.device, b.device);
-    addErrorReport(result, "device architecture", a.device.architecture, b.device.architecture);
+    addErrorReport(result, "device architecture", a.device.architecture,
+        b.device.architecture);
     addErrorReport(result, "device brand", a.device.brand, b.device.brand);
     addErrorReport(result, "device name", a.device.device, b.device.device);
-    addErrorReport(result, "device type", a.device.deviceType, b.device.deviceType);
-    addErrorReport(result, "device manufacturer", a.device.manufacturer, b.device.manufacturer);
+    addErrorReport(result, "device type", a.device.deviceType,
+        b.device.deviceType);
+    addErrorReport(result, "device manufacturer", a.device.manufacturer,
+        b.device.manufacturer);
 
     addErrorReport(result, "OS", a.operatingSystem, b.operatingSystem);
-    addErrorReport(result, "OS", a.operatingSystem.description, b.operatingSystem.description);
-    addErrorReport(result, "OS family", a.operatingSystem.family, b.operatingSystem.family);
-    addErrorReport(result, "OS vendor", a.operatingSystem.vendor, b.operatingSystem.vendor);
-    addErrorReport(result, "OS version", a.operatingSystem.version, b.operatingSystem.version);
-
+    addErrorReport(result, "OS", a.operatingSystem.description,
+        b.operatingSystem.description);
+    addErrorReport(result, "OS family", a.operatingSystem.family,
+        b.operatingSystem.family);
+    addErrorReport(result, "OS vendor", a.operatingSystem.vendor,
+        b.operatingSystem.vendor);
+    addErrorReport(result, "OS version", a.operatingSystem.version,
+        b.operatingSystem.version);
 
     addErrorReport(result, "ignored tokens", a.ignoredTokens, b.ignoredTokens);
     addErrorReport(result, "unknown tokens", a.unknownTokens, b.unknownTokens);
-    addErrorReport(result, "extensions", a.getExtensionsAsString(), b.getExtensionsAsString());
+    addErrorReport(result, "extensions", a.getExtensionsAsString(),
+        b.getExtensionsAsString());
     return result.length() == 0 ? null : result.toString();
   }
 
@@ -156,10 +176,9 @@ public class UserAgentTester {
     } else {
       if (expected != null && actual != null) {
         if (expected instanceof String || expected instanceof Enum) {
-          errors.append("\texpected ").append(name)
-          .append(" to be '").append(expected.toString())
-          .append("' but was '").append(actual.toString())
-          .append("'\n");
+          errors.append("\texpected ").append(name).append(" to be '")
+              .append(expected.toString()).append("' but was '")
+              .append(actual.toString()).append("'\n");
 
         }
       }
@@ -177,9 +196,9 @@ public class UserAgentTester {
   private static class UserAgentDetection {
     String id, string, browser_family, browser_description,
         browser_renderingEngine, os_family, os_description, os_version,
-        device_type, device_brand, device_manufacturer, device, status, lang,
-        country, comment, ignored_tokens, unknown_tokens, device_arch,
-        browser_vendor, os_vendor;
+        device_type, device_brand, device_manufacturer, device, lang, country,
+        comment, ignored_tokens, unknown_tokens, device_arch, browser_vendor,
+        os_vendor;
 
     public UserAgentDetection(String line) {
       String[] elements = line.split("\t");
@@ -195,7 +214,6 @@ public class UserAgentTester {
       device_brand = elements[9];
       device_manufacturer = elements[10];
       device = elements[11];
-      status = elements[12];
       lang = elements[13];
       country = elements[14];
       comment = elements[15];
