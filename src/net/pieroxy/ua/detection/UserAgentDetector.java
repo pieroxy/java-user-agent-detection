@@ -2,6 +2,8 @@ package net.pieroxy.ua.detection;
 import java.io.*;
 import java.util.*;
 public class UserAgentDetector {
+    public static final String VERSION = "_DEV_VERSION_";
+
     String keepPos(String version, int position) {
         int pd = 0;
         for (int i=0 ; i<version.length() ; i++) {
@@ -2571,19 +2573,19 @@ public class UserAgentDetector {
                 res.operatingSystem.version = ("Red Hat " + arch).trim();
                 return res;
             } else if (archTotal.endsWith("-pc-win32")) {
-                res.device.setBrand(Brand.WINDOWS);
+                res.device.setBrandAndManufacturer(Brand.WINDOWS);
                 res.operatingSystem.family = OSFamily.WINDOWS;
                 res.operatingSystem.description = "Windows";
                 res.operatingSystem.version = arch;
                 return res;
             } else if (archTotal.endsWith("pc-mingw32msvc")) {
-                res.device.setBrand(Brand.WINDOWS);
+                res.device.setBrandAndManufacturer(Brand.WINDOWS);
                 res.operatingSystem.family = OSFamily.WINDOWS;
                 res.operatingSystem.description = "Windows";
                 res.operatingSystem.version = (arch + " through MinGW").trim();
                 return res;
             } else if ((pos=archTotal.indexOf("-apple-darwin"))>-1) {
-                res.device.setBrand(Brand.APPLE);
+                res.device.setBrandAndManufacturer(Brand.APPLE);
                 res.device.device = "Macintosh";
                 res.operatingSystem.family = OSFamily.MACOSX;
                 res.operatingSystem.description = "Mac OS";
@@ -2618,7 +2620,7 @@ public class UserAgentDetector {
                 res.operatingSystem.version = ver;
                 return res;
             } else if (context.consume("cygwin",MatchingType.EQUALS, MatchingRegion.BOTH)) {
-                res.device.setBrand(Brand.WINDOWS);
+                res.device.setBrandAndManufacturer(Brand.WINDOWS);
                 res.operatingSystem.family = OSFamily.WINDOWS;
                 res.operatingSystem.description = "Windows";
                 res.operatingSystem.version = "through cygwin";

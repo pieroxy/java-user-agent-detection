@@ -1,6 +1,9 @@
 package net.pieroxy.ua.detection;
 import java.io.*;
 import java.util.*;
+/**
+* Describes the device that produced the user-agent string.
+*/
 public class Device {
     public DeviceType deviceType;
     public Brand brand;
@@ -17,7 +20,12 @@ public class Device {
         deviceType = dt;
         architecture = a;
     }
-    public void setBrand(Brand b) {
+
+    /**
+    * Sets the brand and the manufacturer of the device.
+    * @param b the Brand to set i both fields.
+    */
+    public void setBrandAndManufacturer(Brand b) {
         brand=b;
         manufacturer=b;
     }
@@ -56,5 +64,4 @@ public class Device {
         }
         return res;
     }
-
 }

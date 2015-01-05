@@ -1,6 +1,9 @@
 package net.pieroxy.ua.detection;
 import java.io.*;
 import java.util.*;
+/**
+* The brand can apply to Browsers, Devices or OSes.
+*/
 public enum Brand {  HTC("HTC"),
                      APPLE("Apple"),
                      SAMSUNG("Samsung"),
@@ -64,6 +67,9 @@ public enum Brand {  HTC("HTC"),
 Brand(String l) {
     this.label = l;
 }
+/**
+* @return the string representation of the brand.
+*/
 public String getLabel() {
     return label;
 }

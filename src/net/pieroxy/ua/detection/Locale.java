@@ -1,6 +1,9 @@
 package net.pieroxy.ua.detection;
 import java.io.*;
 import java.util.*;
+/**
+* The Locale class is made of a Language and a Country. It can helpful to help build statistics about your audience. While not all user agents report these two values, some do and it can give a statistically significant trend.
+*/
 public class Locale {
     public Language lang;
     public Country country;
@@ -33,5 +36,4 @@ public class Locale {
         this.country = LocaleHelper.getCountry(c);
         if (this.country == null) this.country = Country.UNKNOWN;
     }
-
 }

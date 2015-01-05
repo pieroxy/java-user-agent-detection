@@ -1,6 +1,9 @@
 package net.pieroxy.ua.detection;
 import java.io.*;
 import java.util.*;
+/**
+* This is the class returned by the detection API.
+*/
 public class UserAgentDetectionResult {
     public Device device;
     public Browser browser;
