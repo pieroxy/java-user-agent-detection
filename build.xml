@@ -15,7 +15,7 @@
     <mkdir dir="${dst}/classes"/>
     <mkdir dir="${dst}/doc"/>
 
-    <javac debug="true" srcdir="${src}" destdir="${dst}/classes" includes="**/*.java"/>
+    <javac source="1.6" target="1.6" debug="true" srcdir="${src}" destdir="${dst}/classes" includes="**/*.java"/>
     <jar destfile="${dst}/user-agent-detector.jar" basedir="${dst}/classes"/>
     <javadoc sourcepath="${src}" destdir="${dst}/doc" access="public"/>
   </target>
@@ -36,7 +36,7 @@
       <include name="**/*.java"/>
     </replace>
 
-    <javac debug="true" srcdir="release/tmp/src" destdir="release/tmp/build" includes="**/*.java"/>
+    <javac source="1.6" target="1.6" debug="true" srcdir="release/tmp/src" destdir="release/tmp/build" includes="**/*.java"/>
     <jar destfile="release/user-agent-detector.jar" basedir="release/tmp/build"/>
     <javadoc sourcepath="release/tmp/src" destdir="release/doc" access="public"/>
 
