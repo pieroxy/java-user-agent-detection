@@ -24,6 +24,8 @@ import net.pieroxy.ua.detection.UserAgentDetector;
 
 public class UserAgentTester {
 
+  private static UserAgentDetector detector = new UserAgentDetector();
+  
   public static void printUsage() {
     System.out.println("Usage:");
     System.out.println("  UserAgentTester [test|perf] filename");
@@ -45,6 +47,8 @@ public class UserAgentTester {
   }
 
   public static void test(String fileName) throws IOException {
+    UserAgentDetector.test();
+    
     File f = new File(fileName);
     InputStream is = new GZIPInputStream(new FileInputStream(f));
     Reader r = new InputStreamReader(is);
@@ -105,8 +109,7 @@ public class UserAgentTester {
   }
 
   private static boolean test(UserAgentDetection uad) {
-    UserAgentDetectionResult detection = UserAgentDetector
-        .parseUserAgent(uad.string);
+    UserAgentDetectionResult detection = detector.parseUserAgent(uad.string);
     String result = compare(uad.getDetectionResult(), detection);
     if (result != null) {
       String prefix = "";
@@ -120,7 +123,7 @@ public class UserAgentTester {
   }
 
   private static void perfOne(String s) {
-    UserAgentDetector.parseUserAgent(s);
+    detector.parseUserAgent(s);
   }
 
   private static String compare(UserAgentDetectionResult a,

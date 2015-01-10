@@ -304,6 +304,10 @@ class UserAgentContext {
         }
         if (!context.getRegularTokens().equals("{ \"a\", \"b\", \"c\", \"i\"}")) throw new RuntimeException("Fail 11: " + context.getRegularTokens());
 
+
+        context = new UserAgentContext("Mozilla/5.0 (Linux; U; Android 4.0.4; fr-fr; GT-I9300-ORANGE/I9300BVBLH2 Build/IMM76D) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30");
+        if (!context.getRegularTokens().equals("{ \"Mozilla/5.0\", \"AppleWebKit/534.30\", \"Version/4.0\", \"Mobile\", \"Safari/534.30\"}")) throw new RuntimeException("Fail 12: " + context.getRegularTokens());
+        if (!context.getParenTokens().equals("{ \"KHTML, like Gecko\", \"Linux\", \"U\", \"Android 4.0.4\", \"fr-fr\", \"GT-I9300-ORANGE/I9300BVBLH2\", \"Build/IMM76D\"}")) throw new RuntimeException("Fail 13: " + context.getParenTokens());
     }
 
     /* public API */
@@ -358,6 +362,10 @@ class UserAgentContext {
 
     public void ignoreAllTokens() {
         while (null != getAndConsumeToken(new Matcher("",MatchingType.ALWAYS_MATCH), MatchingRegion.BOTH, ignoredTokens));
+    }
+
+    public void consumeAllTokens() {
+        while (null != getAndConsumeToken(new Matcher("",MatchingType.ALWAYS_MATCH), MatchingRegion.BOTH, consumedTokens));
     }
 
     public String getUA() {
