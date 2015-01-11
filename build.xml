@@ -32,7 +32,7 @@
         <exclude name="**/tooling/*.java"/>
       </fileset>
     </copy>
-    <replace dir="release/tmp/src" encoding="UTF-8" token="DEV_VERSION" value="${tstp} GMT" >
+    <replace dir="release/tmp/src" encoding="UTF-8" token="_DEV_VERSION_" value="${tstp} GMT" >
       <include name="**/*.java"/>
     </replace>
 
