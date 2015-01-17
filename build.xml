@@ -7,7 +7,7 @@
   </target>
 
   <tstamp>
-    <format property="tstp" pattern="yyyy-dd-MM HH:mm" locale="en,US" timezone="GMT"/>
+    <format property="tstp" pattern="yyyy.dd.MM.HH.mm" locale="en,US" timezone="GMT"/>
   </tstamp>
 
   <target name="compile">
@@ -32,7 +32,7 @@
         <exclude name="**/tooling/*.java"/>
       </fileset>
     </copy>
-    <replace dir="release/tmp/src" encoding="UTF-8" token="_DEV_VERSION_" value="${tstp} GMT" >
+    <replace dir="release/tmp/src" encoding="UTF-8" token="_DEV_VERSION_" value="${tstp}.GMT" >
       <include name="**/*.java"/>
     </replace>
 
