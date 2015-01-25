@@ -4,7 +4,9 @@ import java.util.*;
 /**
 * The brand can apply to Browsers, Devices or OSes.
 */
-public enum Brand {  HTC("HTC"),
+public enum Brand {  OBIGO("Obigo"),
+                     INFRAWARE("Infraware Inc."),
+                     HTC("HTC"),
                      APPLE("Apple"),
                      SAMSUNG("Samsung"),
                      SUN("SUN"),
@@ -47,7 +49,9 @@ public enum Brand {  HTC("HTC"),
                      NETSCAPE("Netscape"),
                      CUILL("Cuill"),
                      ORANGE("Orange"),
+                     SOGOU("Sogou"),
                      BE("Be Inc"),
+                     HAIKU("Haiku Project"),
                      ASK("Ask"),
                      YACI("YaCy"),
                      YANDEX("Yandex"),

@@ -110,6 +110,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                        new OS(Brand.UNKNOWN,OSFamily.UNKNOWN,browser, browser));
         } else if (context.getLCUA().matches(".*<script>((window|document|top)\\.)?location(\\.href)?=.*")) {
             String browser = "Spam Bot";
+            context.consumeAllTokens();
             return new UserAgentDetectionResult(
                        new Device("",DeviceType.SPAMBOT,Brand.UNKNOWN,"Infected site honeypot"),
                        new Browser(Brand.UNKNOWN,BrowserFamily.SPAMBOT,browser, browser),
@@ -342,7 +343,20 @@ public class UserAgentDetector implements IUserAgentDetector {
             context.consume("+http://", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
             return new UserAgentDetectionResult(
                        new Device("",DeviceType.BOT,Brand.OTHER,"Sogou Web Spider"),
-                       new Browser(Brand.ORANGE,BrowserFamily.CRAWLER,browser, browser),
+                       new Browser(Brand.SOGOU,BrowserFamily.CRAWLER,browser, browser),
+                       new OS(Brand.UNKNOWN,OSFamily.UNKNOWN,"Bot","Bot"),
+                       getLocale(context));
+        }
+        else if ((multi = context.getcNextTokens(new Matcher[] {new Matcher("Sogou", MatchingType.EQUALS),
+                 new Matcher("Pic", MatchingType.EQUALS),
+                 new Matcher("Spider/", MatchingType.BEGINS)
+        },
+        MatchingRegion.REGULAR)) != null) {
+            String browser = "Sogou Picture Spider " + multi[2].substring(7);
+            context.consume("+http://", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
+            return new UserAgentDetectionResult(
+                       new Device("",DeviceType.BOT,Brand.OTHER,"Sogou Picture Spider"),
+                       new Browser(Brand.SOGOU,BrowserFamily.CRAWLER,browser, browser),
                        new OS(Brand.UNKNOWN,OSFamily.UNKNOWN,"Bot","Bot"),
                        getLocale(context));
         }
@@ -350,8 +364,15 @@ public class UserAgentDetector implements IUserAgentDetector {
 
         // MISC BOTS
 
-        else if (context.consume("Ask Jeeves", MatchingType.BEGINS, MatchingRegion.BOTH) ||
-                 context.consume("Teoma/", MatchingType.BEGINS, MatchingRegion.BOTH)) {
+        else if (context.consume("TencentTraveler", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
+            context.consumeAllTokens();
+            return new UserAgentDetectionResult(
+                       new Device("",DeviceType.SPAMBOT,Brand.UNKNOWN,"Tencent Traveler"),
+                       new Browser(Brand.UNKNOWN,BrowserFamily.CRAWLER,"Rencent Traveler",""),
+                       new OS(Brand.UNKNOWN,OSFamily.UNKNOWN,"Bot","Bot"));
+
+        } else if (context.consume("Ask Jeeves", MatchingType.BEGINS, MatchingRegion.BOTH) ||
+                   context.consume("Teoma/", MatchingType.BEGINS, MatchingRegion.BOTH)) {
             String browser = "Ask Jeeves Bot (ex Teoma)";
             String bdesc = browser;
             consumeUrlAndMozilla(context,"http://");
@@ -509,13 +530,13 @@ public class UserAgentDetector implements IUserAgentDetector {
 
 
         /*else if ((pos=userAgent.indexOf("webcrawler/"))>-1) {
-            String browser = "WebCrawler " + getVersionNumber(userAgent,pos+11);
-          } else // The following two bots don't have any version number in their User-Agent strings.
-            if ((pos=userAgent.indexOf("inktomi"))>-1) {
-            String browser = "Inktomi";
-          } else if ((pos=userAgent.indexOf("teoma"))>-1) {
-            String browser = "Teoma";
-          }*/ else if ((ver=context.getcVersionAfterPattern("Yahoo! Slurp", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) != null) {
+              String browser = "WebCrawler " + getVersionNumber(userAgent,pos+11);
+            } else // The following two bots don't have any version number in their User-Agent strings.
+              if ((pos=userAgent.indexOf("inktomi"))>-1) {
+              String browser = "Inktomi";
+            } else if ((pos=userAgent.indexOf("teoma"))>-1) {
+              String browser = "Teoma";
+            }*/ else if ((ver=context.getcVersionAfterPattern("Yahoo! Slurp", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) != null) {
             String browser = "Yahoo! Slurp " + ver;
             browser = browser.trim();
             consumeUrlAndMozilla(context,"http://");
@@ -658,7 +679,7 @@ public class UserAgentDetector implements IUserAgentDetector {
             } else
                 res = new OS(Brand.MICROSOFT,OSFamily.WINDOWS_NT,"WinNT?","WinNT?");
             /*if ((pos=userAgent.indexOf("Tablet PC"))>-1 && userAgent.indexOf("Touch")>-1)
-            res.version += " Tablet PC " + getVersionNumber(userAgent, pos+9);*/
+                res.version += " Tablet PC " + getVersionNumber(userAgent, pos+9);*/
         } else if (context.consume("Windows XP 5.1", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
             res = new OS(Brand.MICROSOFT,OSFamily.WINDOWS_NT,"Windows","XP");
         } else if (context.consume("Windows 2003 5.2", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
@@ -732,6 +753,13 @@ public class UserAgentDetector implements IUserAgentDetector {
                 // Should not happen at this point
                 res = new OS(Brand.MICROSOFT,OSFamily.WINDOWS,"Windows","Unknown");
 
+            if (res.family == OSFamily.WINDOWS_MOBILE) {
+                context.consume("OpVer [0-9\\.]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);
+                context.consume("PPC;", MatchingType.EQUALS, MatchingRegion.REGULAR);
+                context.getcNextTokens(new Matcher[] {new Matcher("OpVer", MatchingType.EQUALS),
+                                           new Matcher("[0-9\\.]+",MatchingType.REGEXP)
+                }, MatchingRegion.REGULAR);
+            }
         } else if ((ver = context.getcVersionAfterPattern("Intel Mac OS X", MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
             res = new OS(Brand.APPLE,OSFamily.MACOSX,"Intel Mac OS X",ver);
         } else if (context.contains("like Mac OS X", MatchingType.ENDS, MatchingRegion.PARENTHESIS) &&
@@ -794,6 +822,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                     detail = ver;
                     context.consume("hardy", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
                     context.consume("gutsy", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
+                    context.consume("maverick", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
                     context.consume("lucid", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
                     context.consume("intrepid", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
                     context.consume("karmic", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
@@ -880,6 +909,18 @@ public class UserAgentDetector implements IUserAgentDetector {
                 } else if ((ver = context.getcVersionAfterPattern("Ubuntu/", MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
                     med = "Ubuntu";
                     detail = ver;
+                } else if ((ver = context.getcVersionAfterPattern("Jolicloud/", MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                    med = "Joli OS";
+                    detail = ver;
+                } else if ((mt = context.getcNextTokens(new Matcher[] {new Matcher("Joli", MatchingType.EQUALS),
+                    new Matcher("OS/[0-9\\.]+",MatchingType.REGEXP)
+                }, MatchingRegion.REGULAR))!=null) {
+                    med = "Joli OS";
+                    detail = mt[1].substring(3);
+                }
+                else if ((ver = context.getcVersionAfterPattern("Pardus/", MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                    med = "Pardus";
+                    detail = ver;
                 } else if (context.consume("Ubuntu", MatchingType.EQUALS, MatchingRegion.BOTH)) {
                     med = "Ubuntu";
                     detail = "";
@@ -923,8 +964,12 @@ public class UserAgentDetector implements IUserAgentDetector {
             res = new OS(Brand.IBM,OSFamily.OS2,"OS/2",OS);
         } else if (context.consume("BEOS", MatchingType.EQUALSIGNORECASE, MatchingRegion.PARENTHESIS) ||
                    context.consume("BeOS ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) {
-            res = new OS(Brand.BE,OSFamily.BEOS,"BeOS","");
             context.consume("BeOS ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
+            if (context.consume("Haiku BePC", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) {
+                res = new OS(Brand.HAIKU,OSFamily.BEOS,"Haiku","");
+            } else {
+                res = new OS(Brand.BE,OSFamily.BEOS,"BeOS","");
+            }
         } else if ((ver = context.getcVersionAfterPattern("RISC OS", MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
             res = new OS(Brand.ACORN, OSFamily.RISC, "RISC OS", ver);
             context.consume("Acorn ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
@@ -976,7 +1021,11 @@ public class UserAgentDetector implements IUserAgentDetector {
         }, MatchingRegion.REGULAR)) != null) {
             res = new OS(Brand.NINTENDO,OSFamily.OTHER,"OS for Nintendo Wii","");
         }
-        if (context.consume("Nintendo Wii(U)?", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) {
+        if (context.consume("Nintendo WiiU", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) {
+            res = new OS(Brand.NINTENDO,OSFamily.OTHER,"OS for Nintendo WiiU","");
+            context.consume("[0-9]{4}(\\-[0-9])?", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);
+        }
+        if (context.consume("Nintendo Wii", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) {
             res = new OS(Brand.NINTENDO,OSFamily.OTHER,"OS for Nintendo Wii","");
             context.consume("[0-9]{4}(\\-[0-9])?", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);
         } else if (context.consume("Nintendo DSi", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
@@ -1073,6 +1122,10 @@ public class UserAgentDetector implements IUserAgentDetector {
         } else if ((ver = context.getcVersionAfterPattern("Iceweasel/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
             res.description="Iceweasel "+ver;
             context.consume("like Firefox", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
+        } else if ((ver = context.getcVersionAfterPattern("IceCat/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
+            // The new IceWeasel
+            res.description="IceCat "+ver;
+            context.consume("like Firefox", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
         } else if ((ver = context.getcVersionAfterPattern("Firebird/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
             res.description="Firebird "+ver;
             context.consume("Mozilla",  MatchingType.EQUALS, MatchingRegion.REGULAR);
@@ -1094,6 +1147,7 @@ public class UserAgentDetector implements IUserAgentDetector {
             res.description="K-Meleon "+ver;
         } else if ((ver = context.getcVersionAfterPattern("Galeon/",  MatchingType.BEGINS, MatchingRegion.BOTH))!=null) {
             res.description="Galeon "+ver;
+            context.consume("Firefox/", MatchingType.BEGINS, MatchingRegion.REGULAR);
         } else if ((ver = context.getcVersionAfterPattern("Epiphany/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
             context.consume("Firefox/", MatchingType.BEGINS, MatchingRegion.REGULAR);
             res.description="Epiphany "+ver;
@@ -1109,7 +1163,6 @@ public class UserAgentDetector implements IUserAgentDetector {
             res.description="GranParadiso " + ver + " (Firefox beta)";
             res.renderingEngine+=" (GranParadiso"+ver+")";
             context.consume("Firefox",MatchingType.BEGINS, MatchingRegion.REGULAR);
-            context.consume("Gecko",  MatchingType.EQUALS, MatchingRegion.REGULAR);
         } else if ((ver = context.getcVersionAfterPattern("Firefox/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
             context.consume("Fennec/",MatchingType.BEGINS, MatchingRegion.REGULAR); // This is FF for Android, but we already have the OS to tell us that.
             res.description="Firefox "+ver;
@@ -1133,10 +1186,15 @@ public class UserAgentDetector implements IUserAgentDetector {
             res.renderingEngine+=" (Minefield"+ver+")";
         } else if ((ver = context.getcVersionAfterPattern("SWB/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
             res.description="HP Secure Web Browser "+ver;
+        } else if ((ver = context.getcVersionAfterPattern("BonEcho/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
+            res.description="Firefox "+ver;
+            res.family = BrowserFamily.FIREFOX;
         }
 
 
+        context.consume("Gecko", MatchingType.EQUALS, MatchingRegion.REGULAR);
         context.consume("Mnenhy/",  MatchingType.BEGINS, MatchingRegion.REGULAR);
+        context.consume("BonEcho/2",  MatchingType.BEGINS, MatchingRegion.REGULAR);
         return res;
     }
 
@@ -1291,6 +1349,12 @@ public class UserAgentDetector implements IUserAgentDetector {
             res = new Browser(Brand.UNKNOWN,BrowserFamily.ROBOT,"EvoHtmlToPdf "+ver,"Unknown");
         } else if ((ver=context.getcVersionAfterPattern("SMIT-Browser/", MatchingType.BEGINS,MatchingRegion.REGULAR))!=null) {
             res = new Browser(Brand.UNKNOWN,BrowserFamily.OTHER,"SMIT Browser "+ver,"Unknown");
+        } else if (context.getUA().startsWith("Windows Phone Search")) {
+            context.getcNextTokens(new Matcher[] {new Matcher("Windows",MatchingType.EQUALS),new Matcher("Phone",MatchingType.EQUALS),new Matcher("Search",MatchingType.EQUALS)}
+            , MatchingRegion.REGULAR);
+            context.consume("[0-9]\\.[0-9]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);
+            context.consume("[0-9]{4}", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);
+            res = new Browser(Brand.MICROSOFT,BrowserFamily.OTHER,"Image Search Preview","");
         } else if ((ver=context.getcVersionAfterPattern("MSIEMobile ", MatchingType.BEGINS,MatchingRegion.PARENTHESIS))!=null) {
             res = new Browser(Brand.MICROSOFT,BrowserFamily.IE,"IE Mobile " +ver,getTridentVersion(context,"IE Mobile " +ver));
             context.consume("MSIE ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
@@ -1307,6 +1371,19 @@ public class UserAgentDetector implements IUserAgentDetector {
             res = new Browser(Brand.NOKIA,BrowserFamily.OTHER,"OviBrowser " +ver,"OviBrowser " + ver);
             context.consume("Gecko/", MatchingType.BEGINS, MatchingRegion.REGULAR);
             context.consume("Mozilla/", MatchingType.BEGINS, MatchingRegion.REGULAR);
+        } else if ((ver=context.getcVersionAfterPattern("NintendoBrowser/", MatchingType.BEGINS,MatchingRegion.REGULAR))!=null) {
+            res = new Browser(Brand.NINTENDO,BrowserFamily.OTHER_WEBKIT,"Nintendo Browser " +ver,"Nintendo Browser " + ver);
+            context.consume("NX/", MatchingType.BEGINS, MatchingRegion.REGULAR);
+            context.consume("Mozilla/5.0", MatchingType.EQUALS, MatchingRegion.REGULAR);
+            context.consume("KHTML, like Gecko", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
+
+
+            if ((ver=context.getcVersionAfterPattern("AppleWebKit/", MatchingType.BEGINS,MatchingRegion.REGULAR))!=null) {
+                res.renderingEngine = "AppleWebKit " + ver;
+            }
+        } else if (os.description.endsWith("Nintendo 3DS") && (ver=context.getcVersionAfterPattern("Version/", MatchingType.BEGINS,MatchingRegion.REGULAR))!=null) {
+            res = new Browser(Brand.NINTENDO,BrowserFamily.OTHER_WEBKIT,"Nintendo Browser 3DS " +ver,"Nintendo Browser 3DS " + ver);
+            context.consume("Mozilla/5.0", MatchingType.EQUALS, MatchingRegion.REGULAR);
         } else if (context.contains("WebKit", MatchingType.CONTAINS, MatchingRegion.BOTH) ||
                    context.contains("Webkit", MatchingType.CONTAINS, MatchingRegion.BOTH) ||
                    (context.contains("com.google.GooglePlus/", MatchingType.BEGINS,MatchingRegion.REGULAR) && iStuff)) {
@@ -1331,6 +1408,8 @@ public class UserAgentDetector implements IUserAgentDetector {
             } else if ((ver=context.getcVersionAfterPattern("Scourge/", MatchingType.BEGINS,MatchingRegion.REGULAR))!=null) {
                 res = new Browser(Brand.UNKNOWN,BrowserFamily.OTHER_WEBKIT,"Scourge "+ver, getWebkitVersion(context));
             } else if ((ver=context.getcVersionAfterPattern("Surf/", MatchingType.BEGINS,MatchingRegion.REGULAR))!=null) {
+                context.consume("Compatible", MatchingType.EQUALS,MatchingRegion.REGULAR);
+                context.consume("Safari", MatchingType.EQUALS,MatchingRegion.PARENTHESIS);
                 res = new Browser(Brand.UNKNOWN,BrowserFamily.OTHER_WEBKIT,"Surf "+ver, getWebkitVersion(context));
             } else if ((ver=context.getcVersionAfterPattern("Silk/", MatchingType.BEGINS,MatchingRegion.BOTH,2))!=null) {
                 res = new Browser(Brand.AMAZON,BrowserFamily.OTHER_WEBKIT,"Silk "+ver, getWebkitVersion(context));
@@ -1343,10 +1422,14 @@ public class UserAgentDetector implements IUserAgentDetector {
                     String app = "";
                     if ((ver=context.getcVersionAfterPattern("BingWeb/", MatchingType.BEGINS,MatchingRegion.REGULAR,2))!=null)
                         app = " (with Bing app "+ver+")";
-                    res = new Browser(Brand.GOOGLE,BrowserFamily.ANDROID,"Stock Browser" + app,getWebkitVersion(context));
-                    if ((ver=context.getcVersionAfterPattern("GSA/", MatchingType.BEGINS,MatchingRegion.REGULAR,2))!=null) {
-                        res.description += " (through Google Search App)";
+                    else if ((ver=context.getcVersionAfterPattern("GoogleGoggles-Android/", MatchingType.BEGINS,MatchingRegion.REGULAR,2))!=null)  {
+                        context.consume("gzip", MatchingType.EQUALS, MatchingRegion.REGULAR);
+                        app = " (with Google Goggles app "+ver+")";
                     }
+                    else if ((ver=context.getcVersionAfterPattern("GSA/", MatchingType.BEGINS,MatchingRegion.REGULAR,2))!=null) {
+                        app += " (with Google Search App)";
+                    }
+                    res = new Browser(Brand.GOOGLE,BrowserFamily.ANDROID,"Stock Browser" + app,getWebkitVersion(context));
                     context.consume("Version/", MatchingType.BEGINS,MatchingRegion.REGULAR);
                 } else if (context.contains("BlackBerry/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) {
                     res = new Browser(Brand.RIM,BrowserFamily.OTHER_WEBKIT,"Stock Browser",getWebkitVersion(context));
@@ -1428,12 +1511,14 @@ public class UserAgentDetector implements IUserAgentDetector {
             context.consume("like Gecko", MatchingType.EQUALS,MatchingRegion.PARENTHESIS);
             context.consume("20[01][0-9][01][0-9][0-3][0-9]", MatchingType.REGEXP,MatchingRegion.PARENTHESIS);
             res = new Browser(Brand.KDE,BrowserFamily.KHTML,"Konqueror "+ver,getKHTMLVersion(context));
+        } else if ((ver=context.getcVersionAfterPattern("Polaris/", MatchingType.BEGINS,MatchingRegion.PARENTHESIS))!=null) {
+            res = new Browser(Brand.INFRAWARE,BrowserFamily.OTHER,"Polaris "+ver,"");
         } else if (context.contains("KHTML, like Gecko", MatchingType.BEGINS, MatchingRegion.PARENTHESIS) ||
                    context.contains("KHTML/", MatchingType.BEGINS, MatchingRegion.REGULAR)) {
             consumeMozilla(context);
             context.consume("like Gecko", MatchingType.EQUALS,MatchingRegion.PARENTHESIS);
             res = new Browser(Brand.KDE,BrowserFamily.KHTML,"KHTML-based",getKHTMLVersion(context));
-        } else if ((ver=context.getcVersionAfterPattern("NetFront/", MatchingType.BEGINS,MatchingRegion.REGULAR))!=null ||
+        } else if ((ver=context.getcVersionAfterPattern("NetFront/", MatchingType.BEGINS,MatchingRegion.BOTH))!=null ||
                    (ver=context.getcVersionAfterPattern("Browser/NetFront/", MatchingType.BEGINS,MatchingRegion.REGULAR))!=null) {
 
             String ver2;
@@ -1443,6 +1528,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                 res = new Browser(Brand.ACCESSCO,BrowserFamily.NETFRONT,"NetFront","NetFront "+ver);
             }
 
+            context.consume("NetFront/", MatchingType.BEGINS, MatchingRegion.BOTH);
         } else if (context.contains("Mozilla/3.0", MatchingType.EQUALS, MatchingRegion.REGULAR) &&
                    context.consume("Sun", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
             res = new Browser(Brand.SUN,BrowserFamily.OTHER,"HotJava","Java");
@@ -1514,6 +1600,10 @@ public class UserAgentDetector implements IUserAgentDetector {
             res = new Browser(Brand.OREGAN,BrowserFamily.OTHER,"Oregano " + ver,"");
             consumeMozilla(context);
             context.consume("Compatible", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
+        } else if (os.vendor == Brand.NINTENDO && context.getUA().startsWith("Opera/9.50") && context.getUA().contains("DSi") &&
+                   (ver = context.getcVersionAfterPattern("Opera/",  MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
+            res = new Browser(Brand.OPERA,BrowserFamily.OPERA,"For DSi, ver " + ver,"Presto 2.1"); // See http://en.wikipedia.org/wiki/Nintendo_DS_%26_DSi_Browser
+            context.consume("Opera/9.50", MatchingType.EQUALS, MatchingRegion.REGULAR);
         } else
 
 
@@ -1622,6 +1712,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                 } else {
                     res = new Browser(Brand.NETSCAPE,BrowserFamily.OTHER,"Communicator","Communicator " + context.getcVersionAfterPattern("Mozilla/", MatchingType.BEGINS, MatchingRegion.REGULAR));
                     context.consume("I",  MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
+                    context.consume("Nav",  MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
                 }
                 context.consume("compatible",  MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
             } else
@@ -1652,9 +1743,7 @@ public class UserAgentDetector implements IUserAgentDetector {
             return new Device("",DeviceType.BOT,Brand.GOOGLE,"Web Preview");
         }
         if (context.consume("yacybot", MatchingType.EQUALS, MatchingRegion.REGULAR)) {
-            context.consume("http://", MatchingType.BEGINS, MatchingRegion.REGULAR);
-            context.consume("freeworld/global", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
-            context.consume("Europe", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
+            context.consumeAllTokens();
             return new Device("",DeviceType.BOT,Brand.YACI,"YaCy Bot");
         }
         if (context.contains("EvoHtmlToPdf/", MatchingType.BEGINS,MatchingRegion.CONSUMED)) return new Device("",DeviceType.BOT,Brand.UNKNOWN,"EvoHtmlToPdf");
@@ -1706,9 +1795,6 @@ public class UserAgentDetector implements IUserAgentDetector {
                 if (context.getcToken("Nokia[ ]?6630/.*", MatchingType.REGEXP, MatchingRegion.BOTH) != null) res.device = "6630";
                 if (context.getcToken("Nokia5530c-2/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS) != null) res.device = "5530 XpressMusic";
                 if (context.getcToken("Nokia5800d", MatchingType.BEGINS, MatchingRegion.PARENTHESIS) != null) res.device = "5800 XpressMusic";
-
-                if (context.consume("SonyEricssonU5a", MatchingType.BEGINS, MatchingRegion.REGULAR)) return new Device(arm,DeviceType.PHONE,Brand.SONY,"Vivaz");
-
             }
             if (context.consume("NokiaN-GageQD", MatchingType.BEGINS, MatchingRegion.REGULAR)) {
                 context.consume("SymbianOS/", MatchingType.BEGINS, MatchingRegion.REGULAR);
@@ -1717,6 +1803,17 @@ public class UserAgentDetector implements IUserAgentDetector {
                 res.deviceType = DeviceType.CONSOLE;
             }
             if (res.device.length()>0) return res;
+
+            if (context.getUA().startsWith("SonyEricsson")) {
+                res = new Device(arm,DeviceType.PHONE,Brand.SONY,"");
+                if (context.consume("SonyEricssonU5", MatchingType.BEGINS, MatchingRegion.REGULAR)) res.device = "Vivaz";
+                if (context.consume("SonyEricssonU1[ai]/.*", MatchingType.REGEXP, MatchingRegion.REGULAR)) res.device = "Satio";
+                if (res.device.length()==0) {
+                    ver = context.getcVersionAfterPattern("SonyEricsson", MatchingType.BEGINS, MatchingRegion.REGULAR);
+                    res = new Device(arm,DeviceType.PHONE,Brand.SONY,ver);
+                }
+                return res;
+            }
         }
 
         if (o.family == OSFamily.WEBOS) {
@@ -1757,34 +1854,41 @@ public class UserAgentDetector implements IUserAgentDetector {
         }
         // Android devices
         if (o.family == OSFamily.ANDROID) {
-
             context.consume("Dalvik/", MatchingType.BEGINS, MatchingRegion.REGULAR);
 
             // Samsung
 
             if (context.contains("SAMSUNG-SGH-", MatchingType.BEGINS, MatchingRegion.PARENTHESIS) ||
                     context.contains("SGH-", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) {
-                if (context.consume("(SAMSUNG-)?SGH-T999.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy S3");
-                if (context.consume("(SAMSUNG-)?SGH-T989.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy S2");
-                if (context.consume("(SAMSUNG-)?SGH-T959.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy S");
-                if (context.consume("(SAMSUNG-)?SGH-T889.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy Note 2");
-                if (context.consume("(SAMSUNG-)?SGH-T769.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy S Blaze 4G");
-                if (context.consume("(SAMSUNG-)?SGH-T759.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Exhibit 4G");
-                if (context.consume("(SAMSUNG-)?SGH-I896.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy S");
-                if (context.consume("(SAMSUNG-)?SGH-I747.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy S3");
-                if (context.consume("(SAMSUNG-)?SGH-I407.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"SGH-I407");
-                if (context.consume("(SAMSUNG-)?SGH-I897.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Captivate");
-                if (context.consume("(SAMSUNG-)?SGH-I777.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy S2");
-                if (context.consume("(SAMSUNG-)?SGH-I727.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy S2");
-                if (context.consume("(SAMSUNG-)?SGH-I717.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy Note");
-                if (context.consume("(SAMSUNG-)?SGH-I317.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy Note 2");
-                if (context.consume("(SAMSUNG-)?SGH-T679.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Exhibit II 4G");
-                if (context.consume("(SAMSUNG-)?SGH-I997.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Infuse 4G");
-                if (context.consume("(SAMSUNG )?SGH-T849.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.TABLET,Brand.SAMSUNG,"Galaxy Tab 7.0");
-                if (context.consume("(SAMSUNG )?SGH-T859.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.TABLET,Brand.SAMSUNG,"Galaxy Tab 10.1");
-                if (context.consume("(SAMSUNG )?SGH-T499.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Dart");
-                if (context.consume("(SAMSUNG )?SGH-T589.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Gravity Smart");
-                if (context.consume("(SAMSUNG )?SGH-T839.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Sidekick 4G");
+                Device device = null;
+                if (context.consume("(SAMSUNG-)?SGH-T999.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) device = new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy S3");
+                else if (context.consume("(SAMSUNG-)?SGH-T989.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) device = new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy S2");
+                else if (context.consume("(SAMSUNG-)?SGH-T959.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) device = new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy S");
+                else if (context.consume("(SAMSUNG-)?SGH-T889.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) device = new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy Note 2");
+                else if (context.consume("(SAMSUNG-)?SGH-T769.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) device = new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy S Blaze 4G");
+                else if (context.consume("(SAMSUNG-)?SGH-T759.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) device = new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Exhibit 4G");
+                else if (context.consume("(SAMSUNG-)?SGH-I896.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) device = new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy S");
+                else if (context.consume("(SAMSUNG-)?SGH-I747.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) device = new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy S3");
+                else if (context.consume("(SAMSUNG-)?SGH-I407.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) device = new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Amp");
+                else if (context.consume("(SAMSUNG-)?SGH-I897.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) device = new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Captivate");
+                else if (context.consume("(SAMSUNG-)?SGH-I777.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) device = new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy S2");
+                else if (context.consume("(SAMSUNG-)?SGH-I727.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) device = new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy S2");
+                else if (context.consume("(SAMSUNG-)?SGH-I717.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) device = new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy Note");
+                else if (context.consume("(SAMSUNG-)?SGH-I317.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) device = new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy Note 2");
+                else if (context.consume("(SAMSUNG-)?SGH-T679.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) device = new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Exhibit II 4G");
+                else if (context.consume("(SAMSUNG-)?SGH-I997.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) device = new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Infuse 4G");
+                else if (context.consume("(SAMSUNG )?SGH-T849.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) device = new Device(arm,DeviceType.TABLET,Brand.SAMSUNG,"Galaxy Tab 7.0");
+                else if (context.consume("(SAMSUNG )?SGH-T859.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) device = new Device(arm,DeviceType.TABLET,Brand.SAMSUNG,"Galaxy Tab 10.1");
+                else if (context.consume("(SAMSUNG )?SGH-T499.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) device = new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Dart");
+                else if (context.consume("(SAMSUNG )?SGH-T589.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) device = new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Gravity Smart");
+                else if (context.consume("(SAMSUNG )?SGH-T839.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) device = new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Sidekick 4G");
+
+                if (device != null) {
+                    if (context.contains("(SAMSUNG[- ])SGH-..../.*", MatchingType.REGEXP, MatchingRegion.CONSUMED)) {
+                        context.consume("Build/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
+                    }
+                    return device;
+                }
 
                 return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Unknown");
             }
@@ -1800,6 +1904,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                 if (context.consume("(SAMSUNG )?GT-S5670.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy Fit");
                 if (context.consume("(SAMSUNG )?GT-S5660.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy Gio");
                 if (context.consume("(SAMSUNG )?GT-S536[0-3].*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy Y");
+                if (context.consume("(SAMSUNG )?GT-S5570.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy Mini");
 
                 if (context.consume("(SAMSUNG )?GT-P75[01]0.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.TABLET,Brand.SAMSUNG,"Galaxy Tab 10.1");
                 if (context.consume("(SAMSUNG )?GT-P68[01]0.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.TABLET,Brand.SAMSUNG,"Galaxy Tab 7.7");
@@ -1838,7 +1943,6 @@ public class UserAgentDetector implements IUserAgentDetector {
                 if (context.consume("(SAMSUNG )?GT-I5801.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy Apollo");
                 if (context.consume("(SAMSUNG )?GT-I8150.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy W");
 
-                if (context.consume("(SAMSUNG )?GT-S5570.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy Mini");
 
                 if (context.consume("(SAMSUNG )?GT-B5510.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy Y Pro");
                 if (context.consume("(SAMSUNG )?GT-B7510.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy Pro");
@@ -1866,6 +1970,7 @@ public class UserAgentDetector implements IUserAgentDetector {
             if (context.consume("SPH-M910", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Intercept");
             if (context.consume("SPH-M930", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Transform Ultra");
             if (context.consume("SPH-P100", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.TABLET,Brand.SAMSUNG,"Galaxy Tab 7");
+            if (context.consume("SPH-D600", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.TABLET,Brand.SAMSUNG,"Conquer 4G");
 
             if (context.consume("SHW-M380K", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.TABLET,Brand.SAMSUNG,"Galaxy Tab 10.1");
             if (context.consume("SHW-M250K", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy S2");
@@ -1904,10 +2009,6 @@ public class UserAgentDetector implements IUserAgentDetector {
             if (context.consume("Huawei-U8665", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HUAWEI,"Fusion 2");
             if (context.consume("Huawei-U8652", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HUAWEI,"Fusion U8652");
             if (context.consume("TURKCELL MaxiPRO5", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HUAWEI,"Honor U8860");
-
-            // Asus
-            if (context.consume("Transformer TF101", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.TABLET,Brand.ASUS,"Eee Pad Transformer");
-            if (context.consume("Transformer Prime TF201", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.TABLET,Brand.ASUS,"Eee Pad Transformer Prime");
 
             // SONY
             if (context.consume("SonyST21i", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SONY,"Xperia");
@@ -1951,47 +2052,70 @@ public class UserAgentDetector implements IUserAgentDetector {
             if (context.consume("Sprint APX515CKT", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Evo 3D X515xkt");
             if (context.consume("Sprint APA9292KT", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Evo 4G");
             if (context.consume("Sprint APA7373KT", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"EVO Shift 4G");
-
-            if (context.consume("(HTC[ _])?EVO( )?3D[ _]X515m.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Evo 3D X515m");
             if (context.consume("EVO ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Evo 4G");
-            if (context.consume("(HTC_)?Amaze_4G.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Amaze 4G");
+            if (context.consume("HTC Inspire 4G ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Inspire 4G");
+
             if (context.consume("ADR6300", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Droid Incredible");
-            if (context.consume("HTC_WildfireS", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Wildfire S (Marvel)");
-            if (context.consume("HTCA510e/1.0", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"WildFire");
-            if (context.consume("HTCA510e", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Wildfire (Buzz)");
-            if (context.consume("HTC[_ ]Sensation[_ ]4G.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Sensation 4G");
-            if (context.consume("HTC_PH39100/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Vivid");
-            if (context.consume("HTC_T120C ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"One V");
             if (context.consume("pcdadr6350", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"ADR6350");
             if (context.consume("PC36100", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"One XL");
             if (context.consume("IncredibleS_S710e", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Incredible S");
             if (context.consume("HTL21", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"J Butterfly");
-            if (context.consume("HTC_One_X", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"One X");
-            if (context.consume("HTC EVA_UL", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"One X Evita");
-            if (context.consume("HTC_One_S", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"One S");
-            if (context.consume("HTC_DesireS_S510e", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Desire S");
-            if (context.consume("HTC/DesireS/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Desire S");
-            if (context.consume("HTC_DesireHD_A9191", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Desire HD");
-            if (context.consume("HTC_C715c", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"EVO Design 4G");
-            if (context.consume("HTC Sensation Z710e", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Sensation Z710e");
-            if (context.consume("HTC Glacier", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Glacier");
-            if (context.consume("HTC_Rhyme_S510b", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Rhyme");
-            if (context.consume("HTC/WildfireS/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Wildfire S");
-            if (context.consume("HTC/Sensation/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Sensation");
-            if (context.consume("HTC One X", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"One X");
-            if (context.consume("HTC Incredible S", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Incredible S");
-            if (context.consume("HTC Desire HD", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Desire HD");
-            if (context.consume("HTC[_ ]Wildfire[-_ ].*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Wildfire");
-            if (context.consume("HTC Desire C", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Desire C");
-            if (context.consume("HTC_DesireZ_", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Desire Z");
-            if (context.consume("HTC Desire ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Desire");
-            if (context.consume("HTC_Desire", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Desire");
-            if (context.consume("HTC Hero ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Hero");
-            if (context.consume("HTC Vision ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Desire Z");
-            if (context.consume("HTC Legend ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Legend");
-            if (context.consume("HTC One S ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"One S");
-            if (context.consume("HTC[_ ]One[_ ]V .*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"One V");
-            if (context.consume("HTC Bravo ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Desire");
+            if (context.consume("(HTC[ _])?EVO( )?3D[ _]X515m.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Evo 3D X515m");
+            if (context.consume("(HTC_)?Amaze_4G.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Amaze 4G");
+            if (context.getUA().indexOf("HTC")>0) {
+                if (context.consume("HTC_Flyer_P512_NA ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Flyer");
+                if (context.consume("HTC[_ ]Dream .*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Dream");
+                if (context.consume("HTC_S510b ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Rhyme");
+                if (context.consume("HTC Liberty ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Liberty/Aria/Intruder/A6366");
+                if (context.consume("HTC_WildfireS", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Wildfire S (Marvel)");
+                if (context.consume("HTCA510e/1.0", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"WildFire");
+                if (context.consume("HTCA510e", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Wildfire (Buzz)");
+                if (context.consume("HTC[_ ]Sensation[_ ]4G.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Sensation 4G");
+                if (context.consume("HTC_PH39100/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Vivid");
+                if (context.consume("HTC_T120C ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"One V");
+                if (context.consume("HTC_One_X", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"One X");
+                if (context.consume("HTC EVA_UL", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"One X Evita");
+                if (context.consume("HTC_One_S", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"One S");
+                if (context.consume("HTC_DesireS_S510e", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Desire S");
+                if (context.consume("HTC/DesireS/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Desire S");
+                if (context.consume("HTC_DesireHD_A9191", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Desire HD");
+                if (context.consume("HTC_C715c", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"EVO Design 4G");
+                if (context.consume("HTC Sensation Z710e", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Sensation Z710e");
+                if (context.consume("HTC Glacier", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Glacier");
+                if (context.consume("HTC_Rhyme_S510b", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Rhyme");
+                if (context.consume("HTC/WildfireS/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Wildfire S");
+                if (context.consume("HTC-PG762 ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Wildfire S");
+                if (context.consume("HTC/Sensation/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Sensation");
+                if (context.consume("HTC_SensationXL_Beats-", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Sensation XL Beats");
+                if (context.consume("HTC One X", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"One X");
+                if (context.consume("HTC Click-", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Click/Tattoo");
+                if (context.consume("HTC Incredible S", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Incredible S");
+                if (context.consume("HTC Desire HD", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Desire HD");
+                if (context.consume("HTC HD2", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"HD2/Leo");
+                if (context.consume("HTC[_ ]Wildfire[-_ ].*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Wildfire");
+                if (context.consume("HTC Desire C", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Desire C");
+                if (context.consume("HTC_DesireZ_", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Desire Z");
+                if (context.consume("HTC-A7275", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Desire Z");
+                if (context.consume("HTC Desire ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Desire");
+                if (context.consume("HTC_Desire", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Desire");
+                if (context.consume("HTC Hero ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Hero");
+                if (context.consume("HTC Vision ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Desire Z");
+                if (context.consume("HTC Legend ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Legend");
+                if (context.consume("HTC One S ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"One S");
+                if (context.consume("HTC[_ ]One[_ ]V .*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"One V");
+                if (context.consume("HTC Bravo ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Desire");
+                if (context.consume("HTC Salsa C510b ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Salsa");
+                if (context.consume("HTC-A9192/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) {
+                    context.consume("Build/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
+                    return new Device(arm,DeviceType.PHONE,Brand.HTC,"Inspire 4G");
+                }
+                if (context.consume("HTC-A6366/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) {
+                    context.consume("Build/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
+                    return new Device(arm,DeviceType.PHONE,Brand.HTC,"Liberty/Aria/Intruder/A6366");
+                }
+
+
+            }
             if (context.consume("ADR6350 ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.HTC,"Droid Incredible 2");
             if (context.consume("A6277 ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) {
                 context.consume("APA6277KT", MatchingType.EQUALS, MatchingRegion.REGULAR);
@@ -2004,7 +2128,17 @@ public class UserAgentDetector implements IUserAgentDetector {
                 Device res = null;
                 if (context.consume("LG-MS770 ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Motion 4G");
                 if (context.consume("Optimus 2X", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Optimus 2X");
+                if (context.consume("LG-L[GS]855.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Marquee");
+                if (context.consume("LG-LU6500", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Optimus Q2");
+                if (context.consume("LG-LS840", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Viper");
+                if (context.consume("LG-MS690", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Optimus M");
+                if (context.consume("LG-MS695", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Optimus M+");
+
+                if (context.consume("LG-P350", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Optimus Me");
                 if (context.consume("LG-P500", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Optimus One");
+                if (context.consume("LG-P509", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Optimus T");
+                if (context.consume("LG-P700", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Optimus L7");
+                if (context.consume("LG-P870", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Escape");
                 if (context.consume("LG-P880", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Optimus 4X HD");
                 if (context.consume("LG-P920", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Optimus 3D");
                 if (context.consume("LG-P925", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Thrill 4G");
@@ -2017,6 +2151,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                 if (context.consume("LG-E739", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"myTouch");
                 if (context.consume("LG-C800 ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"myTouch Q");
                 if (context.consume("LG-VS700", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Enlighten");
+                if (context.consume("LG-VM696", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Optimus Elite");
                 if (context.consume("LG Eve", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Eve");
 
                 if (res != null) {
@@ -2049,7 +2184,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                     return new Device(arm,DeviceType.PHONE,Brand.MOTOROLA,"Droid X");
                 }
             }
-            if (context.consume("MZ601", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.TABLET,Brand.MOTOROLA,"Xoom");
+            if (context.consume("MZ60[14].*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.TABLET,Brand.MOTOROLA,"Xoom");
             if (context.consume("MB865", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.MOTOROLA,"Atrix 2");
             if (context.consume("MB860", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.MOTOROLA,"Atrix");
             if (context.consume("MB525", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) {
@@ -2073,6 +2208,8 @@ public class UserAgentDetector implements IUserAgentDetector {
             // Asus
             if (context.consume("ASUS Transformer Pad TF700T", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.TABLET,Brand.ASUS,"Transformer Pad Infinity");
             if (context.consume("ASUS Transformer Pad TF300T", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.TABLET,Brand.ASUS,"Transformer Pad TF300T");
+            if (context.consume("Transformer TF101", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.TABLET,Brand.ASUS,"Eee Pad Transformer");
+            if (context.consume("Transformer Prime TF201", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.TABLET,Brand.ASUS,"Eee Pad Transformer Prime");
 
             // Acer
             if (context.consume("A700", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.TABLET,Brand.ACER,"Iconia Tab A700");
@@ -2100,7 +2237,17 @@ public class UserAgentDetector implements IUserAgentDetector {
             if (context.consume("Tablet", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) return new Device("",DeviceType.TABLET,Brand.UNKNOWN_ANDROID,"Unknown");
             return new Device("",DeviceType.UNKNOWN_MOBILE,Brand.UNKNOWN_ANDROID,"Unknown");
         }
+        if (o.family == OSFamily.LINUX) {
+            if (context.consume("Transformer TF101", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.TABLET,Brand.ASUS,"Eee Pad Transformer");
+        }
 
+        if (b.family == BrowserFamily.NETFRONT) {
+            String device = context.getcRegion("(SAMSUNG-)?GT-([SB][0-9][0-9][0-9][0-9])/.*", MatchingRegion.REGULAR, 2);
+            if (device != null) {
+                return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,device);
+            }
+            //if (context.consume("(SAMSUNG-)?GT-(S3310/.*", MatchingType.REGEXP, MatchingRegion.REGULAR)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"S3310");
+        }
 
         // Apple
         if (o.family == OSFamily.IOS) {
@@ -2215,8 +2362,8 @@ public class UserAgentDetector implements IUserAgentDetector {
 
 
         // Consoles
-        if (context.consume("Nintendo WiiU", MatchingType.EQUALS, MatchingRegion.CONSUMED)) return new Device(arm,DeviceType.CONSOLE,Brand.NINTENDO,"Wii U");
-        if (context.consume("Nintendo Wii", MatchingType.EQUALS, MatchingRegion.CONSUMED)) return new Device(arm,DeviceType.CONSOLE,Brand.NINTENDO,"Wii");
+        if (context.consume("Nintendo WiiU", MatchingType.EQUALS, MatchingRegion.CONSUMED)) return new Device("PowerPC",DeviceType.CONSOLE,Brand.NINTENDO,"Wii U");
+        if (context.consume("Nintendo Wii", MatchingType.EQUALS, MatchingRegion.CONSUMED)) return new Device("PowerPC",DeviceType.CONSOLE,Brand.NINTENDO,"Wii");
         if (context.consume("Nintendo DSi", MatchingType.EQUALS, MatchingRegion.CONSUMED)) return new Device(arm,DeviceType.CONSOLE,Brand.NINTENDO,"DSi");
         if (context.consume("Super_Nintendo", MatchingType.EQUALS, MatchingRegion.REGULAR)) return new Device(arm,DeviceType.CONSOLE,Brand.NINTENDO,"Super Nintendo");
         if (context.consume("Nintendo 3DS", MatchingType.EQUALS, MatchingRegion.CONSUMED)) return new Device(arm,DeviceType.CONSOLE,Brand.NINTENDO,"3DS");
@@ -2245,6 +2392,9 @@ public class UserAgentDetector implements IUserAgentDetector {
                 return new Device(arm,DeviceType.PHONE,Brand.HTC,"HD Mini");
 
             if (o.version.equals("CE")) {
+                context.consume("PPC" , MatchingType.EQUALS, MatchingRegion.PARENTHESIS ); // Pocket PC
+                if (context.consume("Palm750/v0100" , MatchingType.BEGINS, MatchingRegion.REGULAR ))
+                    return new Device(arm,DeviceType.PHONE,Brand.PALM,"Treo 750");
                 if (context.consume("HTC_Snap_S52[0-9]", MatchingType.REGEXP, MatchingRegion.REGULAR))
                     return new Device(arm,DeviceType.PHONE,Brand.HTC,"Snap");
                 if (context.consume("HTC_TyTN", MatchingType.BEGINS, MatchingRegion.PARENTHESIS))
@@ -2284,8 +2434,10 @@ public class UserAgentDetector implements IUserAgentDetector {
 
                 if (context.consume("SonyEricssonX1a", MatchingType.BEGINS, MatchingRegion.REGULAR))
                     return new Device(arm,DeviceType.PHONE,Brand.SONY,"Xperia X1");
-                if (context.consume("SonyEricssonM1a", MatchingType.BEGINS, MatchingRegion.REGULAR))
+                if (context.consume("SonyEricssonM1a", MatchingType.BEGINS, MatchingRegion.REGULAR)) {
+                    context.consume("Browser/Mozilla/4.0", MatchingType.EQUALS, MatchingRegion.REGULAR);
                     return new Device(arm,DeviceType.PHONE,Brand.SONY,"Aspen Faith");
+                }
 
                 return new Device("",DeviceType.PHONE,Brand.UNKNOWN,"");
 
@@ -2424,6 +2576,50 @@ public class UserAgentDetector implements IUserAgentDetector {
                 if (context.consume("(SAMSUNG[ -])?GT-S7230.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Wave 723");
                 if (context.consume("(SAMSUNG[ -])?GT-S8600.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Wave 3");
                 if (context.consume("(SAMSUNG[ -])?GT-S5780.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Wave 578");
+                if (context.consume("(SAMSUNG[ -])?GT-S5330.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Wave 533 / Wave 2 Pro");
+            }
+        }
+        // Other samsung OS
+        if (context.getUA().startsWith("SAMSUNG-GT-") || context.getUA().startsWith("samsung-gt") || context.contains("SPH-M[0-9]{3}", MatchingType.REGEXP, MatchingRegion.BOTH)) {
+            Device device = new Device(arm, DeviceType.PHONE, Brand.SAMSUNG, "");
+            if (context.consume("SAMSUNG-GT-S5263/", MatchingType.BEGINS, MatchingRegion.REGULAR)) device.device = "Star II";
+            if (context.consume("SAMSUNG-GT-S5230/", MatchingType.BEGINS, MatchingRegion.REGULAR)) device.device = "Player One";
+            if (context.consume("SPH-M810", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) device.device = "Instinct Mini (S30)";
+            if (context.consume("SPH-M800", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) device.device = "Instinct";
+            if (context.consume("SPH-M570", MatchingType.EQUALS, MatchingRegion.REGULAR)) device.device = "Restore";
+            if (context.consume("samsung-gt-s5350/", MatchingType.BEGINS, MatchingRegion.REGULAR)) device.device = "Shark";
+            if (device.device.length()>0) {
+                context.consume("SAMSUNG", MatchingType.EQUALSIGNORECASE, MatchingRegion.PARENTHESIS);
+                if (o.family == OSFamily.UNKNOWN) {
+                    o.family = OSFamily.OTHER;
+                    o.vendor = Brand.SAMSUNG;
+                    o.description = "Proprietary OS";
+                }
+                if (b.family == BrowserFamily.UNKNOWN && (ver = context.getcVersionAfterPattern("Dolfin/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
+                    b.description = "Dolfin " + ver;
+                    b.family = BrowserFamily.OTHER;
+                    b.renderingEngine = "WebKit";
+                    b.vendor = Brand.SAMSUNG;
+                } else if (b.family == BrowserFamily.UNKNOWN && (ver = context.getcVersionAfterPattern("Jasmine/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
+                    // Not so sure this is actually a web browser...
+                    b.description = "Jasmine " + ver;
+                    b.family = BrowserFamily.OTHER;
+                    b.renderingEngine = "";
+                    b.vendor = Brand.SAMSUNG;
+                } else if (b.family == BrowserFamily.UNKNOWN && (ver = context.getcVersionAfterPattern("Browser",  MatchingType.BEGINS, MatchingRegion.REGULAR, 2))!=null) {
+                    // Not so sure this is actually a web browser...
+                    b.description = "Browser " + ver;
+                    b.family = BrowserFamily.OTHER;
+                    b.renderingEngine = "";
+                    b.vendor = Brand.SAMSUNG;
+                } else if (b.family == BrowserFamily.UNKNOWN && (ver = context.getcVersionAfterPattern("TELECA-/",  MatchingType.BEGINS, MatchingRegion.REGULAR, 2))!=null) {
+                    b.description = "Teleca " + ver;
+                    b.family = BrowserFamily.OTHER;
+                    b.renderingEngine = "";
+                    b.vendor = Brand.OBIGO;
+                    context.consume("Teleca/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
+                }
+                return device;
             }
         }
 
@@ -2803,23 +2999,28 @@ public class UserAgentDetector implements IUserAgentDetector {
         if (s.contains(",")) {
             String[]langs = s.split(",");
             boolean ok = true;
+            int pos = 0, curPos = 0;
             for (String lang : langs) {
                 lang = lang.trim();
                 switch(lang.length()) {
+                case 0:
+                    if (curPos == 0 && langs.length>pos+1) pos++;
+                    break;
                 case 2:
                     ok = ok && LocaleHelper.getLanguage(lang)!=null;
                     break;
                 case 5:
-                    ok = ok && LocaleHelper.getLanguage(lang.substring(0,2))!=null && lang.charAt(2)=='_' && LocaleHelper.getCountry(lang.substring(3,5))!=null;
+                    ok = ok && LocaleHelper.getLanguage(lang.substring(0,2))!=null && (lang.charAt(2)=='_' || lang.charAt(2)=='-') && LocaleHelper.getCountry(lang.substring(3,5))!=null;
                     break;
                 default:
                     ok = false;
                     break;
                 }
                 if (!ok) break;
+                curPos++;
             }
             if (ok) {
-                return getLocale(langs[0], context);
+                return getLocale(langs[pos].trim(), context);
             }
         }
 
@@ -2867,8 +3068,20 @@ public class UserAgentDetector implements IUserAgentDetector {
     }
 
 
-    static void addExtensions(UserAgentContext context, Browser b, UserAgentDetectionResult res) {
+    static void addExtensions(UserAgentContext context, UserAgentDetectionResult res) {
         String ver;
+        if (res.operatingSystem.vendor == Brand.SAMSUNG || res.operatingSystem.family == OSFamily.UNKNOWN) {
+            if ((ver = context.getcVersionAfterPattern("BREW ",MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) != null ||
+                    (ver = context.getcVersionAfterPattern("Brew MP ",MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) != null) {
+                // http://www.brewmp.com/
+                // Binary Runtime Environment for Wireless
+                res.addExtension(new Extension("BREW ",ver));
+            }
+
+        }
+        if ((ver = context.getcVersionAfterPattern("NexPlayer/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+            res.addExtension(new Extension("NexPlayer ",ver));
+        }
         if ((ver = context.getcVersionAfterPattern("YPC ",MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) != null) {
             res.addExtension(new Extension("Yahoo! Parental Control",ver));
             context.consume("yplus ",MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
@@ -2894,17 +3107,24 @@ public class UserAgentDetector implements IUserAgentDetector {
             if (ver != null) res.addExtension(new Extension("Java Platform",ver));
 
         }
-        if (b.description.startsWith("Silk")) {
+        if (res.browser.description.startsWith("Silk")) {
             if (context.consume("Silk-Accelerated=true",MatchingType.EQUALS, MatchingRegion.REGULAR)) {
                 res.addExtension(new Extension("Silk-Accelerated",""));
             }
         }
-        if (b.description.startsWith("ELinks") || b.description.startsWith("Lynx") || b.description.startsWith("Links") || res.operatingSystem.family == OSFamily.WINDOWS_MOBILE) {
+        if (res.browser.description.startsWith("ELinks") || res.browser.description.startsWith("Lynx") || res.browser.description.startsWith("Links") || res.operatingSystem.family == OSFamily.WINDOWS_MOBILE) {
             String reso = context.getcToken("[0-9]+x[0-9]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);
             if (reso != null)
                 res.addExtension(new Extension("Resolution",reso));
         }
-        if (b.family == BrowserFamily.IE) {
+        if (res.operatingSystem.family == OSFamily.WINDOWS_MOBILE) {
+            String reso = context.getcToken("[0-9]+x[0-9]+;?", MatchingType.REGEXP, MatchingRegion.BOTH);
+            if (reso != null) {
+                if (reso.endsWith(";")) reso = reso.substring(0, reso.length()-1);
+                res.addExtension(new Extension("Resolution",reso));
+            }
+        }
+        if (res.browser.family == BrowserFamily.IE) {
             if (context.consume("DigExt",MatchingType.EQUALS, MatchingRegion.PARENTHESIS) || context.consume("MSIECrawler",  MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
                 res.addExtension(new Extension("Offline Save")); // IE downloading for offline access
             }
@@ -2913,9 +3133,9 @@ public class UserAgentDetector implements IUserAgentDetector {
             }
         }
 
-        if (b.family == BrowserFamily.FIREFOX || b.family == BrowserFamily.OTHER_GECKO) {
+        if (res.browser.family == BrowserFamily.FIREFOX || res.browser.family == BrowserFamily.OTHER_GECKO) {
 
-            if (b.description.startsWith("Thunderbird")) {
+            if (res.browser.description.startsWith("Thunderbird")) {
                 if ((ver = context.getcVersionAfterPattern("ThunderBrowse/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
                     res.addExtension(new Extension("ThunderBrowse",ver));
                 }
@@ -3028,7 +3248,6 @@ public class UserAgentDetector implements IUserAgentDetector {
             context.ignore("managedpc", MatchingType.EQUALS, MatchingRegion.PARENTHESIS); // Dunno
             context.ignore("SVD", MatchingType.EQUALS, MatchingRegion.PARENTHESIS); // Dunno
             context.ignore("WinNT-PAI [0-9\\.]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS); // Trojan http://www.threatexpert.com/report.aspx?md5=72e15bf94e8cb6ea2fc8d0626774ddd2
-            context.ignore("hotvideobar_[0-9_]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS); // WTWTWTF?
             context.ignore("VB_juicypalace", MatchingType.EQUALS, MatchingRegion.PARENTHESIS); // Dunno?
             context.ignore("UGDCFR [0-9\\.]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS); // Dunno
             context.ignore("eMusic DLM/4", MatchingType.EQUALS, MatchingRegion.PARENTHESIS); // eMusic Download Manager
@@ -3036,6 +3255,9 @@ public class UserAgentDetector implements IUserAgentDetector {
                 context.ignore("ENUS", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
             }
             while (context.ignore("MS-RTC ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)); // NetMeeting
+            while (context.ignore("desktopsmiley_[0-9_]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) {
+                context.ignore("DS_desktopsmiley", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
+            }
 
         } else {
             if (null != context.ignoreNextTokens(new Matcher[] {new Matcher("Service", MatchingType.EQUALS),
@@ -3047,7 +3269,6 @@ public class UserAgentDetector implements IUserAgentDetector {
             while (context.consume("[0-9]+", MatchingType.REGEXP, MatchingRegion.REGULAR)) ;
 
             context.ignore("SVD", MatchingType.EQUALS, MatchingRegion.REGULAR); // Dunno
-            context.ignore("hotvideobar_[0-9_]+", MatchingType.REGEXP, MatchingRegion.REGULAR); // WTWTWTF?
             context.ignore("VB_juicypalace", MatchingType.EQUALS, MatchingRegion.REGULAR); // Dunno?
             context.ignore("UGDCFR/[0-9\\.]+", MatchingType.REGEXP, MatchingRegion.REGULAR); // Dunno
             context.ignoreNextTokens(new Matcher[] {new Matcher("eMusic", MatchingType.EQUALS),
@@ -3065,14 +3286,13 @@ public class UserAgentDetector implements IUserAgentDetector {
             context.ignore("XF_mmhpset", MatchingType.EQUALS, MatchingRegion.REGULAR); // Dunno
             context.ignore("BT-lookingforgroup", MatchingType.EQUALS, MatchingRegion.PARENTHESIS); // Dunno
             context.ignore("RTSE/[0-9\\.]+", MatchingType.REGEXP, MatchingRegion.REGULAR); // Dunno
-            //context.ignore("CK-zz", MatchingType.EQUALS, MatchingRegion.PARENTHESIS); // Dunno
             context.ignore("MultiZilla/", MatchingType.BEGINS, MatchingRegion.REGULAR); // Collection of FF extensions
             context.ignore("FirePHP/", MatchingType.BEGINS, MatchingRegion.REGULAR); // extension for developers
             context.ignore("FireShot/", MatchingType.BEGINS, MatchingRegion.REGULAR); // Screeshot extension for FF
             context.ignore("UGA6PV", MatchingType.BEGINS, MatchingRegion.REGULAR);// This website would suggest this is operated by a human: http://forums.mozfr.org/viewtopic.php?t=66727&p=455964
-            context.ignore("CK-[0-9a-zA-Z\\.\\-_]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);// Dunno what that is, but it looks widespread enough not to be a robot
-            //  if (context.ua.indexOf("(CK-")>-1)
-            //  	context.ignore("CK-[0-9a-zA-A\\.]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);// Dunno what that is, but it looks widespread enough not to be a robot
+            //context.ignore("CK-[0-9a-zA-Z\\.\\-_]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);// Dunno what that is, but it looks widespread enough not to be a robot
+            if (context.getUA().indexOf("(CK-")>-1)
+                context.ignore("CK-[0-9a-zA-Z\\.\\-_]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);// Dunno what that is, but it looks widespread enough not to be a robot
             context.ignoreNextTokens(new Matcher[] {new Matcher("WinNT-PAI", MatchingType.EQUALS),
                                          new Matcher("[\\.0-9]+", MatchingType.REGEXP)
             },
@@ -3112,7 +3332,7 @@ public class UserAgentDetector implements IUserAgentDetector {
 
 
         // Bullshitware
-        while (context.ignore("FunWebProducts", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)); // Is this malware? Probably.
+        while (context.ignore("FunWebProducts", MatchingType.REGEXP, MatchingRegion.BOTH)); // Is this malware? Probably.
         while (context.ignore("InfoPath\\.[0-9]", MatchingType.REGEXP, MatchingRegion.PARENTHESIS));
         context.ignore("Zune [0-9.]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);
         context.ignore("OfficeLiveConnector\\.[0-9]\\.[0-9]", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);
@@ -3202,7 +3422,10 @@ public class UserAgentDetector implements IUserAgentDetector {
         context.ignore("YTB730", MatchingType.EQUALS, MatchingRegion.PARENTHESIS); // Dunno what that is. I assume TB == Toolbar
         context.ignore("BarreMagique", MatchingType.EQUALS, MatchingRegion.BOTH); // Web Radio
         context.ignore("SuperSearchSearchToolbar [0-9\\.]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);  // Dunno.
-
+        context.ignoreNextTokens(new Matcher[] {new Matcher("VRE", MatchingType.EQUALS),new Matcher("Toolbar", MatchingType.EQUALS),
+                                     new Matcher("[0-9\\.]+", MatchingType.REGEXP)
+        },
+        MatchingRegion.REGULAR);
 
 
         // Mail.ru Agent - Instant Messenger / VoIP / Malware ?
@@ -3258,6 +3481,8 @@ public class UserAgentDetector implements IUserAgentDetector {
         context.ignore("360SE", MatchingType.EQUALS, MatchingRegion.PARENTHESIS); // 360 Security Explorer https://kb.bluecoat.com/index?page=content&id=KB4979&actp=RSS
         context.ignore("ShopperReports [0-9\\.]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS); // Seems to be some crapware/virus proposing "good deals"
         context.ignore("Edutice/", MatchingType.BEGINS, MatchingRegion.REGULAR); // French device locking software for education
+        while (context.ignore("hotvideobar_[0-9_]+", MatchingType.REGEXP, MatchingRegion.BOTH)); // Malware https://forums.malwarebytes.org/index.php?/topic/26285-hotvideobar/
+        while (context.ignore("VB_gameztar", MatchingType.REGEXP, MatchingRegion.BOTH)); // Malware ? GamezTar is.
 
         // DL manager
         context.ignore("QQDownload [0-9]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);
@@ -3378,7 +3603,7 @@ public class UserAgentDetector implements IUserAgentDetector {
 
         res.device = getDevice(context,res.browser,res.operatingSystem);
 
-        addExtensions(context, res.browser, res);
+        addExtensions(context, res);
 
         consumeRandomGarbage(context, res);
 

@@ -308,6 +308,9 @@ class UserAgentContext {
         context = new UserAgentContext("Mozilla/5.0 (Linux; U; Android 4.0.4; fr-fr; GT-I9300-ORANGE/I9300BVBLH2 Build/IMM76D) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30");
         if (!context.getRegularTokens().equals("{ \"Mozilla/5.0\", \"AppleWebKit/534.30\", \"Version/4.0\", \"Mobile\", \"Safari/534.30\"}")) throw new RuntimeException("Fail 12: " + context.getRegularTokens());
         if (!context.getParenTokens().equals("{ \"KHTML, like Gecko\", \"Linux\", \"U\", \"Android 4.0.4\", \"fr-fr\", \"GT-I9300-ORANGE/I9300BVBLH2\", \"Build/IMM76D\"}")) throw new RuntimeException("Fail 13: " + context.getParenTokens());
+
+        context = new UserAgentContext("Mozilla/5.0");
+        if (!(s=context.getcRegion("Mozilla/([0-9\\.]+)", MatchingRegion.REGULAR, 1)).equals("5.0")) throw new RuntimeException("Fail 14: " + s);
     }
 
     /* public API */
@@ -325,6 +328,18 @@ class UserAgentContext {
             return getToken(match, consumedTokens);
         }
         return null;
+    }
+
+    public String getcRegion(String pattern, MatchingRegion region, int group) {
+        Matcher matcher = new Matcher(pattern, MatchingType.REGEXP);
+        String token = getAndConsumeToken(matcher, region, consumedTokens);
+        if (token == null) return null;
+        java.util.regex.Pattern rpattern = java.util.regex.Pattern.compile(pattern);
+        java.util.regex.Matcher rmatcher = rpattern.matcher(token);
+        if (rmatcher.find())
+            return rmatcher.group(group);
+        else
+            return null;
     }
 
     // Gets and consumes a token if found. Returns the version number after the pattern inside the token
