@@ -3,9 +3,12 @@ java-user-agent-detection
 
 Some code to deduce an OS/Platform/Browser out of a user-agent string. 
 
-## Home page of the project
+## Useful links
 
-You will find all you need [on the homepage](http://pieroxy.net/user-agent/lib.html).
+* You will find all you need [on the homepage](http://pieroxy.net/user-agent/lib.html).
+* You can [browse the database](http://pieroxy.net/user-agent/db.html) - although it is a little rough right now.
+* You can [test any user-agent](http://pieroxy.net/user-agent/).
+* You can [browse the javadoc API](http://pieroxy.net/user-agent/doc/).
 
 ## How to contribute
 
