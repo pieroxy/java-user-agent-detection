@@ -9,6 +9,7 @@ Some code to deduce an OS/Platform/Browser out of a user-agent string.
 * You can [browse the database](http://pieroxy.net/user-agent/db.html) - although it is a little rough right now.
 * You can [test any user-agent](http://pieroxy.net/user-agent/).
 * You can [browse the javadoc API](http://pieroxy.net/user-agent/doc/).
+* [Leave a comment on the blog](http://pieroxy.net/blog/2014/11/18/user_agent_detection_in_java.html).
 
 ## How to contribute
 
