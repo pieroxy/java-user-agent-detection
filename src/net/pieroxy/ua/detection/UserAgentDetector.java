@@ -101,6 +101,15 @@ public class UserAgentDetector implements IUserAgentDetector {
                        new Browser(Brand.UNKNOWN,BrowserFamily.ROBOT,browser, browser),
                        new OS(Brand.UNKNOWN,OSFamily.UNKNOWN,browser, browser));
         }
+        if (context.getUA().contains("TuringOS; Turing Machine")) {
+            // No idea. This thing only hit a few URLs and doesn't render them (no JS/CSS/IMGs)...
+            String browser = "";
+            context.ignoreAllTokens();
+            return new UserAgentDetectionResult(
+                       new Device("",DeviceType.BOT,Brand.UNKNOWN,""),
+                       new Browser(Brand.UNKNOWN,BrowserFamily.ROBOT,browser, browser),
+                       new OS(Brand.UNKNOWN,OSFamily.UNKNOWN,browser, browser));
+        }
         if (context.getUA().indexOf("<a href=\"")>-1 && context.getUA().endsWith("</a> (Windows NT 5.1; U; en) Presto/2.10.229 Version/11.60")) {
             String browser = "Known Spam Bot";
             context.consumeAllTokens();
@@ -115,8 +124,19 @@ public class UserAgentDetector implements IUserAgentDetector {
                        new Device("",DeviceType.SPAMBOT,Brand.UNKNOWN,"Infected site honeypot"),
                        new Browser(Brand.UNKNOWN,BrowserFamily.SPAMBOT,browser, browser),
                        new OS(Brand.UNKNOWN,OSFamily.UNKNOWN,browser, browser));
+        } else if ((multi = context.getcNextTokens(new Matcher[] {new Matcher("bot", MatchingType.EQUALS),
+            new Matcher("http://", MatchingType.EQUALS),
+            new Matcher("bot@bot\\.(com|bot)", MatchingType.REGEXP)
+        },
+        MatchingRegion.PARENTHESIS)) != null) {
+            context.consumeAllTokens();
+            return new UserAgentDetectionResult(
+                       new Device("",DeviceType.BOT,Brand.UNKNOWN,""),
+                       new Browser(Brand.UNKNOWN,BrowserFamily.ROBOT,"", ""),
+                       new OS(Brand.UNKNOWN,OSFamily.UNKNOWN,"", ""));
 
-        } else if ((ver=context.getcVersionAfterPattern("Gnomit/",MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
+        }
+        else if ((ver=context.getcVersionAfterPattern("Gnomit/",MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
             String browser = "Gnomit crawler " + ver;
 
             consumeUrlAndMozilla(context,"http://");
@@ -200,9 +220,20 @@ public class UserAgentDetector implements IUserAgentDetector {
                        new Browser(Brand.GOOGLE,BrowserFamily.CRAWLER,browser, browser),
                        new OS(Brand.UNKNOWN,OSFamily.UNKNOWN,"Bot","Bot"));
 
-        } else if ((ver=context.getcVersionAfterPattern("Googlebot",MatchingType.BEGINS, MatchingRegion.PARENTHESIS, 2))!=null) {
+        } else if ((ver=context.getcVersionAfterPattern("Googlebot/",MatchingType.BEGINS, MatchingRegion.PARENTHESIS, 2))!=null ||
+                   (ver=context.getcVersionAfterPattern("Googlebot ",MatchingType.BEGINS, MatchingRegion.PARENTHESIS, 2))!=null) {
             String browser = "Google Bot " + ver;
             consumeUrlAndMozilla(context,"http://");
+            return new UserAgentDetectionResult(
+                       new Device("",DeviceType.BOT,Brand.GOOGLE,"Google web search bot"),
+                       new Browser(Brand.GOOGLE,BrowserFamily.CRAWLER,browser, browser),
+                       new OS(Brand.UNKNOWN,OSFamily.UNKNOWN,"Bot","Bot"));
+        } else if ((multi = context.getcNextTokens(new Matcher[] {new Matcher("Googlebot", MatchingType.EQUALS),
+            new Matcher("[0-9\\.]+", MatchingType.REGEXP)
+        },
+        MatchingRegion.REGULAR)) != null) {
+            String browser = "Google Bot " + multi[1];
+            context.consumeAllTokens();
             return new UserAgentDetectionResult(
                        new Device("",DeviceType.BOT,Brand.GOOGLE,"Google web search bot"),
                        new Browser(Brand.GOOGLE,BrowserFamily.CRAWLER,browser, browser),
@@ -211,7 +242,8 @@ public class UserAgentDetector implements IUserAgentDetector {
             // Microsoft Bots
 
 
-        } else if ((ver=context.getcVersionAfterPattern("msnbot/", MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
+        }
+        else if ((ver=context.getcVersionAfterPattern("msnbot/", MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
             String browser = "MSNBot " + ver;
             context.consume("http://search.msn.com/msnbot", MatchingType.CONTAINS, MatchingRegion.PARENTHESIS);
             return new UserAgentDetectionResult(
@@ -556,6 +588,18 @@ public class UserAgentDetector implements IUserAgentDetector {
                context.consume("KFJWI", MatchingType.BEGINS, region);
     }
 
+    static void consumeUbuntuVersion(UserAgentContext context) {
+        context.consume("hardy", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
+        context.consume("gutsy", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
+        context.consume("maverick", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
+        context.consume("lucid", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
+        context.consume("intrepid", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
+        context.consume("karmic", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
+        context.consume("jaunty", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
+        context.consume("[0-9\\.]+-[0-9]ubuntu[0-9]", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);
+        context.consume("Ubuntu package [0-9\\.]+(-[0-9]ubuntu[0-9])?", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);
+    }
+
     static OS getOS(UserAgentContext context) {
         String userAgent = context.getUA();
         OS res = null;
@@ -650,6 +694,12 @@ public class UserAgentDetector implements IUserAgentDetector {
                         res.version += " Media Center " + ver;
                     context.consume("Media Center PC ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS); // Sometimes present more than once
                 }
+            } else if (context.contains("Windows NT   6.0", MatchingType.BEGINS, MatchingRegion.PARENTHESIS) &&
+                       context.contains("Java/", MatchingType.BEGINS, MatchingRegion.REGULAR) &&
+                       context.contains("unknown", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
+                context.consume("Windows NT   6.0", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
+                context.consume("unknown", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
+                res = new OS(Brand.MICROSOFT,OSFamily.WINDOWS_NT,"Windows","Vista");
             } else if (context.consume("Windows NT 6.1", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) {
                 context.consume("SV1", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
                 res = new OS(Brand.MICROSOFT,OSFamily.WINDOWS_NT,"Windows","7");
@@ -666,6 +716,8 @@ public class UserAgentDetector implements IUserAgentDetector {
                     res.version += " RT";
                 }
                 context.consume("Touch", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
+            } else if (context.consume("Windows NT 6.3", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
+                res = new OS(Brand.MICROSOFT,OSFamily.WINDOWS_NT,"Windows","10");
             } else if (context.consume("Windows NT 5.0", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) {
                 res = new OS(Brand.MICROSOFT,OSFamily.WINDOWS_NT,"Windows","2000");
                 if (context.contains("Windows NT 5.01", MatchingType.BEGINS, MatchingRegion.CONSUMED)) res.version += " SP1";
@@ -722,14 +774,31 @@ public class UserAgentDetector implements IUserAgentDetector {
                 res = new OS(Brand.MICROSOFT,OSFamily.WINDOWS,"Windows","95");
             } else if (context.consume("Windows 9x",MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
                 res = new OS(Brand.MICROSOFT,OSFamily.WINDOWS,"Windows","9x");
-            } else if (context.consume("Windows CE",MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
+            } else if (context.getcNextTokens(new Matcher[] {new Matcher("Windows", MatchingType.EQUALS),
+                new Matcher("Mobile", MatchingType.EQUALS),
+                new Matcher("6.5", MatchingType.EQUALS),
+                new Matcher("Standard",MatchingType.BEGINS)
+            }, MatchingRegion.REGULAR) != null) {
+                res = new OS(Brand.MICROSOFT,OSFamily.WINDOWS_MOBILE,"Windows","Mobile (6.5)");
+                context.consume("Windows CE",MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
+            }
+            else if (context.consume("Windows CE",MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
                 res = new OS(Brand.MICROSOFT,OSFamily.WINDOWS_MOBILE,"Windows","CE");
             } else if (context.getcNextTokens(new Matcher[] {new Matcher("Windows Mobile", MatchingType.EQUALS),
                 new Matcher("WCE",MatchingType.EQUALS)
             }, MatchingRegion.PARENTHESIS) != null) {
-                res = new OS(Brand.MICROSOFT,OSFamily.WINDOWS_MOBILE,"Windows","CE");
+                res = new OS(Brand.MICROSOFT,OSFamily.WINDOWS_MOBILE,"Windows","Mobile (CE)");
             }
-            else if (context.consume("Windows 3.11",MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
+            else if (context.getcNextTokens(new Matcher[] {new Matcher("Windows Mobile", MatchingType.EQUALS),
+                     new Matcher("PPC",MatchingType.EQUALS)
+            }, MatchingRegion.PARENTHESIS) != null) {
+                res = new OS(Brand.MICROSOFT,OSFamily.WINDOWS_MOBILE,"Windows","Mobile (Pocket PC)");
+            }
+            else if ((ver = context.getcVersionAfterPattern("Windows Mobile/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
+                res = new OS(Brand.MICROSOFT,OSFamily.WINDOWS_MOBILE,"Windows","Mobile ("+ver+")");
+            } else if ((ver = context.getcVersionAfterPattern("Windows Mobile", MatchingType.EQUALS, MatchingRegion.PARENTHESIS))!=null) {
+                res = new OS(Brand.MICROSOFT,OSFamily.WINDOWS_MOBILE,"Windows","Mobile");
+            } else if (context.consume("Windows 3.11",MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
                 res = new OS(Brand.MICROSOFT,OSFamily.WINDOWS,"Windows","3.11");
             } else if (context.consume("Windows 3.1",MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
                 res = new OS(Brand.MICROSOFT,OSFamily.WINDOWS,"Windows","3.1");
@@ -820,37 +889,36 @@ public class UserAgentDetector implements IUserAgentDetector {
                 if ((ver = context.getcVersionAfterPattern("Ubuntu/", MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
                     med = "Ubuntu";
                     detail = ver;
-                    context.consume("hardy", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
-                    context.consume("gutsy", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
-                    context.consume("maverick", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
-                    context.consume("lucid", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
-                    context.consume("intrepid", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
-                    context.consume("karmic", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
-                    context.consume("jaunty", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
+                    consumeUbuntuVersion(context);
                 } else if ((ver = context.getcVersionAfterPattern("Ubuntu-feisty", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) != null) {
                     med = "Ubuntu";
                     detail = "7.04";
-                } else if (context.consume("karmic", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
-                    med = "Ubuntu";
-                    detail = "9.10";
-                    context.getcNextTokens(new Matcher[] {new Matcher("Ultimate", MatchingType.EQUALS),
-                                               new Matcher("Edition/",MatchingType.BEGINS)
-                    }, MatchingRegion.REGULAR);
+                    consumeUbuntuVersion(context);
                 } else if ((ver = context.getcVersionAfterPattern("Ubuntu-edgy", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) != null) {
                     med = "Ubuntu";
                     detail = "6.10";
+                    consumeUbuntuVersion(context);
                 } else if ((mt = context.getcNextTokens(new Matcher[] {new Matcher("Kubuntu", MatchingType.EQUALS),
                     new Matcher("[\\.0-9]+",MatchingType.REGEXP)
                 }, MatchingRegion.REGULAR)) != null ||
                 (ver = context.getcVersionAfterPattern("Kubuntu package ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) != null ||
+                (ver = context.getcVersionAfterPattern("Kubuntu/", MatchingType.BEGINS, MatchingRegion.REGULAR)) != null ||
                 context.consume("Kubuntu", MatchingType.EQUALS, MatchingRegion.BOTH)) {
                     if (mt != null) ver = mt[1];
                     if (ver == null) ver = "";
                     med = "Ubuntu";
                     detail = ("Kubuntu " + ver).trim();
                     context.consume("Dapper", MatchingType.EQUALS, MatchingRegion.REGULAR);
+                    context.consume("Debian", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
+                    consumeUbuntuVersion(context);
                 }
-                else if ((ver = context.getcVersionAfterPattern("Fedora", MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                else if (context.consume("karmic", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
+                    med = "Ubuntu";
+                    detail = "9.10";
+                    context.getcNextTokens(new Matcher[] {new Matcher("Ultimate", MatchingType.EQUALS),
+                                               new Matcher("Edition/",MatchingType.BEGINS)
+                    }, MatchingRegion.REGULAR);
+                } else if ((ver = context.getcVersionAfterPattern("Fedora", MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
                     med = "Fedora"; // Used to get the version through ver but it looks like it's the version of the browser, not Fedora's
                     detail = "";
                 } else if ((ver = context.getcVersionAfterPattern("openSUSE/", MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
@@ -922,6 +990,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                     med = "Pardus";
                     detail = ver;
                 } else if (context.consume("Ubuntu", MatchingType.EQUALS, MatchingRegion.BOTH)) {
+                    consumeUbuntuVersion(context);
                     med = "Ubuntu";
                     detail = "";
                 }
@@ -1014,8 +1083,13 @@ public class UserAgentDetector implements IUserAgentDetector {
             res = new OS(Brand.DIGITAL_HP,OSFamily.OTHER,"Open VMS",X11?" X11 capable":"");
             context.consume("HP", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
         } else if (context.consume("X11", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
-            res = new OS(Brand.UNKNOWN,OSFamily.UNIX,"Unix-like","X11 capable");
-            context.consume("I", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
+            if (context.consume("Gentoo/", MatchingType.BEGINS, MatchingRegion.BOTH) ||
+                    context.consume("Gentoo", MatchingType.EQUALS, MatchingRegion.BOTH)) {
+                res = new OS(Brand.LINUX,OSFamily.LINUX,"Gentoo","");
+            } else {
+                res = new OS(Brand.UNKNOWN,OSFamily.UNIX,"Unix-like","X11 capable");
+                context.consume("I", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
+            }
         } else if ((mt = context.getcNextTokens(new Matcher[] {new Matcher("Nintendo", MatchingType.EQUALS),
             new Matcher("Wii;",MatchingType.EQUALS)
         }, MatchingRegion.REGULAR)) != null) {
@@ -1156,6 +1230,13 @@ public class UserAgentDetector implements IUserAgentDetector {
             res.description="Flock "+ver;
         } else if ((ver = context.getcVersionAfterPattern("SeaMonkey/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
             res.description="SeaMonkey "+ver;
+        } else if ((ver = context.getcVersionAfterPattern("webaroo/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
+            context.consume("Firefox/", MatchingType.BEGINS, MatchingRegion.REGULAR);
+            res.description="Webaroo "+ver;
+        } else if ((ver = context.getcVersionAfterPattern("Lunascape/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
+            context.consume("Firefox/", MatchingType.BEGINS, MatchingRegion.REGULAR);
+            res.description="Lunascape "+ver;
+            res.vendor = Brand.LUNASCAPE;
         } else if ((ver = context.getcVersionAfterPattern("Seamonkey-",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
             res.description="SeaMonkey "+ver;
         } else if ((ver = context.getcVersionAfterPattern("GranParadiso/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
@@ -1309,6 +1390,11 @@ public class UserAgentDetector implements IUserAgentDetector {
                     res.family = BrowserFamily.OTHER_TRIDENT;
                     res.description = "Crazy Browser " + ver;
                 }
+                if ((ver=context.getcVersionAfterPattern("Lunascape ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
+                    res.family = BrowserFamily.OTHER_TRIDENT;
+                    res.vendor = Brand.LUNASCAPE;
+                    res.description = "Lunascape " + ver;
+                }
                 if ((ver=context.getcVersionAfterPattern("America Online Browser ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
                     res.family = BrowserFamily.OTHER_TRIDENT;
                     res.description = "AOL Browser " + ver;
@@ -1389,8 +1475,21 @@ public class UserAgentDetector implements IUserAgentDetector {
                    (context.contains("com.google.GooglePlus/", MatchingType.BEGINS,MatchingRegion.REGULAR) && iStuff)) {
             if ((ver=context.getcVersionAfterPattern("NokiaBrowser/", MatchingType.BEGINS,MatchingRegion.REGULAR))!=null) {
                 res = new Browser(Brand.NOKIA,BrowserFamily.OTHER_WEBKIT,"NokiaBrowser " + ver,getWebkitVersion(context));
+            } else if ((ver=context.getcVersionAfterPattern("PhantomJS/", MatchingType.BEGINS,MatchingRegion.REGULAR,2))!=null) {
+                if (context.consume("development", MatchingType.EQUALS,MatchingRegion.PARENTHESIS)) {
+                    ver += " dev";
+                }
+                res = new Browser(Brand.OPENSOURCE,BrowserFamily.ROBOT,"PhantomJS "+ver, getWebkitVersion(context));
+                context.consume("Unknown", MatchingType.EQUALS,MatchingRegion.PARENTHESIS);
             } else if ((ver=context.getcVersionAfterPattern("Chromium/", MatchingType.BEGINS,MatchingRegion.REGULAR,2))!=null) {
                 res = new Browser(Brand.CHROMIUM,BrowserFamily.CHROME,"Chromium "+ver, getWebkitVersion(context));
+                context.consume("Chrome/", MatchingType.BEGINS,MatchingRegion.REGULAR);
+            } else if ((ver = context.getcVersionAfterPattern("Lunascape/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
+                context.consume("KHTML, like Gecko", MatchingType.BEGINS,MatchingRegion.PARENTHESIS);
+                res = new Browser(Brand.LUNASCAPE,BrowserFamily.OTHER_WEBKIT,"Lunascape "+ver,getWebkitVersion(context));
+                res.description="Lunascape "+ver;
+            } else if ((ver=context.getcVersionAfterPattern("Vivaldi/", MatchingType.BEGINS,MatchingRegion.REGULAR,2))!=null) {
+                res = new Browser(Brand.VIVALDI,BrowserFamily.CHROME,"Vivaldi "+ver, getWebkitVersion(context));
                 context.consume("Chrome/", MatchingType.BEGINS,MatchingRegion.REGULAR);
             } else if (os.family == OSFamily.BADA && (ver = context.getcVersionAfterPattern("Dolfin/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
                 res = new Browser(Brand.IBM,BrowserFamily.OTHER,"Dolfin " + ver,getWebkitVersion(context));
@@ -1508,7 +1607,7 @@ public class UserAgentDetector implements IUserAgentDetector {
             context.consume("Version/", MatchingType.BEGINS,MatchingRegion.REGULAR);
         } else if ((ver=context.getcVersionAfterPattern("Konqueror/", MatchingType.BEGINS,MatchingRegion.PARENTHESIS))!=null) {
             consumeMozilla(context);
-            context.consume("like Gecko", MatchingType.EQUALS,MatchingRegion.PARENTHESIS);
+            context.consume("(KHTML, )?like Gecko", MatchingType.REGEXP,MatchingRegion.PARENTHESIS);
             context.consume("20[01][0-9][01][0-9][0-3][0-9]", MatchingType.REGEXP,MatchingRegion.PARENTHESIS);
             res = new Browser(Brand.KDE,BrowserFamily.KHTML,"Konqueror "+ver,getKHTMLVersion(context));
         } else if ((ver=context.getcVersionAfterPattern("Polaris/", MatchingType.BEGINS,MatchingRegion.PARENTHESIS))!=null) {
@@ -1588,7 +1687,7 @@ public class UserAgentDetector implements IUserAgentDetector {
             }
             String b = "Mobi" + version;
             res = new Browser(Brand.OPERA,BrowserFamily.OPERA,"Opera " + b, getPrestoVersion(context, b));
-            context.consume("Opera/9.80",  MatchingType.EQUALS, MatchingRegion.REGULAR);
+            context.consume("Opera/9.(80|7)",  MatchingType.REGEXP, MatchingRegion.REGULAR);
         } else if ((ver = context.getcVersionAfterPattern("NetPositive/",  MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
             consumeMozilla(context);
             res = new Browser(Brand.BE,BrowserFamily.OTHER,"NetPositive " + ver,"");
@@ -2406,7 +2505,9 @@ public class UserAgentDetector implements IUserAgentDetector {
                 if (context.consume("HTC_Touch_Diamond2_T5353", MatchingType.EQUALS, MatchingRegion.REGULAR))
                     return new Device(arm,DeviceType.PHONE,Brand.HTC,"Touch Diamond2");
 
-
+                if (context.consume("UTStar-XV6175.1", MatchingType.BEGINS, MatchingRegion.REGULAR)) {
+                    return new Device(arm,DeviceType.PHONE,Brand.UTSTARCOM,"XV6175");
+                }
 
                 if (context.consume("acer_S200", MatchingType.EQUALS, MatchingRegion.REGULAR))
                     return new Device(arm,DeviceType.PHONE,Brand.ACER,"neoTouch");
@@ -2967,6 +3068,16 @@ public class UserAgentDetector implements IUserAgentDetector {
         return null;
     }
 
+    static Locale getLocaleSecondPass(UserAgentContext context, UserAgentDetectionResult result) {
+        if (result.browser.family == BrowserFamily.FIREFOX || result.browser.family == BrowserFamily.OTHER_GECKO) {
+            if (result.operatingSystem.family == OSFamily.MACOSX) {
+                if (context.consume("ja-JP-mac", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
+                    return new Locale(Language.JA, Country.JP);
+                }
+            }
+        }
+        return result.locale;
+    }
 
     static Locale getLocale(String s, UserAgentContext context) {
         if (s.equals("LG")) {
@@ -3077,7 +3188,6 @@ public class UserAgentDetector implements IUserAgentDetector {
                 // Binary Runtime Environment for Wireless
                 res.addExtension(new Extension("BREW ",ver));
             }
-
         }
         if ((ver = context.getcVersionAfterPattern("NexPlayer/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
             res.addExtension(new Extension("NexPlayer ",ver));
@@ -3118,7 +3228,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                 res.addExtension(new Extension("Resolution",reso));
         }
         if (res.operatingSystem.family == OSFamily.WINDOWS_MOBILE) {
-            String reso = context.getcToken("[0-9]+x[0-9]+;?", MatchingType.REGEXP, MatchingRegion.BOTH);
+            String reso = context.getcToken("[0-9]+[x\\*][0-9]+;?", MatchingType.REGEXP, MatchingRegion.BOTH);
             if (reso != null) {
                 if (reso.endsWith(";")) reso = reso.substring(0, reso.length()-1);
                 res.addExtension(new Extension("Resolution",reso));
@@ -3130,6 +3240,11 @@ public class UserAgentDetector implements IUserAgentDetector {
             }
             if ((ver = context.getcVersionAfterPattern("chromeframe/",MatchingType.BEGINS, MatchingRegion.BOTH)) != null) {
                 res.addExtension(new Extension("Chrome Frame",ver));
+            }
+        }
+        if (res.browser.family == BrowserFamily.IE || res.browser.family == BrowserFamily.OTHER_TRIDENT) {
+            if (context.consume("i-NavFourF",MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) {
+                res.addExtension(new Extension("i-Nav","")); // Some auto-translation toolbar
             }
         }
 
@@ -3180,11 +3295,24 @@ public class UserAgentDetector implements IUserAgentDetector {
         return context.ignore(regexp, MatchingType.REGEXP, region);
     }
 
+    static boolean consumeEntityFromIEAndFirefoxBuggy(String entity, String ver, UserAgentContext context, UserAgentDetectionResult result) {
+        String sep;
+        MatchingRegion region;
+        if (result.browser.family == BrowserFamily.OTHER_TRIDENT || result.browser.family == BrowserFamily.IE) {
+            String regexp = entity+" "+ver;
+            return context.ignore(regexp, MatchingType.REGEXP, MatchingRegion.PARENTHESIS);
+        } else {
+            return null != context.ignoreNextTokens(new Matcher[] {new Matcher(entity, MatchingType.REGEXP),
+                       new Matcher(ver, MatchingType.REGEXP)
+            },
+            MatchingRegion.REGULAR);
+        }
+    }
+
     static void consumeRandomGarbage(UserAgentContext context, UserAgentDetectionResult result) {
         context.ignore("3gpp-gba", MatchingType.EQUALS, MatchingRegion.REGULAR); // Authentication protocol
         context.ignore("MALC", MatchingType.EQUALS, MatchingRegion.PARENTHESIS); //Multiple Access Line Concentrator
         context.consume("U", MatchingType.EQUALS, MatchingRegion.PARENTHESIS); // "Secure" flag
-
 
         if (result.operatingSystem.family == OSFamily.WINDOWS_NT) {
             if (result.browser.family == BrowserFamily.IE || result.browser.family == BrowserFamily.OTHER_TRIDENT) {
@@ -3218,21 +3346,31 @@ public class UserAgentDetector implements IUserAgentDetector {
             }
         }
         if (result.browser.family == BrowserFamily.OTHER_TRIDENT || result.browser.family == BrowserFamily.IE) {
+            context.ignore("SiteKiosk [0-9\\.]+ Build [0-9]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS); // Some kiosk public computer browser whatever
             context.ignore("image_azv", MatchingType.EQUALS, MatchingRegion.PARENTHESIS); // Dunno
             context.ignore("Tucows", MatchingType.EQUALS, MatchingRegion.PARENTHESIS); // Dunno
             context.ignore("TOB 6\\.[0-9]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS); // Dunno
+            context.ignore("RCP000\\.[0-9]{3}\\.[0-9]{5}/[a-f0-9]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS); // Dunno
             {   // Trojan: http://blog.armorize.com/2010/05/browser-helper-objects-infection-with.html and http://www.spambotsecurity.com/forum/viewtopic.php?f=43&t=1579
                 context.ignore("SIMBAR=\\{[0-9ABCDEFabcdef\\-]+\\}", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);
                 context.ignore("SIMBAR Enabled", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
                 context.ignore("SIMBAR=0", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
             }
+            if (context.ignore("ONDOWN3.2", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) { // Looks like a bot to me.
+                result.device = new Device("",DeviceType.BOT,Brand.UNKNOWN,"ONDOWN3.2");
+            }
             context.ignore("WWTClient2", MatchingType.EQUALS, MatchingRegion.PARENTHESIS); // World Wide Telescope Client?
+            context.ignore("TheFreeDictionary.com", MatchingType.EQUALS, MatchingRegion.PARENTHESIS); // What the heck is this?
             context.ignore("F-6\\.0SP[1-2]-200[0-9][0-9][0-9][0-9][0-9]", MatchingType.REGEXP, MatchingRegion.PARENTHESIS); // Dunno
             while (context.ignore("SU [0-9\\.]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)); // Dunno
+            while (context.ignore("PeoplePal [0-9\\.]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)); // Dunno. Doesn't look like a bot. Maybe http://www.paretologic.com/resources/definitions.aspx?remove=PeoplePal+Toolbar ?  This means adware.
+            while (context.ignore("IWSS(25|31):[0-9A-Za-z/=\\+]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)); // Dunno, doesn't look like a bot. Maybe Trend Micro InterScan Web Security Suite
+            while (context.ignore("IWSS:[0-9A-Za-z\\-/]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)); // Dunno, doesn't look like a bot. Maube Trend Micro InterScan Web Security Suite
             context.ignore("tnet.2007feb", MatchingType.EQUALS, MatchingRegion.PARENTHESIS); // Dunno
             context.ignore("ibrytetoolbar_playbryte", MatchingType.EQUALS, MatchingRegion.PARENTHESIS); // Dunno
             while (context.ignore("Qwest [0-9\\.]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)); // Dunno
             while (context.ignore("Qwest Communications", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)); // Gotta go with corporate installs
+            context.ignore("yie6_SBC", MatchingType.EQUALS, MatchingRegion.PARENTHESIS); // IE Optimized for Yahoo. Gotta wonder what the fuck this could be... http://downloads.yahoo.com/internetexplorer/
 
             if (context.ignore("system:[0-9]+\\.[0-9]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS) // Dunno
                     || context.ignore("patch:[0-9]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS) // Dunno
@@ -3247,10 +3385,13 @@ public class UserAgentDetector implements IUserAgentDetector {
             context.ignore("IE0006_ver1", MatchingType.EQUALS, MatchingRegion.PARENTHESIS); // Dunno
             context.ignore("managedpc", MatchingType.EQUALS, MatchingRegion.PARENTHESIS); // Dunno
             context.ignore("SVD", MatchingType.EQUALS, MatchingRegion.PARENTHESIS); // Dunno
+            context.ignore("Ringo", MatchingType.EQUALS, MatchingRegion.PARENTHESIS); // Dunno, usage pattern doesn't indicate a bot
             context.ignore("WinNT-PAI [0-9\\.]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS); // Trojan http://www.threatexpert.com/report.aspx?md5=72e15bf94e8cb6ea2fc8d0626774ddd2
             context.ignore("VB_juicypalace", MatchingType.EQUALS, MatchingRegion.PARENTHESIS); // Dunno?
             context.ignore("UGDCFR [0-9\\.]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS); // Dunno
             context.ignore("eMusic DLM/4", MatchingType.EQUALS, MatchingRegion.PARENTHESIS); // eMusic Download Manager
+            context.ignore("Badongo [0-9\\.]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS); // Badongo seems to be an app/add-on for music streaming
+            context.ignore("SpamBlockerUtility [0-9\\.]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS); // Does look like it does more harm that good (Adware application from HotBar)
             if (context.ignore("BO1IE8_v1", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) { // Dunno
                 context.ignore("ENUS", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
             }
@@ -3278,6 +3419,7 @@ public class UserAgentDetector implements IUserAgentDetector {
         }
 
         if (result.browser.family == BrowserFamily.OTHER_GECKO || result.browser.family == BrowserFamily.FIREFOX) {
+            context.ignore("ayakawa PGU", MatchingType.EQUALS, MatchingRegion.PARENTHESIS); // http://forums.mozfr.org/viewtopic.php?f=24&t=64837 seems to indicate this is not a bot
             context.ignore("lolifox/", MatchingType.BEGINS, MatchingRegion.REGULAR); // Some bullshit addon to FF
             context.ignore("tete009 .*SSE[2]?.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS); // Custom FF build http://www1.plala.or.jp/tete009/en-US/software.html
             context.ignore("tete009 .*MMX?.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS); // Custom FF build
@@ -3285,18 +3427,28 @@ public class UserAgentDetector implements IUserAgentDetector {
                 while (context.consume("[0-9]+", MatchingType.REGEXP, MatchingRegion.REGULAR)) ;
             context.ignore("XF_mmhpset", MatchingType.EQUALS, MatchingRegion.REGULAR); // Dunno
             context.ignore("BT-lookingforgroup", MatchingType.EQUALS, MatchingRegion.PARENTHESIS); // Dunno
+            while (context.ignore("GendFox", MatchingType.EQUALS, MatchingRegion.BOTH)); // This indicates it's probably not a bot : http://forums.mozfr.org/viewtopic.php?t=59568&p=410453
             context.ignore("RTSE/[0-9\\.]+", MatchingType.REGEXP, MatchingRegion.REGULAR); // Dunno
             context.ignore("MultiZilla/", MatchingType.BEGINS, MatchingRegion.REGULAR); // Collection of FF extensions
             context.ignore("FirePHP/", MatchingType.BEGINS, MatchingRegion.REGULAR); // extension for developers
             context.ignore("FireShot/", MatchingType.BEGINS, MatchingRegion.REGULAR); // Screeshot extension for FF
+            if (context.ignore("OneRiot/", MatchingType.BEGINS, MatchingRegion.REGULAR)) { // Social media crap
+                context.consume("http://.*oneriot.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);
+            }
             context.ignore("UGA6PV", MatchingType.BEGINS, MatchingRegion.REGULAR);// This website would suggest this is operated by a human: http://forums.mozfr.org/viewtopic.php?t=66727&p=455964
-            //context.ignore("CK-[0-9a-zA-Z\\.\\-_]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);// Dunno what that is, but it looks widespread enough not to be a robot
+            context.ignore("UGEST/", MatchingType.BEGINS, MatchingRegion.REGULAR);// Doesn't look like a bot
+
             if (context.getUA().indexOf("(CK-")>-1)
                 context.ignore("CK-[0-9a-zA-Z\\.\\-_]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);// Dunno what that is, but it looks widespread enough not to be a robot
             context.ignoreNextTokens(new Matcher[] {new Matcher("WinNT-PAI", MatchingType.EQUALS),
                                          new Matcher("[\\.0-9]+", MatchingType.REGEXP)
             },
             MatchingRegion.REGULAR); // Trojan http://www.threatexpert.com/report.aspx?md5=72e15bf94e8cb6ea2fc8d0626774ddd2
+
+            while (context.ignoreNextTokens(new Matcher[] {new Matcher("GoogleToolbarFF", MatchingType.EQUALS),
+                      new Matcher("[0-9]\\.[0-9]\\.[0-9]{8}", MatchingType.REGEXP)
+            },
+            MatchingRegion.REGULAR)!=null); // No big deal according to http://forums.mozfr.org/viewtopic.php?t=120841&p=771849
 
 
             if (result.browser.description.startsWith("Thunderbird")) {
@@ -3321,6 +3473,9 @@ public class UserAgentDetector implements IUserAgentDetector {
         context.ignore("Sky Broadband", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
         context.ignore("Rogers Hi-Speed Internet", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
         context.ignore("Neostrada TP ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
+        context.ignore("Comcast Install 1.0", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
+        while (context.ignore("Cox High Speed Internet Customer", MatchingType.EQUALS, MatchingRegion.PARENTHESIS));
+        while (context.ignore("Comcast", MatchingType.EQUALS, MatchingRegion.PARENTHESIS));
         if (result.device.deviceType.isMobile()) {
             context.ignore("Orange", MatchingType.EQUALS, MatchingRegion.PARENTHESIS); // French operator
             context.ignore("SFR", MatchingType.EQUALS, MatchingRegion.PARENTHESIS); // French operator
@@ -3397,7 +3552,7 @@ public class UserAgentDetector implements IUserAgentDetector {
         context.ignore("BLNGBAR", MatchingType.EQUALS, MatchingRegion.BOTH); // Dunno
 
         context.ignoreNextTokens(new Matcher[] {new Matcher("MEGAUPLOAD", MatchingType.EQUALS),
-                                     new Matcher("[12]\\.0(\\.)?", MatchingType.REGEXP)
+                                     new Matcher("[123]\\.0(\\.)?", MatchingType.REGEXP)
         },
         MatchingRegion.REGULAR);
 
@@ -3426,6 +3581,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                                      new Matcher("[0-9\\.]+", MatchingType.REGEXP)
         },
         MatchingRegion.REGULAR);
+        consumeEntityFromIEAndFirefoxBuggy("eMusic", "DLM/[0-9\\.ab_]+", context, result); // why doe this adds itself to the UA, I wonder.
 
 
         // Mail.ru Agent - Instant Messenger / VoIP / Malware ?
@@ -3477,12 +3633,13 @@ public class UserAgentDetector implements IUserAgentDetector {
         while (context.ignore("Foxy/1", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)); // *Maybe* some kind of proxy
         context.ignore("\\[eburo v[0-9].[0-9]\\]", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);
         context.ignore("WinNT-EVI [0-9][0-9]\\.[0-9][0-9]\\.[1-2]0[0-9][0-9]", MatchingType.REGEXP, MatchingRegion.PARENTHESIS); // Antivir
-        context.ignore("WinTSI [0-9][0-9]\\.[0-9][0-9]\\.[1-2]0[0-9][0-9]", MatchingType.REGEXP, MatchingRegion.PARENTHESIS); // Personal Security Virus
         context.ignore("360SE", MatchingType.EQUALS, MatchingRegion.PARENTHESIS); // 360 Security Explorer https://kb.bluecoat.com/index?page=content&id=KB4979&actp=RSS
         context.ignore("ShopperReports [0-9\\.]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS); // Seems to be some crapware/virus proposing "good deals"
         context.ignore("Edutice/", MatchingType.BEGINS, MatchingRegion.REGULAR); // French device locking software for education
         while (context.ignore("hotvideobar_[0-9_]+", MatchingType.REGEXP, MatchingRegion.BOTH)); // Malware https://forums.malwarebytes.org/index.php?/topic/26285-hotvideobar/
         while (context.ignore("VB_gameztar", MatchingType.REGEXP, MatchingRegion.BOTH)); // Malware ? GamezTar is.
+        consumeEntityFromIEAndFirefoxBuggy("WinTSI", "[0-9]{2}\\.[0-9]{2}\\.[0-9]{4}", context, result); // Personal Security Virus
+
 
         // DL manager
         context.ignore("QQDownload [0-9]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);
@@ -3492,19 +3649,24 @@ public class UserAgentDetector implements IUserAgentDetector {
         context.ignore("Google Page Speed", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
 
 
-        // Unknown
+        // Unknown. These are unknown and don't look like bots, from their usage pattern.
         while (consumeEntityFromIEAndFirefox("UGES[VULMYF]?", "[0-9\\.]+", context, result)); // Dunno
         consumeEntityFromIEAndFirefox("LUDI2", null, context, result); // Dunno
+        while (consumeEntityFromIEAndFirefox("3P_U(RGD|SEC|VSM|VRM|AMG|ASE|PCPC|ASG)(ES|NL|FR|DE|IT)?", "[0-9]+\\.[0-9]+\\.[0-9]+\\.[0-9]+", context, result)); // Dunno. Usage pattern doesn't point to a bot
+        while (consumeEntityFromIEAndFirefox("3P_U(VRM)", "1\\.00\\.1", context, result)); // Dunno. Usage pattern doesn't point to a bot
+        consumeEntityFromIEAndFirefox("CK=\\{[0-9a-zA-Z\\+/]+=?=?\\}", null, context, result); // Dunno. Usage pattern doesn't point to a bot
 
         context.ignore("YB/", MatchingType.BEGINS, MatchingRegion.BOTH);
 
         while (context.ignore("AtHome([A-Z][A-Z])?[0-9][0-9][0-9][0-9]?(SI)?", MatchingType.REGEXP, MatchingRegion.PARENTHESIS));
         while (context.ignore("QS [0-9\\.]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS));
-        context.ignore("BTRS[0-9]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);
+        consumeEntityFromIEAndFirefox("BTRS[0-9]+", null, context, result);
+        context.ignore("Google-TR", MatchingType.BEGINS, MatchingRegion.PARENTHESIS); // Looks like an addin, not a bot http://commerce.net/deciphering-fluffy-bunny/
         context.ignore("Zango [\\.0-9]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);
         context.ignore("LBEXG/[\\.0-9]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);
         context.ignore(".NAP [\\.0-9]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);
         context.ignore("ZangoToolbar [\\.0-9]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);
+        context.ignore("No IDN", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
         context.ignore("APC", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
         context.ignore("LEN2", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
         context.ignore("Hemmit", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
@@ -3602,6 +3764,8 @@ public class UserAgentDetector implements IUserAgentDetector {
         res.browser = getBrowser(context, res.operatingSystem);
 
         res.device = getDevice(context,res.browser,res.operatingSystem);
+
+        res.locale = getLocaleSecondPass(context, res);
 
         addExtensions(context, res);
 

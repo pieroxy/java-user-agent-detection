@@ -43,7 +43,10 @@ public enum Brand {  OBIGO("Obigo"),
                      NINTENDO("Nintendo"),
                      MOZILLA("Mozilla"),
                      OPERA("Opera"),
+                     LUNASCAPE("Lunascape"),
                      CHROMIUM("The Chromium Project"),
+                     OPENSOURCE("An Open Source Project"),
+                     VIVALDI("Vivaldi Technologies"),
                      KDE("KDE"),
                      ACCESSCO("Access Co. Ltd."),
                      NETSCAPE("Netscape"),
@@ -65,7 +68,8 @@ public enum Brand {  OBIGO("Obigo"),
                      PALM("Palm"),
                      HANDSPRING("Handspring"),
                      ACORN("Acorn"),
-                     BAIDU("Baidu");
+                     BAIDU("Baidu"),
+                     UTSTARCOM("UTStarcom");
 
                      private String label;
 Brand(String l) {
