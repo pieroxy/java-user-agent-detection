@@ -7,7 +7,7 @@
   </target>
 
   <tstamp>
-    <format property="tstp" pattern="yyyy.dd.MM.HH.mm" locale="en,US" timezone="GMT"/>
+    <format property="tstp" pattern="yyyy.MM.dd.HH.mm" locale="en,US" timezone="GMT"/>
   </tstamp>
 
   <target name="compile">
