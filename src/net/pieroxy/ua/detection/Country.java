@@ -1,6 +1,9 @@
 package net.pieroxy.ua.detection;
 import java.io.*;
 import java.util.*;
+/**
+* Describes a country.
+*/
 public enum Country {  /** Unknown */UNKNOWN("Unknown"),
                                      /** Ascension Island */AC("Ascension Island"),
                                      /** ANDORRA */AD("ANDORRA"),

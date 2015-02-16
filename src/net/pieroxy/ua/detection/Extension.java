@@ -1,18 +1,31 @@
 package net.pieroxy.ua.detection;
 import java.io.*;
 import java.util.*;
+/**
+* Represents an extension of the system or browser. These extensions represent a piece of software that might be of some interest for the server (parental control, java version, etc).
+*/
 public class Extension {
     private String version,name;
+
+    /** The name of this extension */
     public String getName() {
         return name;
     }
+    /** The version of this extension, if applicable. */
     public String getVersion() {
         return version;
     }
+
+    /** Builds a new extension with a name and a version
+     * @param  n The name
+     * @param  v The version
+     */
     public Extension(String n, String v) {
         name = (n==null) ? "" : n;
         version = (v==null) ? "" : v;
     }
+
+    /** equivalent to calling <code>new Extension(s, null)</code>. */
     public Extension(String s) {
         if (s.contains("#")) {
             String[]ss = s.split("#");

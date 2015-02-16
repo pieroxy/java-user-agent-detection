@@ -21,6 +21,10 @@ public enum BrowserFamily {  /**
     */
     OPERA("Opera",false, false, false, false),
     /**
+    * Opera, by Opera Software, with the WebKit/Blink rendering engine
+    */
+    NEW_OPERA("Opera",false, false, true, false),
+    /**
     * Mobile Safari, the default browser on iPhones and iPads, by Apple.
     */
     IOS("iOS's default browser",false, false, true, false),

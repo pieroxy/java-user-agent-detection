@@ -14,7 +14,7 @@ class UserAgentContext {
     public UserAgentContext(String u) {
         //System.out.println("\r\nBuilding context for: " + u);
         if (u != null) {
-            if (u.charAt(0) == '"' && u.charAt(u.length()-1) == '"') {
+            if (u.length()>0 && u.charAt(0) == '"' && u.charAt(u.length()-1) == '"') {
                 u = u.substring(1,u.length()-1);
             }
             if (u.length()>1) {
@@ -36,7 +36,8 @@ class UserAgentContext {
                 while (stw.hasMoreTokens()) {
                     tokens.add(stw.nextToken().trim());
                 }
-            }
+            } else
+                ua=lcua="";
         }
 
     }
