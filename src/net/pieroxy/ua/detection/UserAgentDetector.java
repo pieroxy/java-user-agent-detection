@@ -407,7 +407,23 @@ public class UserAgentDetector implements IUserAgentDetector {
 
         // MISC BOTS
 
-        else if (context.consume("TencentTraveler", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
+        else if ((ver = context.getcVersionAfterPattern("AhrefsBot/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) != null) {
+            context.consume("Mozilla/", MatchingType.BEGINS, MatchingRegion.REGULAR);
+            context.consume("compatible", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
+            context.consume("+http://", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
+            return new UserAgentDetectionResult(
+                       new Device("",DeviceType.BOT,Brand.UNKNOWN,"AhrefsBot"),
+                       new Browser(Brand.UNKNOWN,BrowserFamily.CRAWLER,"AhrefsBot",ver),
+                       new OS(Brand.UNKNOWN,OSFamily.UNKNOWN,"Bot","Bot"));
+        } else if ((ver = context.getcVersionAfterPattern("Feedly/", MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+            context.consume("like ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
+            context.consume("+http://", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
+            return new UserAgentDetectionResult(
+                       new Device("",DeviceType.BOT,Brand.UNKNOWN,"Feedly"),
+                       new Browser(Brand.UNKNOWN,BrowserFamily.FEED_CRAWLER,"Feedly",ver),
+                       new OS(Brand.UNKNOWN,OSFamily.UNKNOWN,"Bot","Bot"));
+
+        } else if (context.consume("TencentTraveler", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
             context.consumeAllTokens();
             return new UserAgentDetectionResult(
                        new Device("",DeviceType.SPAMBOT,Brand.UNKNOWN,"Tencent Traveler"),
@@ -1241,6 +1257,9 @@ public class UserAgentDetector implements IUserAgentDetector {
             res.description="Kazehakase "+ver;
         } else if ((ver = context.getcVersionAfterPattern("Thunderbird/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
             res.description="Thunderbird "+ver;
+        } else if ((ver = context.getcVersionAfterPattern("PaleMoon/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
+            context.consume("Firefox/",  MatchingType.BEGINS, MatchingRegion.REGULAR);
+            res.description="PaleMoon "+ver;
         } else if ((ver = context.getcVersionAfterPattern("Phoenix/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
             res.description="Phoenix "+ver;
         } else if (os.family == OSFamily.WINDOWS &&
@@ -1470,6 +1489,22 @@ public class UserAgentDetector implements IUserAgentDetector {
             }
             return res;
         }
+
+        if (possibleVersions.contains(",11,") &&
+                (vertr=context.getcVersionAfterPattern("Trident/",  MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
+            if ((ver=context.getcVersionAfterPattern("rv:",  MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
+                if (vertr.equals("7.0") && ver.startsWith("11")) {
+                    res = new Browser(Brand.MICROSOFT,BrowserFamily.IE,"IE " +ver,"Trident " + vertr);
+
+                    context.getcNextTokens(new Matcher[] {new Matcher("like", MatchingType.EQUALS),
+                                               new Matcher("Gecko", MatchingType.REGEXP)
+                    },
+                    MatchingRegion.REGULAR);
+                }
+            }
+            if (res!=null) return res;
+        }
+
         return null;
 
     }
@@ -1503,6 +1538,15 @@ public class UserAgentDetector implements IUserAgentDetector {
         } else if ((ver=context.getcVersionAfterPattern("IEMobile ", MatchingType.BEGINS,MatchingRegion.PARENTHESIS))!=null ||
                    (ver=context.getcVersionAfterPattern("IEMobile/", MatchingType.BEGINS,MatchingRegion.PARENTHESIS))!=null) {
             res = new Browser(Brand.MICROSOFT,BrowserFamily.IE,"IE Mobile " +ver,getTridentVersion(context,"IE Mobile " +ver));
+
+            if (ver.equals("11.0")) {
+                context.getcNextTokens(new Matcher[] {new Matcher("like", MatchingType.EQUALS),
+                                           new Matcher("Gecko", MatchingType.REGEXP)
+                },
+                MatchingRegion.REGULAR);
+                context.consume("rv:" + ver, MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
+            }
+
             context.consume("MSIE ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
             consumeMozilla(context);
         } else if ((ver=context.getcVersionAfterPattern("S40OviBrowser/", MatchingType.BEGINS,MatchingRegion.REGULAR,3))!=null) {
@@ -1748,7 +1792,7 @@ public class UserAgentDetector implements IUserAgentDetector {
             }
             context.consume("Mozilla/", MatchingType.BEGINS, MatchingRegion.REGULAR);
             context.consume("Mozilla", MatchingType.EQUALS, MatchingRegion.REGULAR);
-        } else if (context.contains("Gecko", MatchingType.BEGINS, MatchingRegion.BOTH)) {
+        } else if (context.contains("Gecko", MatchingType.BEGINS, MatchingRegion.BOTH) && !context.contains("Trident/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) {
             res = getGecko(context,"", os);
             context.consume("Mozilla/", MatchingType.BEGINS, MatchingRegion.REGULAR);
             context.consume("Gecko", MatchingType.BEGINS, MatchingRegion.REGULAR);
@@ -1836,6 +1880,9 @@ public class UserAgentDetector implements IUserAgentDetector {
                     if (res != null) {
                         context.consume("compatible",  MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
                     }
+                }
+                if (res == null) {
+                    res = tryGetIE(context,",11,", os);
                 }
                 if (res == null) {
                     if ((ver = context.getcVersionAfterPattern("AvantGo ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
@@ -2606,6 +2653,14 @@ public class UserAgentDetector implements IUserAgentDetector {
         if (context.consume("Nintendo DSi", MatchingType.EQUALS, MatchingRegion.CONSUMED)) return new Device(arm,DeviceType.CONSOLE,Brand.NINTENDO,"DSi");
         if (context.consume("Super_Nintendo", MatchingType.EQUALS, MatchingRegion.REGULAR)) return new Device(arm,DeviceType.CONSOLE,Brand.NINTENDO,"Super Nintendo");
         if (context.consume("Nintendo 3DS", MatchingType.EQUALS, MatchingRegion.CONSUMED)) return new Device(arm,DeviceType.CONSOLE,Brand.NINTENDO,"3DS");
+        if (context.consume("Xbox One", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
+            context.consume("Xbox", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
+            return new Device("AMD x86-64",DeviceType.CONSOLE,Brand.MICROSOFT,"Xbox One");
+        }
+        if (context.consume("Xbox", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
+            if (context.getUA().contains("MSIE 9")) return new Device("PowerPC",DeviceType.CONSOLE,Brand.MICROSOFT,"Xbox 360");
+            //if (context.getUA().contains("MSIE 7")) return new Device("x86 (PIII)",DeviceType.CONSOLE,Brand.MICROSOFT,"Xbox"); No browser on original Xbox ?
+        }
         if (context.consume("PlayStation Vita", MatchingType.BEGINS, MatchingRegion.CONSUMED)) return new Device(arm,DeviceType.CONSOLE,Brand.SONY,"PlayStation Vita ");
         if (context.consume("PLAYSTATION 3", MatchingType.BEGINS, MatchingRegion.CONSUMED)) return new Device("Cell",DeviceType.CONSOLE,Brand.SONY,"PlayStation 3");
         if (context.consume("PlayStation Portable", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
