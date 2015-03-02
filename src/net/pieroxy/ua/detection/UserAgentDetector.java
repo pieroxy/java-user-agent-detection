@@ -518,7 +518,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                 }
                 context.consume("Touch", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
             } else if (context.consume("Windows NT 6.3", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
-                res = new OS(Brand.MICROSOFT,OSFamily.WINDOWS_NT,"Windows","10");
+                res = new OS(Brand.MICROSOFT,OSFamily.WINDOWS_NT,"Windows","8.1");
             } else if (context.consume("Windows NT 5.0", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) {
                 res = new OS(Brand.MICROSOFT,OSFamily.WINDOWS_NT,"Windows","2000");
                 if (context.contains("Windows NT 5.01", MatchingType.BEGINS, MatchingRegion.CONSUMED)) res.version += " SP1";
