@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
+import net.pieroxy.ua.detection.Bot;
+import net.pieroxy.ua.detection.BotFamily;
 import net.pieroxy.ua.detection.Brand;
 import net.pieroxy.ua.detection.Browser;
 import net.pieroxy.ua.detection.BrowserFamily;
@@ -25,7 +27,7 @@ import net.pieroxy.ua.detection.UserAgentDetector;
 public class UserAgentTester {
 
   private static UserAgentDetector detector = new UserAgentDetector();
-  
+
   public static void printUsage() {
     System.out.println("Usage:");
     System.out.println("  UserAgentTester [test|perf] filename");
@@ -48,11 +50,12 @@ public class UserAgentTester {
 
   public static void test(String fileName) throws IOException {
     UserAgentDetector.test();
-    
+
     File f = new File(fileName);
     InputStream is = new GZIPInputStream(new FileInputStream(f));
     Reader r = new InputStreamReader(is);
     BufferedReader br = new BufferedReader(r);
+    int lineNumber = 1;
 
     try {
       br.readLine(); // Discard header
@@ -65,11 +68,14 @@ public class UserAgentTester {
           nbFailures++;
         }
         nbTests++;
+        lineNumber ++;
       }
       if (nbFailures > 0)
         System.out.println(nbFailures + "/" + nbTests + " FAILURES.");
       else
         System.out.println("100% of " + nbTests + " succeeded.");
+    } catch (Exception e) {
+      throw new RuntimeException("at line " + lineNumber, e);
     } finally {
       br.close();
     }
@@ -159,6 +165,15 @@ public class UserAgentTester {
     addErrorReport(result, "OS version", a.operatingSystem.version,
         b.operatingSystem.version);
 
+    addErrorReport(result, "bot brand", a.bot == null ? null : a.bot.vendor,
+        b.bot == null ? null : b.bot.vendor);
+    addErrorReport(result, "bot type", a.bot == null ? null : a.bot.family,
+        b.bot == null ? null : b.bot.family);
+    addErrorReport(result, "bot description", a.bot == null ? null
+        : a.bot.description, b.bot == null ? null : b.bot.description);
+    addErrorReport(result, "bot version", a.bot == null ? null : a.bot.version,
+        b.bot == null ? null : b.bot.version);
+
     addErrorReport(result, "ignored tokens", a.ignoredTokens, b.ignoredTokens);
     addErrorReport(result, "unknown tokens", a.unknownTokens, b.unknownTokens);
     addErrorReport(result, "extensions", a.getExtensionsAsString(),
@@ -201,10 +216,10 @@ public class UserAgentTester {
         browser_renderingEngine, os_family, os_description, os_version,
         device_type, device_brand, device_manufacturer, device, lang, country,
         comment, ignored_tokens, unknown_tokens, device_arch, browser_vendor,
-        os_vendor;
+        os_vendor, bot_family, bot_vendor, bot_description, bot_version;
 
     public UserAgentDetection(String line) {
-      String[] elements = line.split("\t");
+      String[] elements = line.split("\t", -1);
       id = elements[0];
       string = elements[1];
       browser_family = elements[2];
@@ -225,9 +240,26 @@ public class UserAgentTester {
       device_arch = elements[18];
       browser_vendor = elements[19];
       os_vendor = elements[20];
+      bot_vendor = getStringOrNull(elements[22]);
+      bot_family = getStringOrNull(elements[23]);
+      bot_description = getStringOrNull(elements[24]);
+      bot_version= getStringOrNull(elements[25]);
     }
 
+    private String getStringOrNull(String s) {
+      if (s == null || s.equals("NULL")) return null;
+      return s;
+    }
+    
     public UserAgentDetectionResult getDetectionResult() {
+      Bot bot = null;
+      BotFamily f = (bot_family == null || bot_family.length() == 0 || bot_family.equals("NULL")) ? null
+          : Enum.valueOf(BotFamily.class, bot_family);
+      if (f != null) {
+        bot = new Bot(Enum.valueOf(Brand.class, bot_vendor), f,
+            bot_description, bot_version);
+      }
+
       return new UserAgentDetectionResult(
           new Device(device_arch, Enum.valueOf(DeviceType.class, device_type),
               Enum.valueOf(Brand.class, device_brand), Enum.valueOf(
@@ -237,7 +269,7 @@ public class UserAgentTester {
               browser_renderingEngine), new OS(Enum.valueOf(Brand.class,
               os_vendor), Enum.valueOf(OSFamily.class, os_family),
               os_description, os_version), new Locale(lang, country), comment,
-          ignored_tokens, unknown_tokens);
+          ignored_tokens, unknown_tokens, bot);
 
     }
   }

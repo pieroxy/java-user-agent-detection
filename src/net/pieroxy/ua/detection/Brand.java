@@ -22,6 +22,7 @@ public enum Brand {  OBIGO("Obigo"),
                      SHARP("Sharp"),
                      SANYO("Sanyo"),
                      WIKO("Wiko"),
+                     DOMAINTOOLS("DomainTools", "http://www.domaintools.com"),
                      MOTOROLA("Motorola"),
                      HUAWEI("Huawei"),
                      LENOVO("Lenovo"),
@@ -48,6 +49,10 @@ public enum Brand {  OBIGO("Obigo"),
                      NINTENDO("Nintendo"),
                      MOZILLA("Mozilla"),
                      OPERA("Opera"),
+                     NETEASE("NetEase","http://ir.netease.com/"),
+                     ENTIREWEB("EntireWeb", "http://www.entireweb.com/"),
+                     SEOPROFILER("SEO Profiler", "http://seoprofiler.com/"),
+                     EXALEAD("Exalead", "https://www.exalead.com/"),
                      LUNASCAPE("Lunascape"),
                      CHROMIUM("The Chromium Project"),
                      OPENSOURCE("An Open Source Project"),
@@ -78,8 +83,15 @@ public enum Brand {  OBIGO("Obigo"),
                      UTSTARCOM("UTStarcom");
 
                      private String label;
+                     private String website;
+
 Brand(String l) {
     this.label = l;
+}
+
+Brand(String l, String url) {
+    this.label = l;
+    this.website = url;
 }
 /**
 * @return the string representation of the brand.

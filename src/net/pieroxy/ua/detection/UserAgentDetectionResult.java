@@ -6,6 +6,7 @@ import java.util.*;
 */
 public class UserAgentDetectionResult {
     public Device device;
+    public Bot bot;
     public Browser browser;
     public OS operatingSystem;
     Locale locale;
@@ -18,12 +19,18 @@ public class UserAgentDetectionResult {
         if (a == null || b == null) return false;
         return a.equals(b);
     }
+    private boolean botEquals(Bot a, Bot b) {
+        if ((a == null || a.family == null)  && (b == null || b.family == null)) return true;
+        if ((a == null || a.family == null)  || (b == null || b.family == null)) return false;
+        return a.equals(b);
+    }
 
     public boolean equals(Object o) {
         if (o == null) return false;
         if (! (o instanceof UserAgentDetectionResult)) return false;
         UserAgentDetectionResult d = (UserAgentDetectionResult) o;
         return
+            botEquals(d.bot,bot) &&
             objectEquals(d.device,device) &&
             objectEquals(d.browser,browser) &&
             objectEquals(d.locale,locale) &&
@@ -37,12 +44,11 @@ public class UserAgentDetectionResult {
         if (! (o instanceof UserAgentDetectionResult)) return "!this.class";
         UserAgentDetectionResult d = (UserAgentDetectionResult) o;
         if (!objectEquals(d.device,device)) return "device";
+        if (!botEquals(d.bot,bot)) return "bot";
         if (!objectEquals(d.browser,browser)) return "browser";
         if (!objectEquals(d.locale,locale)) return "locale";
         if (!objectEquals(d.getExtensions().size(),getExtensions().size())) return "extensions " + d.getExtensions().size() + " " +  getExtensions().size();
         if (!objectEquals(d.getExtensions(),getExtensions())) return "extensions " + d.getExtensions().size() + " " +  getExtensions().size() + " " + getExtensions().iterator().next().getName() + " " + d.getExtensions().iterator().next().getVersion() + " " + getExtensions().iterator().next().getVersion();
-
-
         if (!objectEquals(d.operatingSystem,operatingSystem)) return "os";
         return "==";
     }
@@ -55,6 +61,10 @@ public class UserAgentDetectionResult {
         if (ignoredTokens!= null) {
             res *= 3;
             res += ignoredTokens.hashCode();
+        }
+        if (bot!= null) {
+            res *= 3;
+            res += bot.hashCode();
         }
         if (unknownTokens!= null) {
             res *= 3;
@@ -92,6 +102,10 @@ public class UserAgentDetectionResult {
         this(_device,_browser, _os, _locale, _extensions);
         ignoredTokens = ignored;
         unknownTokens = unknown;
+    }
+    public UserAgentDetectionResult(Device _device, Browser _browser, OS _os, Locale _locale, String _extensions, String ignored, String unknown, Bot bot) {
+        this(_device,_browser, _os, _locale, _extensions, ignored, unknown);
+        this.bot = bot;
     }
     public UserAgentDetectionResult(Device _device, Browser _browser, OS _os, Locale _locale) {
         this(_device,_browser, _os);
@@ -140,6 +154,9 @@ public class UserAgentDetectionResult {
     }
 
 
+    public Bot getBot() {
+        return bot;
+    }
     public Device getDevice() {
         return device;
     }
