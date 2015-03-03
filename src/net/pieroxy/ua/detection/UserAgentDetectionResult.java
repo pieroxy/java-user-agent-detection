@@ -111,6 +111,10 @@ public class UserAgentDetectionResult {
         this(_device,_browser, _os);
         if (locale != null) this.locale = _locale;
     }
+    public UserAgentDetectionResult(Device _device, Browser _browser, OS _os, Bot _bot) {
+        this(_device, _browser, _os);
+        this.bot = _bot;
+    }
     public UserAgentDetectionResult(Device _device, Browser _browser, OS _os) {
         this();
         device = _device;

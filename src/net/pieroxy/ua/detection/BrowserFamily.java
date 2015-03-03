@@ -61,22 +61,6 @@ public enum BrowserFamily {  /**
     */
     TEXTBASED("Text Based",false, false, false, false),
     /**
-    * A robot.
-    */
-    ROBOT("Other Robot/Program",false, false, false,true ),
-    /**
-    * A spam bot.
-    */
-    SPAMBOT("Spam bot",false, false, false,true ),
-    /**
-    * A robot used to crawl the web (Google's crawler, Bing's crawler, etc.)
-    */
-    CRAWLER("Web Crawler",false, false, false,true ),
-    /**
-    * Feed aggregator (Feedly, ...)
-    */
-    FEED_CRAWLER("Feed aggregator",false, false, false,true ),
-    /**
     * Another browser not popular enough to warrant a place in this enum.
     */
     OTHER("Other",false, false, false, false),

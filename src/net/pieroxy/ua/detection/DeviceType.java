@@ -17,14 +17,6 @@ public enum DeviceType {  /**
     */
     COMPUTER(false),
     /**
-    * A robot.
-    */
-    BOT(false),
-    /**
-    * A robot doing bad things.
-    */
-    SPAMBOT(false),
-    /**
     * The user uses a simulator such as Google's Android SDK.
     */
     SDK(false),
