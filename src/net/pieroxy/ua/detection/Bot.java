@@ -19,6 +19,7 @@ public class Bot {
         if (o == null) return false;
         if (! (o instanceof Bot)) return false;
         Bot d = (Bot) o;
+        if (d.vendor==null && vendor!=d.vendor) return false;
         if (d.family==null && family!=d.family) return false;
         if (d.description==null && description!=d.description) return false;
         if (d.version==null && version!=d.version) return false;
