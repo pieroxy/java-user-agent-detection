@@ -102,6 +102,11 @@ public class UserAgentDetector implements IUserAgentDetector {
             }
             context.consume("Unknown", MatchingType.EQUALS,MatchingRegion.PARENTHESIS);
             return new Bot(Brand.OPENSOURCE,BotFamily.ROBOT,"PhantomJS", ver);
+        } else if (context.consume("Feedfetcher-Google;", MatchingType.EQUALS, MatchingRegion.REGULAR)) {
+            context.consume("+http://www.google.com/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
+            context.consume("feed-id=", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
+            context.consume("[0-9]+ subscribers", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);
+            return new Bot(Brand.GOOGLE,BotFamily.FEED_CRAWLER,"RSS Feed Fetcher","");
         } else if (context.consume("yacybot", MatchingType.EQUALS, MatchingRegion.REGULAR)) {
             context.consume("http://", MatchingType.BEGINS, MatchingRegion.REGULAR);
             context.consume("freeworld/global", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
@@ -113,6 +118,23 @@ public class UserAgentDetector implements IUserAgentDetector {
             return new Bot(Brand.OTHER,BotFamily.ROBOT,"AvantGo", ver);
         } else if ((ver = context.getcVersionAfterPattern("LinkScan/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
             return new Bot(Brand.ELSOP,BotFamily.ROBOT,"LinkScan", ver);
+        } else if ((ver = context.getcVersionAfterPattern("Mail.RU_Bot/",  MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
+            consumeUrlAndMozilla(context, "http://go.mail.ru");
+            return new Bot(Brand.MAILRU,BotFamily.CRAWLER,"Mail.ru crawler", ver);
+        } else if ((ver = context.getcVersionAfterPattern("MJ12bot/",  MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
+            consumeUrlAndMozilla(context, "http://www.majestic12");
+            return new Bot(Brand.MAJESTIC12,BotFamily.CRAWLER,"Majestic 12", ver);
+        } else if ((ver = context.getcVersionAfterPattern("GigablastOpenSource/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
+            return new Bot(Brand.UNKNOWN,BotFamily.CRAWLER,"GigaBlast Crawler", ver);
+        } else if (context.getUA().equals("NetLyzer FastProbe")) {
+            context.consumeAllTokens();
+            return new Bot(Brand.UNKNOWN,BotFamily.ROBOT,"NetLyzer FastProbe", "");
+        } else if (context.getUA().equals("updown_tester")) {
+            context.consume("updown_tester", MatchingType.EQUALS, MatchingRegion.REGULAR);
+            return new Bot(Brand.UNKNOWN,BotFamily.ROBOT,"Unknown (updown_tester)", "");
+        } else if (context.getUA().equals("RSSGraffiti")) {
+            context.consume("RSSGraffiti", MatchingType.EQUALS, MatchingRegion.REGULAR);
+            return new Bot(Brand.SCRIBBLE,BotFamily.ROBOT,"RSS Graffiti", "");
         } else if (context.getUA().startsWith("WordPress/")) {
             ver = context.getcVersionAfterPattern("WordPress/", MatchingType.BEGINS, MatchingRegion.REGULAR);
             context.consume("http://", MatchingType.BEGINS, MatchingRegion.REGULAR);
@@ -301,7 +323,7 @@ public class UserAgentDetector implements IUserAgentDetector {
             return new Bot(Brand.UNKNOWN, BotFamily.FEED_CRAWLER, "Feedly", ver);
 
         } else if (context.consume("TencentTraveler", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
-            return new Bot(Brand.UNKNOWN, BotFamily.CRAWLER, "Tencent Traveler", ver);
+            return new Bot(Brand.TENCENT, BotFamily.CRAWLER, "Tencent Traveler", ver);
 
         } else if (context.consume("Ask Jeeves", MatchingType.BEGINS, MatchingRegion.BOTH) ||
                    context.consume("Teoma/", MatchingType.BEGINS, MatchingRegion.BOTH)) {
@@ -2581,6 +2603,10 @@ public class UserAgentDetector implements IUserAgentDetector {
                 }, MatchingRegion.PARENTHESIS)!=null)
                 return new Device(arm,DeviceType.PHONE,Brand.NOKIA,"Lumia 710");
                 if (context.getcNextTokens(new Matcher[] {new Matcher("NOKIA",MatchingType.EQUALS),
+                    new Matcher("Lumia 720",MatchingType.BEGINS)
+                }, MatchingRegion.PARENTHESIS)!=null)
+                return new Device(arm,DeviceType.PHONE,Brand.NOKIA,"Lumia 720");
+                if (context.getcNextTokens(new Matcher[] {new Matcher("NOKIA",MatchingType.EQUALS),
                     new Matcher("Lumia 820",MatchingType.BEGINS)
                 }, MatchingRegion.PARENTHESIS)!=null)
                 return new Device(arm,DeviceType.PHONE,Brand.NOKIA,"Lumia 820");
@@ -2924,6 +2950,131 @@ public class UserAgentDetector implements IUserAgentDetector {
         return new Device("",DeviceType.UNKNOWN,Brand.UNKNOWN,"");
     }
 
+    private static Map<String, OS> mapCfNetworkOS;
+    private static Map<String, String> mapCfNetworkArchitecture;
+
+    static {
+        mapCfNetworkOS = new HashMap<String, OS>();
+        mapCfNetworkOS.put("1.1/", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.2"));
+        mapCfNetworkOS.put("1.2.1/", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.3.2"));
+        mapCfNetworkOS.put("1.2.2/", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.3.9"));
+        mapCfNetworkOS.put("1.2.6/", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.3.9"));
+        mapCfNetworkOS.put("128/8.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.0"));
+        mapCfNetworkOS.put("128/8.1.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.1"));
+        mapCfNetworkOS.put("128.2/8.2.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.2"));
+        mapCfNetworkOS.put("129.5/8.3.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.3"));
+        mapCfNetworkOS.put("129.9/8.4.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.4"));
+        mapCfNetworkOS.put("129.9/8.5.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.5"));
+        mapCfNetworkOS.put("129.10/8.4.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.4"));
+        mapCfNetworkOS.put("129.10/8.5.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.5"));
+        mapCfNetworkOS.put("129.13/8.6.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.6"));
+        mapCfNetworkOS.put("129.16/8.7.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.7"));
+        mapCfNetworkOS.put("129.18/8.8.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.8"));
+        mapCfNetworkOS.put("129.20/8.9.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.9"));
+        mapCfNetworkOS.put("129.21/8.10.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.10"));
+        mapCfNetworkOS.put("129.22/8.11.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.11"));
+        mapCfNetworkOS.put("217/9.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.0"));
+        mapCfNetworkOS.put("220/9.1.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.1"));
+        mapCfNetworkOS.put("221.2/9.2.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.2 dev"));
+        mapCfNetworkOS.put("221.5/9.2.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.2"));
+        mapCfNetworkOS.put("330/9.3.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.3"));
+        mapCfNetworkOS.put("330.4/9.4.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.4"));
+        mapCfNetworkOS.put("339.5/9.5.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.5"));
+        mapCfNetworkOS.put("422.11/9.6.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.6"));
+        mapCfNetworkOS.put("438.12/9.7.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.7"));
+        mapCfNetworkOS.put("438.14/9.8.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.8"));
+        mapCfNetworkOS.put("454.4/10.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.6.0"));
+        mapCfNetworkOS.put("454.5/10.2.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.6.2"));
+        mapCfNetworkOS.put("454.9.4/10.3.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.6.3"));
+        mapCfNetworkOS.put("454.9.7/10.4.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.6.4"));
+        mapCfNetworkOS.put("454.11.5/10.5.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.6.5"));
+        mapCfNetworkOS.put("454.11.5/10.6.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.6.6"));
+        mapCfNetworkOS.put("454.11.12/10.7.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.6.7"));
+        mapCfNetworkOS.put("454.12.4/10.8.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.6.8"));
+        mapCfNetworkOS.put("459/10.0.0d3", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "3.1.3"));
+        mapCfNetworkOS.put("485.2/10.3.1", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "4"));
+        mapCfNetworkOS.put("485.10.2/10.3.1", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "4.1"));
+        mapCfNetworkOS.put("485.12.7/10.4.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "4.2.1"));
+        mapCfNetworkOS.put("485.12.30/10.4.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "4.2.8"));
+        mapCfNetworkOS.put("485.13.9/11.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "4.3.*"));
+        mapCfNetworkOS.put("520.0.13/11.1.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.7.1"));
+        mapCfNetworkOS.put("520.2.5/11.2.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.7.2"));
+        mapCfNetworkOS.put("520.3.2/11.3.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.7.3"));
+        mapCfNetworkOS.put("520.4.3/11.4.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.7.4"));
+        mapCfNetworkOS.put("520.5.1/11.4.2", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.7.5"));
+        mapCfNetworkOS.put("548.0.3/11.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "5"));
+        mapCfNetworkOS.put("548.0.4/11.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "5.0.1"));
+        mapCfNetworkOS.put("548.1.4/11.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "5.1"));
+        mapCfNetworkOS.put("596.0.1/12.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.8.0"));
+        mapCfNetworkOS.put("596.1/12.1.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.8.1"));
+        mapCfNetworkOS.put("596.2.3/12.2.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.8.2"));
+        mapCfNetworkOS.put("596.3.3/12.3.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.8.3"));
+        mapCfNetworkOS.put("596.4.3/12.4.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.8.4"));
+        mapCfNetworkOS.put("596.5/12.5.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.8.5"));
+        mapCfNetworkOS.put("596.6.2/12.5.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.8.5"));
+        mapCfNetworkOS.put("602/13.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "6.0-b3"));
+        mapCfNetworkOS.put("609/13.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "6.0.*"));
+        mapCfNetworkOS.put("609.1.4/13.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "6.1.*"));
+        mapCfNetworkOS.put("672.0.2/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "7.0.0-2"));
+        mapCfNetworkOS.put("672.0.8/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "7.0.3-6"));
+        mapCfNetworkOS.put("672.1.12/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "7.1-b5"));
+        mapCfNetworkOS.put("672.1.13/13.3.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "7.1"));
+        mapCfNetworkOS.put("672.1.13/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "7.1"));
+        mapCfNetworkOS.put("672.1.14/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "7.1.1"));
+        mapCfNetworkOS.put("672.1.15/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "7.1.2"));
+        mapCfNetworkOS.put("673.0.3/13.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.0"));
+        mapCfNetworkOS.put("673.0.3/13.0.2", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.1"));
+        mapCfNetworkOS.put("673.2.1/13.1.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.2"));
+        mapCfNetworkOS.put("673.3/13.2.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.3 beta"));
+        mapCfNetworkOS.put("673.3/13.3.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.3 beta"));
+        mapCfNetworkOS.put("673.3/13.4.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.3 beta"));
+        mapCfNetworkOS.put("673.4/13.2.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.3"));
+        mapCfNetworkOS.put("673.4/13.3.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.4"));
+        mapCfNetworkOS.put("673.4/13.4.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.5"));
+        mapCfNetworkOS.put("673.5/13.4.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.*"));
+        mapCfNetworkOS.put("696.0.2/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
+        mapCfNetworkOS.put("699/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
+        mapCfNetworkOS.put("703.1/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "7.0"));
+        mapCfNetworkOS.put("703.1.6/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "8.0"));
+        mapCfNetworkOS.put("708.1/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
+        mapCfNetworkOS.put("709.1/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
+        mapCfNetworkOS.put("707/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
+        mapCfNetworkOS.put("709/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
+        mapCfNetworkOS.put("711.0.6/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "8.0.0-2"));
+        mapCfNetworkOS.put("711.1.12/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "8.1.0"));
+        mapCfNetworkOS.put("711.1.16/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "8.1.1-3"));
+        mapCfNetworkOS.put("714/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
+        mapCfNetworkOS.put("718/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
+        mapCfNetworkOS.put("720.0.4/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
+        mapCfNetworkOS.put("720.0.7/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
+        mapCfNetworkOS.put("720.0.8/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
+        mapCfNetworkOS.put("720.0.9/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
+        mapCfNetworkOS.put("720.1.1/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.1"));
+        mapCfNetworkOS.put("720.2.2/14.1.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.2"));
+        mapCfNetworkOS.put("720.2.3/14.1.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.1"));
+        mapCfNetworkOS.put("720.2.4/14.1.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.2"));
+        mapCfNetworkOS.put("720.3.6/14.3.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.3"));
+        mapCfNetworkOS.put("720.3.9/14.3.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.3"));
+
+        mapCfNetworkArchitecture = new HashMap<String, String>();
+        mapCfNetworkArchitecture.put("128/8.0.0", "PowerPC");
+        mapCfNetworkArchitecture.put("128/8.1.0", "PowerPC");
+        mapCfNetworkArchitecture.put("128.2/8.2.0", "PowerPC");
+        mapCfNetworkArchitecture.put("129.5/8.3.0", "PowerPC");
+        mapCfNetworkArchitecture.put("129.9/8.4.0", "PowerPC");
+        mapCfNetworkArchitecture.put("129.9/8.5.0", "PowerPC");
+        mapCfNetworkArchitecture.put("129.10/8.4.0", "Intel");
+        mapCfNetworkArchitecture.put("129.10/8.5.0", "Intel");
+    }
+
+    static void setMacOSFromCFNetwork(UserAgentDetectionResult results, String cfver, String dver) {
+        String key = cfver + "/" + dver;
+        OS os = mapCfNetworkOS.get(key);
+        String arch = mapCfNetworkArchitecture.get(key);
+        if (os != null) results.operatingSystem = os;
+        else results.operatingSystem = new OS(Brand.APPLE, OSFamily.UNKNOWN, "iOS or MacOS", "");
+        if (arch != null) results.device.architecture = arch;
+    }
 
     static UserAgentDetectionResult getLibraries(UserAgentContext context) {
         String ua = context.getUA();
@@ -2992,6 +3143,91 @@ public class UserAgentDetector implements IUserAgentDetector {
                 res.operatingSystem.version =  (getVersionNumber(archTotal,pos+16) + " "+arch).trim();
                 return res;
             }
+        } else if ((ver=context.getcVersionAfterPattern("CFNetwork/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+            // A library on MacOS and iOS to make network calls.
+            res.browser.family = BrowserFamily.UNKNOWN;
+            String cfnver = ver;
+            String dver = context.getcVersionAfterPattern("Darwin/",MatchingType.BEGINS, MatchingRegion.REGULAR);
+            if (dver == null) dver = "";
+            if ((ver=context.getcVersionAfterPattern("Flipboard/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.FLIPBOARD, BotFamily.ROBOT, "Flipboard", ver);
+            } else if ((ver=context.getcVersionAfterPattern("Puffin/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.CLOUDMOSA, BotFamily.ROBOT, "Puffin Browser", ver);
+            } else if ((ver=context.getcVersionAfterPattern("Mercury/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.ILEGEND, BotFamily.ROBOT, "Mercury Browser", ver);
+            } else if ((ver=context.getcVersionAfterPattern("Instapaper/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.INSTAPAPER, BotFamily.ROBOT, "Instapaper", ver);
+            } else if ((ver=context.getcVersionAfterPattern("Readability/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.READABILITY, BotFamily.ROBOT, "Readability", ver);
+            } else if ((ver=context.getcVersionAfterPattern("QQ/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.TENCENT, BotFamily.ROBOT, "QQ Messaging App", ver);
+            } else if ((ver=context.getcVersionAfterPattern("Reeder/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.REEDER, BotFamily.ROBOT, "Reeder", ver);
+            } else if ((ver=context.getcVersionAfterPattern("EvernoteShare/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.MOBOTAP, BotFamily.ROBOT, "Evernote Share for Dolphin Browser", ver);
+            } else if ((ver=context.getcVersionAfterPattern("ReadKit/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.WEBIN, BotFamily.ROBOT, "ReadKit", ver);
+            } else if ((ver=context.getcVersionAfterPattern("Spillo/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.BANANAFISH, BotFamily.ROBOT, "Spillo", ver);
+            } else if ((ver=context.getcVersionAfterPattern("Pinner/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Pinner", ver);
+            } else if ((ver=context.getcVersionAfterPattern("LinkedIn/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.LINKEDIN, BotFamily.ROBOT, "LinkedIn", ver);
+            } else if ((ver=context.getcVersionAfterPattern("CloudyTabs/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Cloudy Tabs", ver);
+            } else if ((ver=context.getcVersionAfterPattern("Opera%20Coast/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.OPERA, BotFamily.ROBOT, "Opera Coast", ver);
+            } else if ((ver=context.getcVersionAfterPattern("iCabMobile/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "iCab Mobile", ver);
+            } else if ((ver=context.getcVersionAfterPattern("CLIPish%20Jr/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "CLIPish", ver);
+            } else if ((ver=context.getcVersionAfterPattern("Bing/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.MICROSOFT, BotFamily.ROBOT, "Bing App", ver);
+            } else if ((ver=context.getcVersionAfterPattern("InDesign/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.ADOBE, BotFamily.ROBOT, "InDesign App", ver);
+            } else if ((ver=context.getcVersionAfterPattern("AlienBlue/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null ||
+                       (ver=context.getcVersionAfterPattern("AlienBlueHD/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.REDDIT, BotFamily.ROBOT, "Reddit App", ver);
+            } else if ((ver=context.getcVersionAfterPattern("Newsify/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Newsify App", ver);
+            } else if ((ver=context.getcVersionAfterPattern("Ziner/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Ziner App", ver);
+            } else if ((ver=context.getcVersionAfterPattern("Leaf/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.ROCKYSAND, BotFamily.ROBOT, "Leaf RSS reader App", ver);
+            } else if ((ver=context.getcVersionAfterPattern("Newsflow/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.ROCKYSAND, BotFamily.ROBOT, "Newsflow RSS reader App", ver);
+            } else if ((ver=context.getcVersionAfterPattern("RSS%20Notifier/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.ROCKYSAND, BotFamily.ROBOT, "RSS Notifier App", ver);
+            } else if ((ver=context.getcVersionAfterPattern("Redd/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Redd reddit client App", ver);
+            } else if ((ver=context.getcVersionAfterPattern("Hacker%20News/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Hacker News App", ver);
+            } else if ((ver=context.getcVersionAfterPattern("Buffer/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Buffer App", ver);
+            } else if ((ver=context.getcVersionAfterPattern("Buffer/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Buffer App", ver);
+            } else if ((ver=context.getcVersionAfterPattern("AtomicLite/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null ||
+                       (ver=context.getcVersionAfterPattern("AtomicBrowser/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Atomic Web Browser", ver);
+            } else if ((ver=context.getcVersionAfterPattern("Tweetbot/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null ||
+                       (ver=context.getcVersionAfterPattern("TweetbotPad/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Tweetbot App", ver);
+            } else if ((ver=context.getcVersionAfterPattern("onesafe%20iOS/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.LUNABEE, BotFamily.ROBOT, "OneSafe App", ver);
+            } else if ((ver=context.getcVersionAfterPattern("Stache/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Stache Bookmarking App", ver);
+            } else if ((ver=context.getcVersionAfterPattern("Pins/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Pins App", ver);
+            } else if ((ver=context.getcVersionAfterPattern("Pinterest/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+                res.bot = new Bot(Brand.PINTEREST, BotFamily.ROBOT, "Pinterest", ver);
+            } else {
+                context.consumeAllTokens();
+                res.bot = new Bot(Brand.APPLE, BotFamily.ROBOT, "CFNetwork", cfnver);
+            }
+            setMacOSFromCFNetwork(res, cfnver, dver);
+            if (context.consume("x86_64", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) res.device.architecture = "x86_64";
+            if (context.consume("i386", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) res.device.architecture = "i386";
+            return res;
         } else if ((ver=context.getcVersionAfterPattern("Wget/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
             res.browser.family = BrowserFamily.UNKNOWN;
             res.bot = new Bot(Brand.OPENSOURCE, BotFamily.ROBOT, "wget", ver);
