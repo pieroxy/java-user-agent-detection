@@ -1410,6 +1410,13 @@ public class UserAgentDetector implements IUserAgentDetector {
             } else if ((ver=context.getcVersionAfterPattern("YaBrowser/", MatchingType.BEGINS,MatchingRegion.REGULAR,2))!=null) {
                 res = new Browser(Brand.UNKNOWN,BrowserFamily.OTHER_WEBKIT,"Yandex Browser "+ver, getWebkitVersion(context));
                 context.consume("Chrome/", MatchingType.BEGINS,MatchingRegion.REGULAR);
+            } else if ((ver=context.getcVersionAfterPattern("Edge/", MatchingType.BEGINS,MatchingRegion.REGULAR,2))!=null) {
+                res = new Browser(Brand.MICROSOFT,BrowserFamily.IE,"IE " + ver, "Trident");
+                context.consume("KHTML, like Gecko", MatchingType.BEGINS,MatchingRegion.PARENTHESIS);
+                context.consume("Chrome/", MatchingType.BEGINS,MatchingRegion.REGULAR);
+                context.consume("Mozilla/", MatchingType.BEGINS,MatchingRegion.REGULAR);
+                context.consume("Safari/", MatchingType.BEGINS,MatchingRegion.REGULAR);
+                context.consume("AppleWebKit/", MatchingType.BEGINS,MatchingRegion.REGULAR);
             } else if ((ver=context.getcVersionAfterPattern("OPR/", MatchingType.BEGINS,MatchingRegion.REGULAR,2))!=null) {
                 res = new Browser(Brand.OPERA,BrowserFamily.NEW_OPERA,"Opera "+ver, getWebkitVersion(context));
                 context.consume("Chrome/", MatchingType.BEGINS,MatchingRegion.REGULAR);
