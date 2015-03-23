@@ -4,7 +4,8 @@ import java.util.*;
 /**
 * The brand can apply to Browsers, Devices or OSes.
 */
-public enum Brand {  MAILRU("mail.ru", "http://mail.ru"),
+public enum Brand {  SEZNAM("Seznam.cz", "http://fulltext.sblog.cz"),
+                     MAILRU("mail.ru", "http://mail.ru"),
                      GIGABLAST("Gigablast", "http://www.gigablast.com"),
                      MAJESTIC12("Majestic 12", "http://www.majestic12.co.uk"),
                      PINTEREST("Pinterest", "http://www.pinterest.com"),

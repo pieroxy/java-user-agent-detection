@@ -118,6 +118,9 @@ public class UserAgentDetector implements IUserAgentDetector {
             return new Bot(Brand.OTHER,BotFamily.ROBOT,"AvantGo", ver);
         } else if ((ver = context.getcVersionAfterPattern("LinkScan/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
             return new Bot(Brand.ELSOP,BotFamily.ROBOT,"LinkScan", ver);
+        } else if ((ver = context.getcVersionAfterPattern("SeznamBot/",  MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
+            consumeUrlAndMozilla(context, "http://fulltext.sblog.cz/");
+            return new Bot(Brand.SEZNAM,BotFamily.CRAWLER,"SeznamBot crawler", ver);
         } else if ((ver = context.getcVersionAfterPattern("Mail.RU_Bot/",  MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
             consumeUrlAndMozilla(context, "http://go.mail.ru");
             return new Bot(Brand.MAILRU,BotFamily.CRAWLER,"Mail.ru crawler", ver);
@@ -2111,6 +2114,8 @@ public class UserAgentDetector implements IUserAgentDetector {
             if (context.consume("C6903 ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SONY,"Xperia Z1");
             if (context.consume("C6833 ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SONY,"Xperia Z Ultra");
             if (context.consume("D58[03]3 .*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SONY,"Xperia Z3 Compact");
+            if (context.consume("D66(03|16|43|53) .*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SONY,"Xperia Z3");
+            if (context.consume("D6633 .*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SONY,"Xperia Z3 Dual");
 
             // Sharp
             if (context.consume("SBM106SH", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SHARP,"SBM106SH");
@@ -2203,9 +2208,10 @@ public class UserAgentDetector implements IUserAgentDetector {
                 if (context.consume("Vortex ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Vortex");
                 if (context.consume("LG-L[GS]855.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Marquee");
                 if (context.consume("LG-LU6500", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Optimus Q2");
-                if (context.consume("LG-LS840", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Viper");
-                if (context.consume("LG-MS690", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Optimus M");
-                if (context.consume("LG-MS695", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Optimus M+");
+                if (context.consume("LGL55C Build/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Optimus Q");
+                if (context.consume("LG-LS840 Build/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Viper");
+                if (context.consume("LG-MS690 Build/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Optimus M");
+                if (context.consume("LG-MS695 Build/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Optimus M+");
 
                 if (context.consume("LG-P350", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Optimus Me");
                 if (context.consume("LG-P500", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Optimus One");
