@@ -4,7 +4,8 @@ import java.util.*;
 /**
 * The brand can apply to Browsers, Devices or OSes.
 */
-public enum Brand {  SEZNAM("Seznam.cz", "http://fulltext.sblog.cz"),
+public enum Brand {  MEANPATH("meanpath, inc.", "https://meanpath.com"),
+                     SEZNAM("Seznam.cz", "http://fulltext.sblog.cz"),
                      MAILRU("mail.ru", "http://mail.ru"),
                      GIGABLAST("Gigablast", "http://www.gigablast.com"),
                      MAJESTIC12("Majestic 12", "http://www.majestic12.co.uk"),
@@ -63,6 +64,8 @@ public enum Brand {  SEZNAM("Seznam.cz", "http://fulltext.sblog.cz"),
                      PHOENIX("Phoenix Studio", "http://www.theworld.cn"),
                      DELL("Dell", "http://www.dell.com"),
                      COMPAQ("Compaq", "http://www.compaq.com"),
+                     KYOCERA("Kyocera", "http://global.kyocera.com"),
+                     LOGICOM("Logicom", "http://www.logicom-europe.com"),
                      UNKNOWN(""),
                      OTHER("Other"),
                      UNKNOWN_ANDROID("(Android)"),

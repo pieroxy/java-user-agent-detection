@@ -9,11 +9,17 @@ public class Bot {
     public BotFamily family;
     public String description;
     public String version;
+    public String url;
+    public Bot(Brand b, BotFamily f, String d, String v, String u) {
+        this(b,f,d,v);
+        url = u==null ? "" : u;
+    }
     public Bot(Brand b, BotFamily f, String d, String v) {
         family = f;
         description = d;
         version = v;
         vendor = b;
+        url = "";
     }
     public boolean equals(Object o) {
         if (o == null) return false;
@@ -23,10 +29,12 @@ public class Bot {
         if (d.family==null && family!=d.family) return false;
         if (d.description==null && description!=d.description) return false;
         if (d.version==null && version!=d.version) return false;
+        if (d.url==null && url!=d.url) return false;
         return
             ( (d.family==null && family==null) || d.family.equals(family) ) &&
             ( (d.description==null && description==null) || d.description.equals(description) ) &&
             ( (d.vendor==null && vendor==null) || d.vendor.equals(vendor) ) &&
+            ( (d.url==null && url==null) || d.url.equals(url) ) &&
             ( (d.version==null && version==null) || d.version.equals(version) );
     }
     public int hashCode() {
@@ -42,6 +50,10 @@ public class Bot {
         if (vendor!= null) {
             res *= 3;
             res += vendor.hashCode();
+        }
+        if (url!= null) {
+            res *= 3;
+            res += url.hashCode();
         }
         if (description != null) {
             res *= 3;

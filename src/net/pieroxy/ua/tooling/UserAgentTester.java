@@ -68,7 +68,7 @@ public class UserAgentTester {
           nbFailures++;
         }
         nbTests++;
-        lineNumber ++;
+        lineNumber++;
       }
       if (nbFailures > 0)
         System.out.println(nbFailures + "/" + nbTests + " FAILURES.");
@@ -173,6 +173,8 @@ public class UserAgentTester {
         : a.bot.description, b.bot == null ? null : b.bot.description);
     addErrorReport(result, "bot version", a.bot == null ? null : a.bot.version,
         b.bot == null ? null : b.bot.version);
+    addErrorReport(result, "bot url", a.bot == null ? null : a.bot.url,
+        b.bot == null ? null : b.bot.url);
 
     addErrorReport(result, "ignored tokens", a.ignoredTokens, b.ignoredTokens);
     addErrorReport(result, "unknown tokens", a.unknownTokens, b.unknownTokens);
@@ -216,7 +218,8 @@ public class UserAgentTester {
         browser_renderingEngine, os_family, os_description, os_version,
         device_type, device_brand, device_manufacturer, device, lang, country,
         comment, ignored_tokens, unknown_tokens, device_arch, browser_vendor,
-        os_vendor, bot_family, bot_vendor, bot_description, bot_version;
+        os_vendor, bot_family, bot_vendor, bot_description, bot_version,
+        bot_url;
 
     public UserAgentDetection(String line) {
       String[] elements = line.split("\t", -1);
@@ -243,21 +246,23 @@ public class UserAgentTester {
       bot_vendor = getStringOrNull(elements[22]);
       bot_family = getStringOrNull(elements[23]);
       bot_description = getStringOrNull(elements[24]);
-      bot_version= getStringOrNull(elements[25]);
+      bot_version = getStringOrNull(elements[25]);
+      bot_url = getStringOrNull(elements[26]);
     }
 
     private String getStringOrNull(String s) {
-      if (s == null || s.equals("NULL")) return null;
+      if (s == null || s.equals("NULL"))
+        return null;
       return s;
     }
-    
+
     public UserAgentDetectionResult getDetectionResult() {
       Bot bot = null;
-      BotFamily f = (bot_family == null || bot_family.length() == 0 || bot_family.equals("NULL")) ? null
-          : Enum.valueOf(BotFamily.class, bot_family);
+      BotFamily f = (bot_family == null || bot_family.length() == 0 || bot_family
+          .equals("NULL")) ? null : Enum.valueOf(BotFamily.class, bot_family);
       if (f != null) {
         bot = new Bot(Enum.valueOf(Brand.class, bot_vendor), f,
-            bot_description, bot_version);
+            bot_description, bot_version, bot_url);
       }
 
       return new UserAgentDetectionResult(
