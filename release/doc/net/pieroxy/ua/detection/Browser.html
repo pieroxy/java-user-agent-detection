@@ -125,11 +125,19 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#renderingEngine">renderingEngine</a></strong></code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#fullVersion">fullVersion</a></strong></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#renderingEngine">renderingEngine</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
 <td class="colFirst"><code><a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a></code></td>
 <td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#vendor">vendor</a></strong></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>java.lang.String</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#version">version</a></strong></code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -150,6 +158,21 @@ extends java.lang.Object</pre>
        <a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a>&nbsp;f,
        java.lang.String&nbsp;d,
        java.lang.String&nbsp;r)</code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#Browser(net.pieroxy.ua.detection.Brand, net.pieroxy.ua.detection.BrowserFamily, java.lang.String, java.lang.String, java.lang.String)">Browser</a></strong>(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;v,
+       <a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a>&nbsp;f,
+       java.lang.String&nbsp;d,
+       java.lang.String&nbsp;r,
+       java.lang.String&nbsp;oneVersion)</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#Browser(net.pieroxy.ua.detection.Brand, net.pieroxy.ua.detection.BrowserFamily, java.lang.String, java.lang.String, java.lang.String, java.lang.String)">Browser</a></strong>(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;v,
+       <a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a>&nbsp;f,
+       java.lang.String&nbsp;d,
+       java.lang.String&nbsp;r,
+       java.lang.String&nbsp;ver,
+       java.lang.String&nbsp;fullVer)</code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -173,6 +196,10 @@ extends java.lang.Object</pre>
 <tr class="rowColor">
 <td class="colFirst"><code>int</code></td>
 <td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#hashCode()">hashCode</a></strong>()</code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>void</code></td>
+<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#setFullVersionOneShot(java.lang.String)">setFullVersionOneShot</a></strong>(java.lang.String&nbsp;version)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -223,6 +250,24 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;java.lang.String description</pre>
 </li>
 </ul>
+<a name="version">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>version</h4>
+<pre>public&nbsp;java.lang.String version</pre>
+</li>
+</ul>
+<a name="fullVersion">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>fullVersion</h4>
+<pre>public&nbsp;java.lang.String fullVersion</pre>
+</li>
+</ul>
 <a name="renderingEngine">
 <!--   -->
 </a>
@@ -240,7 +285,33 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
+<a name="Browser(net.pieroxy.ua.detection.Brand, net.pieroxy.ua.detection.BrowserFamily, java.lang.String, java.lang.String, java.lang.String, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>Browser</h4>
+<pre>public&nbsp;Browser(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;v,
+       <a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a>&nbsp;f,
+       java.lang.String&nbsp;d,
+       java.lang.String&nbsp;r,
+       java.lang.String&nbsp;ver,
+       java.lang.String&nbsp;fullVer)</pre>
+</li>
+</ul>
 <a name="Browser(net.pieroxy.ua.detection.Brand, net.pieroxy.ua.detection.BrowserFamily, java.lang.String, java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>Browser</h4>
+<pre>public&nbsp;Browser(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;v,
+       <a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a>&nbsp;f,
+       java.lang.String&nbsp;d,
+       java.lang.String&nbsp;r)</pre>
+</li>
+</ul>
+<a name="Browser(net.pieroxy.ua.detection.Brand, net.pieroxy.ua.detection.BrowserFamily, java.lang.String, java.lang.String, java.lang.String)">
 <!--   -->
 </a>
 <ul class="blockListLast">
@@ -249,7 +320,8 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;Browser(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;v,
        <a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a>&nbsp;f,
        java.lang.String&nbsp;d,
-       java.lang.String&nbsp;r)</pre>
+       java.lang.String&nbsp;r,
+       java.lang.String&nbsp;oneVersion)</pre>
 </li>
 </ul>
 </li>
@@ -276,7 +348,7 @@ extends java.lang.Object</pre>
 <a name="hashCode()">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>hashCode</h4>
 <pre>public&nbsp;int&nbsp;hashCode()</pre>
@@ -284,6 +356,15 @@ extends java.lang.Object</pre>
 <dt><strong>Overrides:</strong></dt>
 <dd><code>hashCode</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
 </dl>
+</li>
+</ul>
+<a name="setFullVersionOneShot(java.lang.String)">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>setFullVersionOneShot</h4>
+<pre>public&nbsp;void&nbsp;setFullVersionOneShot(java.lang.String&nbsp;version)</pre>
 </li>
 </ul>
 </li>

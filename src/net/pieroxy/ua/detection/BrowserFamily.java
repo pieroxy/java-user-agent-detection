@@ -63,6 +63,10 @@ public enum BrowserFamily {  /**
     /**
     * Another browser not popular enough to warrant a place in this enum.
     */
+    LIBRARY("Library",false, false, false, true),
+    /**
+    * Another browser not popular enough to warrant a place in this enum.
+    */
     OTHER("Other",false, false, false, false),
     /**
     * Unknown browser
