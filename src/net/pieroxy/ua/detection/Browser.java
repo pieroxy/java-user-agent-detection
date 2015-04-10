@@ -33,12 +33,14 @@ public class Browser {
         if (d.family==null && family!=d.family) return false;
         if (d.description==null && description!=d.description) return false;
         if (d.version==null && version!=d.version) return false;
+        if (d.vendor==null && vendor!=d.vendor) return false;
         if (d.fullVersion==null && fullVersion!=d.fullVersion) return false;
         if (d.renderingEngine==null && renderingEngine!=d.renderingEngine) return false;
         return
             ( (d.family==null && family==null) || d.family.equals(family) ) &&
             ( (d.description==null && description==null) || d.description.equals(description) ) &&
             ( (d.version==null && version==null) || d.version.equals(version) ) &&
+            ( (d.vendor==null && vendor==null) || d.vendor.equals(vendor) ) &&
             ( (d.description==null && description==null) || d.description.equals(description) ) &&
             ( (d.fullVersion==null && fullVersion==null) || d.fullVersion.equals(fullVersion) ) &&
             ( (d.renderingEngine==null && renderingEngine==null) || d.renderingEngine.equals(renderingEngine) );
