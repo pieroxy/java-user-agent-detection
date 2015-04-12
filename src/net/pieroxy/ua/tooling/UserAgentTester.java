@@ -144,6 +144,10 @@ public class UserAgentTester {
     addErrorReport(result, "browser rendering engine",
         a.browser.renderingEngine, b.browser.renderingEngine);
     addErrorReport(result, "browser vendor", a.browser.vendor, b.browser.vendor);
+    addErrorReport(result, "browser version", a.browser.version,
+        b.browser.version);
+    addErrorReport(result, "browser fullVersion", a.browser.fullVersion,
+        b.browser.fullVersion);
 
     addErrorReport(result, "device", a.device, b.device);
     addErrorReport(result, "device architecture", a.device.architecture,
@@ -219,7 +223,7 @@ public class UserAgentTester {
         device_type, device_brand, device_manufacturer, device, lang, country,
         comment, ignored_tokens, unknown_tokens, device_arch, browser_vendor,
         os_vendor, bot_family, bot_vendor, bot_description, bot_version,
-        bot_url;
+        bot_url, browser_version, browser_fullVersion;
 
     public UserAgentDetection(String line) {
       String[] elements = line.split("\t", -1);
@@ -248,6 +252,8 @@ public class UserAgentTester {
       bot_description = getStringOrNull(elements[24]);
       bot_version = getStringOrNull(elements[25]);
       bot_url = getStringOrNull(elements[26]);
+      browser_version = getStringOrNull(elements[27]);
+      browser_fullVersion = getStringOrNull(elements[28]);
     }
 
     private String getStringOrNull(String s) {
@@ -271,10 +277,11 @@ public class UserAgentTester {
                   Brand.class, device_manufacturer), device), new Browser(
               Enum.valueOf(Brand.class, browser_vendor), Enum.valueOf(
                   BrowserFamily.class, browser_family), browser_description,
-              browser_renderingEngine), new OS(Enum.valueOf(Brand.class,
-              os_vendor), Enum.valueOf(OSFamily.class, os_family),
-              os_description, os_version), new Locale(lang, country), comment,
-          ignored_tokens, unknown_tokens, bot);
+              browser_renderingEngine, browser_version, browser_fullVersion),
+          new OS(Enum.valueOf(Brand.class, os_vendor), Enum.valueOf(
+              OSFamily.class, os_family), os_description, os_version),
+          new Locale(lang, country), comment, ignored_tokens, unknown_tokens,
+          bot);
 
     }
   }
