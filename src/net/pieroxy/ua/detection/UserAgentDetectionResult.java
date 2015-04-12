@@ -140,9 +140,19 @@ public class UserAgentDetectionResult {
     public Set<Extension> getExtensions() {
         return extensions;
     }
+    private List<Extension> getSortedExtensions() {
+        List<Extension> le = new ArrayList<Extension>();
+        le.addAll(getExtensions());
+        Collections.sort(le, new Comparator<Extension>() {
+            public int compare(Extension a, Extension b) {
+                return a.serialize().compareTo(b.serialize());
+            }
+        });
+        return le;
+    }
     public String getExtensionsAsString() {
         StringBuilder sb = new StringBuilder();
-        for (Extension e : getExtensions()) {
+        for (Extension e : getSortedExtensions()) {
             if (sb.length()>0) sb.append(", ");
             sb.append(e.toString());
         }
@@ -150,7 +160,7 @@ public class UserAgentDetectionResult {
     }
     public String serializeExtensions() {
         StringBuilder sb = new StringBuilder();
-        for (Extension e : getExtensions()) {
+        for (Extension e : getSortedExtensions()) {
             if (sb.length()>0) sb.append("^");
             sb.append(e.serialize());
         }
