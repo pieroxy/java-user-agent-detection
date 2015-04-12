@@ -117,23 +117,33 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Device.html#architecture">architecture</a></strong></code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Device.html#architecture">architecture</a></strong></code>
+<div class="block">The architecture of the device.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Device.html#brand">brand</a></strong></code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Device.html#brand">brand</a></strong></code>
+<div class="block">The brand of the device.</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Device.html#device">device</a></strong></code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Device.html#device">device</a></strong></code>
+<div class="block">The description of the device, for example "Galaxy S4" or "iPhone", ...</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../net/pieroxy/ua/detection/DeviceType.html" title="enum in net.pieroxy.ua.detection">DeviceType</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Device.html#deviceType">deviceType</a></strong></code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Device.html#deviceType">deviceType</a></strong></code>
+<div class="block">The type of the device.</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Device.html#manufacturer">manufacturer</a></strong></code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Device.html#manufacturer">manufacturer</a></strong></code>
+<div class="block">The manufacturer of the device.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -150,17 +160,21 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../net/pieroxy/ua/detection/Device.html#Device(java.lang.String, net.pieroxy.ua.detection.DeviceType, net.pieroxy.ua.detection.Brand, net.pieroxy.ua.detection.Brand, java.lang.String)">Device</a></strong>(java.lang.String&nbsp;a,
-      <a href="../../../../net/pieroxy/ua/detection/DeviceType.html" title="enum in net.pieroxy.ua.detection">DeviceType</a>&nbsp;dt,
-      <a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;b,
-      <a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;m,
-      java.lang.String&nbsp;d)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../../net/pieroxy/ua/detection/Device.html#Device(java.lang.String, net.pieroxy.ua.detection.DeviceType, net.pieroxy.ua.detection.Brand, net.pieroxy.ua.detection.Brand, java.lang.String)">Device</a></strong>(java.lang.String&nbsp;_architecture,
+      <a href="../../../../net/pieroxy/ua/detection/DeviceType.html" title="enum in net.pieroxy.ua.detection">DeviceType</a>&nbsp;_type,
+      <a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;_brand,
+      <a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;_manufacturer,
+      java.lang.String&nbsp;_description)</code>
+<div class="block">This constructor allows for every field to be defined.</div>
+</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../../../net/pieroxy/ua/detection/Device.html#Device(java.lang.String, net.pieroxy.ua.detection.DeviceType, net.pieroxy.ua.detection.Brand, java.lang.String)">Device</a></strong>(java.lang.String&nbsp;a,
-      <a href="../../../../net/pieroxy/ua/detection/DeviceType.html" title="enum in net.pieroxy.ua.detection">DeviceType</a>&nbsp;dt,
-      <a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;b,
-      java.lang.String&nbsp;d)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../../net/pieroxy/ua/detection/Device.html#Device(java.lang.String, net.pieroxy.ua.detection.DeviceType, net.pieroxy.ua.detection.Brand, java.lang.String)">Device</a></strong>(java.lang.String&nbsp;_architecture,
+      <a href="../../../../net/pieroxy/ua/detection/DeviceType.html" title="enum in net.pieroxy.ua.detection">DeviceType</a>&nbsp;_type,
+      <a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;_brand,
+      java.lang.String&nbsp;_description)</code>
+<div class="block">This constructor does not specify the <code>manufacturer</code> and assumes it is the same as the <code>brand</code>.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -220,6 +234,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>deviceType</h4>
 <pre>public&nbsp;<a href="../../../../net/pieroxy/ua/detection/DeviceType.html" title="enum in net.pieroxy.ua.detection">DeviceType</a> deviceType</pre>
+<div class="block">The type of the device. For example, COMPUTER, PHONE, TABLET, ...</div>
 </li>
 </ul>
 <a name="brand">
@@ -229,6 +244,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>brand</h4>
 <pre>public&nbsp;<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a> brand</pre>
+<div class="block">The brand of the device. This is in general the manufacturer but can be different for example in the case of the Nexus line of Android devices.
+ For those, the brand will be GOOGLE.</div>
 </li>
 </ul>
 <a name="manufacturer">
@@ -238,6 +255,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>manufacturer</h4>
 <pre>public&nbsp;<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a> manufacturer</pre>
+<div class="block">The manufacturer of the device. This is in general the brand but can be different for example in the case of the Nexus line of Android devices.
+ For those, the manufacturer will be either ASUS, SAMSUNG, LG, whoever built the device.</div>
 </li>
 </ul>
 <a name="architecture">
@@ -247,6 +266,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>architecture</h4>
 <pre>public&nbsp;java.lang.String architecture</pre>
+<div class="block">The architecture of the device. May be "i386", "arm", "x86_64", "Power PC" or any other architecture.</div>
 </li>
 </ul>
 <a name="device">
@@ -256,6 +276,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>device</h4>
 <pre>public&nbsp;java.lang.String device</pre>
+<div class="block">The description of the device, for example "Galaxy S4" or "iPhone", ...</div>
 </li>
 </ul>
 </li>
@@ -272,10 +293,11 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>Device</h4>
-<pre>public&nbsp;Device(java.lang.String&nbsp;a,
-      <a href="../../../../net/pieroxy/ua/detection/DeviceType.html" title="enum in net.pieroxy.ua.detection">DeviceType</a>&nbsp;dt,
-      <a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;b,
-      java.lang.String&nbsp;d)</pre>
+<pre>public&nbsp;Device(java.lang.String&nbsp;_architecture,
+      <a href="../../../../net/pieroxy/ua/detection/DeviceType.html" title="enum in net.pieroxy.ua.detection">DeviceType</a>&nbsp;_type,
+      <a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;_brand,
+      java.lang.String&nbsp;_description)</pre>
+<div class="block">This constructor does not specify the <code>manufacturer</code> and assumes it is the same as the <code>brand</code>.</div>
 </li>
 </ul>
 <a name="Device(java.lang.String, net.pieroxy.ua.detection.DeviceType, net.pieroxy.ua.detection.Brand, net.pieroxy.ua.detection.Brand, java.lang.String)">
@@ -284,11 +306,12 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>Device</h4>
-<pre>public&nbsp;Device(java.lang.String&nbsp;a,
-      <a href="../../../../net/pieroxy/ua/detection/DeviceType.html" title="enum in net.pieroxy.ua.detection">DeviceType</a>&nbsp;dt,
-      <a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;b,
-      <a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;m,
-      java.lang.String&nbsp;d)</pre>
+<pre>public&nbsp;Device(java.lang.String&nbsp;_architecture,
+      <a href="../../../../net/pieroxy/ua/detection/DeviceType.html" title="enum in net.pieroxy.ua.detection">DeviceType</a>&nbsp;_type,
+      <a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;_brand,
+      <a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;_manufacturer,
+      java.lang.String&nbsp;_description)</pre>
+<div class="block">This constructor allows for every field to be defined.</div>
 </li>
 </ul>
 </li>
@@ -307,7 +330,7 @@ extends java.lang.Object</pre>
 <h4>setBrandAndManufacturer</h4>
 <pre>public&nbsp;void&nbsp;setBrandAndManufacturer(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;b)</pre>
 <div class="block">Sets the brand and the manufacturer of the device.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>b</code> - the Brand to set i both fields.</dd></dl>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>b</code> - the Brand to set in both fields.</dd></dl>
 </li>
 </ul>
 <a name="equals(java.lang.Object)">

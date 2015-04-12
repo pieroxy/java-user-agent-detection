@@ -117,23 +117,33 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Bot.html#description">description</a></strong></code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Bot.html#description">description</a></strong></code>
+<div class="block">The description of the bot.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../net/pieroxy/ua/detection/BotFamily.html" title="enum in net.pieroxy.ua.detection">BotFamily</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Bot.html#family">family</a></strong></code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Bot.html#family">family</a></strong></code>
+<div class="block">The family of the bot.</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Bot.html#url">url</a></strong></code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Bot.html#url">url</a></strong></code>
+<div class="block">The URL the bot points at or a url describing the bot.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Bot.html#vendor">vendor</a></strong></code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Bot.html#vendor">vendor</a></strong></code>
+<div class="block">The vendor, usually the company that operates the bot, if known.</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Bot.html#version">version</a></strong></code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Bot.html#version">version</a></strong></code>
+<div class="block">The version number</div>
+</td>
 </tr>
 </table>
 </li>
@@ -150,17 +160,21 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../net/pieroxy/ua/detection/Bot.html#Bot(net.pieroxy.ua.detection.Brand, net.pieroxy.ua.detection.BotFamily, java.lang.String, java.lang.String)">Bot</a></strong>(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;b,
-   <a href="../../../../net/pieroxy/ua/detection/BotFamily.html" title="enum in net.pieroxy.ua.detection">BotFamily</a>&nbsp;f,
-   java.lang.String&nbsp;d,
-   java.lang.String&nbsp;v)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../../net/pieroxy/ua/detection/Bot.html#Bot(net.pieroxy.ua.detection.Brand, net.pieroxy.ua.detection.BotFamily, java.lang.String, java.lang.String)">Bot</a></strong>(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;_brand,
+   <a href="../../../../net/pieroxy/ua/detection/BotFamily.html" title="enum in net.pieroxy.ua.detection">BotFamily</a>&nbsp;_family,
+   java.lang.String&nbsp;_description,
+   java.lang.String&nbsp;_version)</code>
+<div class="block">This constructor of the Bot  object does not specify the url of the bot, initializing it to an empty string.</div>
+</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../../../net/pieroxy/ua/detection/Bot.html#Bot(net.pieroxy.ua.detection.Brand, net.pieroxy.ua.detection.BotFamily, java.lang.String, java.lang.String, java.lang.String)">Bot</a></strong>(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;b,
-   <a href="../../../../net/pieroxy/ua/detection/BotFamily.html" title="enum in net.pieroxy.ua.detection">BotFamily</a>&nbsp;f,
-   java.lang.String&nbsp;d,
-   java.lang.String&nbsp;v,
-   java.lang.String&nbsp;u)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../../net/pieroxy/ua/detection/Bot.html#Bot(net.pieroxy.ua.detection.Brand, net.pieroxy.ua.detection.BotFamily, java.lang.String, java.lang.String, java.lang.String)">Bot</a></strong>(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;_brand,
+   <a href="../../../../net/pieroxy/ua/detection/BotFamily.html" title="enum in net.pieroxy.ua.detection">BotFamily</a>&nbsp;_family,
+   java.lang.String&nbsp;_description,
+   java.lang.String&nbsp;_version,
+   java.lang.String&nbsp;_url)</code>
+<div class="block">This is the most detailed constructor of the Bot object.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -214,6 +228,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>vendor</h4>
 <pre>public&nbsp;<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a> vendor</pre>
+<div class="block">The vendor, usually the company that operates the bot, if known.</div>
 </li>
 </ul>
 <a name="family">
@@ -223,6 +238,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>family</h4>
 <pre>public&nbsp;<a href="../../../../net/pieroxy/ua/detection/BotFamily.html" title="enum in net.pieroxy.ua.detection">BotFamily</a> family</pre>
+<div class="block">The family of the bot. SPAMBOT, WEB_CRAWLER, ...</div>
 </li>
 </ul>
 <a name="description">
@@ -232,6 +248,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>description</h4>
 <pre>public&nbsp;java.lang.String description</pre>
+<div class="block">The description of the bot. For example "Google Bot" or "Flipboard Proxy".</div>
 </li>
 </ul>
 <a name="version">
@@ -241,6 +258,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>version</h4>
 <pre>public&nbsp;java.lang.String version</pre>
+<div class="block">The version number</div>
 </li>
 </ul>
 <a name="url">
@@ -250,6 +268,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>url</h4>
 <pre>public&nbsp;java.lang.String url</pre>
+<div class="block">The URL the bot points at or a url describing the bot.</div>
 </li>
 </ul>
 </li>
@@ -266,11 +285,13 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>Bot</h4>
-<pre>public&nbsp;Bot(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;b,
-   <a href="../../../../net/pieroxy/ua/detection/BotFamily.html" title="enum in net.pieroxy.ua.detection">BotFamily</a>&nbsp;f,
-   java.lang.String&nbsp;d,
-   java.lang.String&nbsp;v,
-   java.lang.String&nbsp;u)</pre>
+<pre>public&nbsp;Bot(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;_brand,
+   <a href="../../../../net/pieroxy/ua/detection/BotFamily.html" title="enum in net.pieroxy.ua.detection">BotFamily</a>&nbsp;_family,
+   java.lang.String&nbsp;_description,
+   java.lang.String&nbsp;_version,
+   java.lang.String&nbsp;_url)</pre>
+<div class="block">This is the most detailed constructor of the Bot object. You can specifiy all of its fields.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>_brand</code> - The vendor of this bot.</dd><dd><code>_family</code> - The family of this bot.</dd><dd><code>_description</code> - The text description of this bot.</dd><dd><code>_version</code> - The vendor of this bot.</dd><dd><code>_fullVersion</code> - The url of this bot.</dd></dl>
 </li>
 </ul>
 <a name="Bot(net.pieroxy.ua.detection.Brand, net.pieroxy.ua.detection.BotFamily, java.lang.String, java.lang.String)">
@@ -279,10 +300,12 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>Bot</h4>
-<pre>public&nbsp;Bot(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;b,
-   <a href="../../../../net/pieroxy/ua/detection/BotFamily.html" title="enum in net.pieroxy.ua.detection">BotFamily</a>&nbsp;f,
-   java.lang.String&nbsp;d,
-   java.lang.String&nbsp;v)</pre>
+<pre>public&nbsp;Bot(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;_brand,
+   <a href="../../../../net/pieroxy/ua/detection/BotFamily.html" title="enum in net.pieroxy.ua.detection">BotFamily</a>&nbsp;_family,
+   java.lang.String&nbsp;_description,
+   java.lang.String&nbsp;_version)</pre>
+<div class="block">This constructor of the Bot  object does not specify the url of the bot, initializing it to an empty string.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>_brand</code> - The vendor of this bot.</dd><dd><code>_family</code> - The family of this bot.</dd><dd><code>_description</code> - The text description of this bot.</dd><dd><code>_version</code> - The vendor of this bot.</dd></dl>
 </li>
 </ul>
 </li>

@@ -116,7 +116,7 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colOne"><code><strong><a href="../../../../net/pieroxy/ua/detection/Extension.html#Extension(java.lang.String)">Extension</a></strong>(java.lang.String&nbsp;s)</code>
-<div class="block">equivalent to calling <code>new Extension(s, null)</code>.</div>
+<div class="block">Will try to find both name and version in the string, separated by a '#' character.</div>
 </td>
 </tr>
 <tr class="rowColor">
@@ -213,7 +213,8 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>Extension</h4>
 <pre>public&nbsp;Extension(java.lang.String&nbsp;s)</pre>
-<div class="block">equivalent to calling <code>new Extension(s, null)</code>.</div>
+<div class="block">Will try to find both name and version in the string, separated by a '#' character. If the separator is not found
+ sets the <code>version</code> to an empty string.</div>
 </li>
 </ul>
 </li>

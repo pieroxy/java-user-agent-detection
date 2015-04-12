@@ -138,18 +138,26 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../net/pieroxy/ua/detection/Locale.html#Locale()">Locale</a></strong>()</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../../net/pieroxy/ua/detection/Locale.html#Locale()">Locale</a></strong>()</code>
+<div class="block">This constructor will set both <code>language</code> and <code>country</code> to their respective <code>UNKNOWN</code> value.</div>
+</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../../../net/pieroxy/ua/detection/Locale.html#Locale(net.pieroxy.ua.detection.Language)">Locale</a></strong>(<a href="../../../../net/pieroxy/ua/detection/Language.html" title="enum in net.pieroxy.ua.detection">Language</a>&nbsp;l)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../../net/pieroxy/ua/detection/Locale.html#Locale(net.pieroxy.ua.detection.Language)">Locale</a></strong>(<a href="../../../../net/pieroxy/ua/detection/Language.html" title="enum in net.pieroxy.ua.detection">Language</a>&nbsp;l)</code>
+<div class="block">This constructor defines the <code>language</code> and sets the <code>country</code> to UNKNOWN.</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colOne"><code><strong><a href="../../../../net/pieroxy/ua/detection/Locale.html#Locale(net.pieroxy.ua.detection.Language, net.pieroxy.ua.detection.Country)">Locale</a></strong>(<a href="../../../../net/pieroxy/ua/detection/Language.html" title="enum in net.pieroxy.ua.detection">Language</a>&nbsp;l,
-      <a href="../../../../net/pieroxy/ua/detection/Country.html" title="enum in net.pieroxy.ua.detection">Country</a>&nbsp;c)</code>&nbsp;</td>
+      <a href="../../../../net/pieroxy/ua/detection/Country.html" title="enum in net.pieroxy.ua.detection">Country</a>&nbsp;c)</code>
+<div class="block">This constructor defines both <code>kanguage</code> and <code>country</code>.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colOne"><code><strong><a href="../../../../net/pieroxy/ua/detection/Locale.html#Locale(java.lang.String, java.lang.String)">Locale</a></strong>(java.lang.String&nbsp;l,
-      java.lang.String&nbsp;c)</code>&nbsp;</td>
+      java.lang.String&nbsp;c)</code>
+<div class="block">This constructor defines both <code>kanguage</code> and <code>country</code> from their string representation.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -229,6 +237,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>Locale</h4>
 <pre>public&nbsp;Locale()</pre>
+<div class="block">This constructor will set both <code>language</code> and <code>country</code> to their respective <code>UNKNOWN</code> value.</div>
 </li>
 </ul>
 <a name="Locale(net.pieroxy.ua.detection.Language)">
@@ -238,6 +247,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>Locale</h4>
 <pre>public&nbsp;Locale(<a href="../../../../net/pieroxy/ua/detection/Language.html" title="enum in net.pieroxy.ua.detection">Language</a>&nbsp;l)</pre>
+<div class="block">This constructor defines the <code>language</code> and sets the <code>country</code> to UNKNOWN.</div>
 </li>
 </ul>
 <a name="Locale(net.pieroxy.ua.detection.Language, net.pieroxy.ua.detection.Country)">
@@ -248,6 +258,7 @@ extends java.lang.Object</pre>
 <h4>Locale</h4>
 <pre>public&nbsp;Locale(<a href="../../../../net/pieroxy/ua/detection/Language.html" title="enum in net.pieroxy.ua.detection">Language</a>&nbsp;l,
       <a href="../../../../net/pieroxy/ua/detection/Country.html" title="enum in net.pieroxy.ua.detection">Country</a>&nbsp;c)</pre>
+<div class="block">This constructor defines both <code>kanguage</code> and <code>country</code>.</div>
 </li>
 </ul>
 <a name="Locale(java.lang.String, java.lang.String)">
@@ -258,6 +269,10 @@ extends java.lang.Object</pre>
 <h4>Locale</h4>
 <pre>public&nbsp;Locale(java.lang.String&nbsp;l,
       java.lang.String&nbsp;c)</pre>
+<div class="block">This constructor defines both <code>kanguage</code> and <code>country</code> from their string representation.
+ Their string representation is the 2-letter ISO code for the country and the language. Thay can be provided
+ in either uppercase or lowercase form but not in a mixed-case form. If one or both parameters cannot be found
+ in the known languages/countries, they are set to their respective UNKNOWN value.</div>
 </li>
 </ul>
 </li>

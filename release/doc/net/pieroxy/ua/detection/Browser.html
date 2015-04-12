@@ -117,27 +117,39 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#description">description</a></strong></code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#description">description</a></strong></code>
+<div class="block">The precise description of the browser.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#family">family</a></strong></code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#family">family</a></strong></code>
+<div class="block">The general family of the browser.</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#fullVersion">fullVersion</a></strong></code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#fullVersion">fullVersion</a></strong></code>
+<div class="block">The full version number of the browser.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#renderingEngine">renderingEngine</a></strong></code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#renderingEngine">renderingEngine</a></strong></code>
+<div class="block">A text description of the rendering engine.</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#vendor">vendor</a></strong></code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#vendor">vendor</a></strong></code>
+<div class="block">The company shipping the browser</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#version">version</a></strong></code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#version">version</a></strong></code>
+<div class="block">The two first numbers in the version of the browser.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -154,25 +166,31 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#Browser(net.pieroxy.ua.detection.Brand, net.pieroxy.ua.detection.BrowserFamily, java.lang.String, java.lang.String)">Browser</a></strong>(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;v,
-       <a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a>&nbsp;f,
-       java.lang.String&nbsp;d,
-       java.lang.String&nbsp;r)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#Browser(net.pieroxy.ua.detection.Brand, net.pieroxy.ua.detection.BrowserFamily, java.lang.String, java.lang.String)">Browser</a></strong>(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;_brand,
+       <a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a>&nbsp;_family,
+       java.lang.String&nbsp;_description,
+       java.lang.String&nbsp;_renderingEngine)</code>
+<div class="block">This constructor of the Browser object does not specifie any of the version fields.</div>
+</td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#Browser(net.pieroxy.ua.detection.Brand, net.pieroxy.ua.detection.BrowserFamily, java.lang.String, java.lang.String, java.lang.String)">Browser</a></strong>(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;v,
-       <a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a>&nbsp;f,
-       java.lang.String&nbsp;d,
-       java.lang.String&nbsp;r,
-       java.lang.String&nbsp;oneVersion)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#Browser(net.pieroxy.ua.detection.Brand, net.pieroxy.ua.detection.BrowserFamily, java.lang.String, java.lang.String, java.lang.String)">Browser</a></strong>(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;_brand,
+       <a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a>&nbsp;_family,
+       java.lang.String&nbsp;_description,
+       java.lang.String&nbsp;_renderingEngine,
+       java.lang.String&nbsp;_oneVersion)</code>
+<div class="block">This constructor of the Browser object only specifies the <code>fullVersion</code>.</div>
+</td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#Browser(net.pieroxy.ua.detection.Brand, net.pieroxy.ua.detection.BrowserFamily, java.lang.String, java.lang.String, java.lang.String, java.lang.String)">Browser</a></strong>(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;v,
-       <a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a>&nbsp;f,
-       java.lang.String&nbsp;d,
-       java.lang.String&nbsp;r,
-       java.lang.String&nbsp;ver,
-       java.lang.String&nbsp;fullVer)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#Browser(net.pieroxy.ua.detection.Brand, net.pieroxy.ua.detection.BrowserFamily, java.lang.String, java.lang.String, java.lang.String, java.lang.String)">Browser</a></strong>(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;_brand,
+       <a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a>&nbsp;_family,
+       java.lang.String&nbsp;_description,
+       java.lang.String&nbsp;_renderingEngine,
+       java.lang.String&nbsp;_version,
+       java.lang.String&nbsp;_fullVersion)</code>
+<div class="block">This is the most detailed constructor of the Browser object, where everything can be specified.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -199,7 +217,9 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#setFullVersionOneShot(java.lang.String)">setFullVersionOneShot</a></strong>(java.lang.String&nbsp;version)</code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#setFullVersionOneShot(java.lang.String)">setFullVersionOneShot</a></strong>(java.lang.String&nbsp;version)</code>
+<div class="block">This method sets both <code>version</code> and <code>fullVersion</code> attributes of this Browser object.</div>
+</td>
 </tr>
 </table>
 <ul class="blockList">
@@ -230,6 +250,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>vendor</h4>
 <pre>public&nbsp;<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a> vendor</pre>
+<div class="block">The company shipping the browser</div>
 </li>
 </ul>
 <a name="family">
@@ -239,6 +260,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>family</h4>
 <pre>public&nbsp;<a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a> family</pre>
+<div class="block">The general family of the browser. Could be FIREFOX, IE, CHROME, LIBRARY (means a program not being a browser), ...</div>
 </li>
 </ul>
 <a name="description">
@@ -248,6 +270,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>description</h4>
 <pre>public&nbsp;java.lang.String description</pre>
+<div class="block">The precise description of the browser. Can be "Firefox" or "Galeon" or "Seamonkey", ...</div>
 </li>
 </ul>
 <a name="version">
@@ -257,6 +280,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>version</h4>
 <pre>public&nbsp;java.lang.String version</pre>
+<div class="block">The two first numbers in the version of the browser. Ex: 10.3 or 35.1</div>
 </li>
 </ul>
 <a name="fullVersion">
@@ -266,6 +290,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>fullVersion</h4>
 <pre>public&nbsp;java.lang.String fullVersion</pre>
+<div class="block">The full version number of the browser. Ex: 1.6.0.04 or 41.0.2272.76</div>
 </li>
 </ul>
 <a name="renderingEngine">
@@ -275,6 +300,9 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>renderingEngine</h4>
 <pre>public&nbsp;java.lang.String renderingEngine</pre>
+<div class="block">A text description of the rendering engine. It is usually made of the name of the
+ rendering engine and its version, separated by a space. For example "WebKit 537.36" or "Gecko 6.0.2".
+ Empty if no rendering engine could be found (for example a library)</div>
 </li>
 </ul>
 </li>
@@ -291,12 +319,14 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>Browser</h4>
-<pre>public&nbsp;Browser(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;v,
-       <a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a>&nbsp;f,
-       java.lang.String&nbsp;d,
-       java.lang.String&nbsp;r,
-       java.lang.String&nbsp;ver,
-       java.lang.String&nbsp;fullVer)</pre>
+<pre>public&nbsp;Browser(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;_brand,
+       <a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a>&nbsp;_family,
+       java.lang.String&nbsp;_description,
+       java.lang.String&nbsp;_renderingEngine,
+       java.lang.String&nbsp;_version,
+       java.lang.String&nbsp;_fullVersion)</pre>
+<div class="block">This is the most detailed constructor of the Browser object, where everything can be specified.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>_brand</code> - The vendor of this browser.</dd><dd><code>_family</code> - The family of this browser.</dd><dd><code>_description</code> - The text description of this browser.</dd><dd><code>_renderingEngine</code> - The rendering engine of this browser.</dd><dd><code>_version</code> - The vendor of this browser.</dd><dd><code>_fullVersion</code> - The vendor of this browser.</dd></dl>
 </li>
 </ul>
 <a name="Browser(net.pieroxy.ua.detection.Brand, net.pieroxy.ua.detection.BrowserFamily, java.lang.String, java.lang.String)">
@@ -305,10 +335,12 @@ extends java.lang.Object</pre>
 <ul class="blockList">
 <li class="blockList">
 <h4>Browser</h4>
-<pre>public&nbsp;Browser(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;v,
-       <a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a>&nbsp;f,
-       java.lang.String&nbsp;d,
-       java.lang.String&nbsp;r)</pre>
+<pre>public&nbsp;Browser(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;_brand,
+       <a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a>&nbsp;_family,
+       java.lang.String&nbsp;_description,
+       java.lang.String&nbsp;_renderingEngine)</pre>
+<div class="block">This constructor of the Browser object does not specifie any of the version fields. They will be left as empty strings.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>_brand</code> - The vendor of this browser.</dd><dd><code>_family</code> - The family of this browser.</dd><dd><code>_description</code> - The text description of this browser.</dd><dd><code>_renderingEngine</code> - The rendering engine of this browser.</dd><dd><code>_version</code> - The vendor of this browser.</dd><dd><code>_fullVersion</code> - The vendor of this browser.</dd></dl>
 </li>
 </ul>
 <a name="Browser(net.pieroxy.ua.detection.Brand, net.pieroxy.ua.detection.BrowserFamily, java.lang.String, java.lang.String, java.lang.String)">
@@ -317,11 +349,13 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>Browser</h4>
-<pre>public&nbsp;Browser(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;v,
-       <a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a>&nbsp;f,
-       java.lang.String&nbsp;d,
-       java.lang.String&nbsp;r,
-       java.lang.String&nbsp;oneVersion)</pre>
+<pre>public&nbsp;Browser(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;_brand,
+       <a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a>&nbsp;_family,
+       java.lang.String&nbsp;_description,
+       java.lang.String&nbsp;_renderingEngine,
+       java.lang.String&nbsp;_oneVersion)</pre>
+<div class="block">This constructor of the Browser object only specifies the <code>fullVersion</code>. The <code>version</code> is deduced by calling <code>setFullVersionOneShot(oneVersion)</code>.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>_brand</code> - The vendor of this browser.</dd><dd><code>_family</code> - The family of this browser.</dd><dd><code>_description</code> - The text description of this browser.</dd><dd><code>_renderingEngine</code> - The rendering engine of this browser.</dd><dd><code>_version</code> - The vendor of this browser.</dd><dd><code>_fullVersion</code> - The vendor of this browser.</dd></dl>
 </li>
 </ul>
 </li>
@@ -365,6 +399,9 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>setFullVersionOneShot</h4>
 <pre>public&nbsp;void&nbsp;setFullVersionOneShot(java.lang.String&nbsp;version)</pre>
+<div class="block">This method sets both <code>version</code> and <code>fullVersion</code> attributes of this Browser object.
+ It will set the <code>version</code> as the full version truncated to the first non numeric character, leaving the first '.' character in the mix.</div>
+<dl><dt><span class="strong">Parameters:</span></dt><dd><code>version</code> - The full version number.</dd></dl>
 </li>
 </ul>
 </li>

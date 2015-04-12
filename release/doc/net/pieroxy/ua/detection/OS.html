@@ -117,19 +117,27 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/OS.html#description">description</a></strong></code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/OS.html#description">description</a></strong></code>
+<div class="block">The description is the name of the OS.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../net/pieroxy/ua/detection/OSFamily.html" title="enum in net.pieroxy.ua.detection">OSFamily</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/OS.html#family">family</a></strong></code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/OS.html#family">family</a></strong></code>
+<div class="block">The family of this OS, like WINDOWS, LINUX, ANDROID, etc...</div>
+</td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/OS.html#vendor">vendor</a></strong></code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/OS.html#vendor">vendor</a></strong></code>
+<div class="block">The vendor, usually the company that ships (or shipped) the operating system.</div>
+</td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/OS.html#version">version</a></strong></code>&nbsp;</td>
+<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/OS.html#version">version</a></strong></code>
+<div class="block">The version is precising which version of the OS is used.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -146,10 +154,12 @@ extends java.lang.Object</pre>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../net/pieroxy/ua/detection/OS.html#OS(net.pieroxy.ua.detection.Brand, net.pieroxy.ua.detection.OSFamily, java.lang.String, java.lang.String)">OS</a></strong>(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;ve,
-  <a href="../../../../net/pieroxy/ua/detection/OSFamily.html" title="enum in net.pieroxy.ua.detection">OSFamily</a>&nbsp;f,
-  java.lang.String&nbsp;d,
-  java.lang.String&nbsp;v)</code>&nbsp;</td>
+<td class="colOne"><code><strong><a href="../../../../net/pieroxy/ua/detection/OS.html#OS(net.pieroxy.ua.detection.Brand, net.pieroxy.ua.detection.OSFamily, java.lang.String, java.lang.String)">OS</a></strong>(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;_brand,
+  <a href="../../../../net/pieroxy/ua/detection/OSFamily.html" title="enum in net.pieroxy.ua.detection">OSFamily</a>&nbsp;_family,
+  java.lang.String&nbsp;_description,
+  java.lang.String&nbsp;_version)</code>
+<div class="block">This constructor of the OS object allows to set all of its fields.</div>
+</td>
 </tr>
 </table>
 </li>
@@ -203,6 +213,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>vendor</h4>
 <pre>public&nbsp;<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a> vendor</pre>
+<div class="block">The vendor, usually the company that ships (or shipped) the operating system.</div>
 </li>
 </ul>
 <a name="family">
@@ -212,6 +223,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>family</h4>
 <pre>public&nbsp;<a href="../../../../net/pieroxy/ua/detection/OSFamily.html" title="enum in net.pieroxy.ua.detection">OSFamily</a> family</pre>
+<div class="block">The family of this OS, like WINDOWS, LINUX, ANDROID, etc...</div>
 </li>
 </ul>
 <a name="description">
@@ -221,6 +233,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>description</h4>
 <pre>public&nbsp;java.lang.String description</pre>
+<div class="block">The description is the name of the OS. For example: "Windows" or "Ubuntu" or "iOS"</div>
 </li>
 </ul>
 <a name="version">
@@ -230,6 +243,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <h4>version</h4>
 <pre>public&nbsp;java.lang.String version</pre>
+<div class="block">The version is precising which version of the OS is used. It can be "Vista" or "XP SP2" (for windows) or "7.1.2" for iOS.</div>
 </li>
 </ul>
 </li>
@@ -246,10 +260,11 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>OS</h4>
-<pre>public&nbsp;OS(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;ve,
-  <a href="../../../../net/pieroxy/ua/detection/OSFamily.html" title="enum in net.pieroxy.ua.detection">OSFamily</a>&nbsp;f,
-  java.lang.String&nbsp;d,
-  java.lang.String&nbsp;v)</pre>
+<pre>public&nbsp;OS(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;_brand,
+  <a href="../../../../net/pieroxy/ua/detection/OSFamily.html" title="enum in net.pieroxy.ua.detection">OSFamily</a>&nbsp;_family,
+  java.lang.String&nbsp;_description,
+  java.lang.String&nbsp;_version)</pre>
+<div class="block">This constructor of the OS object allows to set all of its fields.</div>
 </li>
 </ul>
 </li>
