@@ -135,7 +135,7 @@ public String getLabel() {
     return label;
 }
 /**
-* @return the url of the official website of this brand. If the website is not available anymore, the english wikipedia page of the brand is returned, ot the url for the company having bought it, or the official notice of acquisition.
+* @return the url of the official website of this brand. If the website is not available anymore, the english wikipedia page of the brand is returned, or the url for the company having bought it, or the official notice of acquisition.
 */
 public String getWebsite() {
     return website;

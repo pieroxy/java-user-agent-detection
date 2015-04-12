@@ -4,21 +4,42 @@ import java.util.*;
 /**
 * Describe a bot, which is a program that access sites automatically rather than a human browsing the web.
 */
-public class Bot {
+public class Bot { /** The vendor, usually the company that operates the bot, if known. */
     public Brand vendor;
+    /** The family of the bot. SPAMBOT, WEB_CRAWLER, ... */
     public BotFamily family;
+    /** The description of the bot. For example "Google Bot" or "Flipboard Proxy".  */
     public String description;
+    /** The version number */
     public String version;
+    /** The URL the bot points at or a url describing the bot. */
     public String url;
-    public Bot(Brand b, BotFamily f, String d, String v, String u) {
-        this(b,f,d,v);
-        url = u==null ? "" : u;
+
+    /**
+     * This is the most detailed constructor of the Bot object. You can specifiy all of its fields.
+     * @param  _brand           The vendor of this bot.
+     * @param  _family          The family of this bot.
+     * @param  _description     The text description of this bot.
+     * @param  _version         The vendor of this bot.
+     * @param  _fullVersion     The url of this bot.
+    */
+    public Bot(Brand _brand, BotFamily _family, String _description, String _version, String _url) {
+        this(_brand,_family,_description,_version);
+        url = _url==null ? "" : _url;
     }
-    public Bot(Brand b, BotFamily f, String d, String v) {
-        family = f;
-        description = d;
-        version = v;
-        vendor = b;
+
+    /**
+     * This constructor of the Bot  object does not specify the url of the bot, initializing it to an empty string.
+     * @param  _brand           The vendor of this bot.
+     * @param  _family          The family of this bot.
+     * @param  _description     The text description of this bot.
+     * @param  _version         The vendor of this bot.
+    */
+    public Bot(Brand _brand, BotFamily _family, String _description, String _version) {
+        family = _family;
+        description = _description;
+        version = _version;
+        vendor = _brand;
         url = "";
     }
     public boolean equals(Object o) {

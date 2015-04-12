@@ -5,25 +5,34 @@ import java.util.*;
 * Describes the device that produced the user-agent string.
 */
 public class Device {
+    /** The type of the device. For example, COMPUTER, PHONE, TABLET, ... */
     public DeviceType deviceType;
+    /** The brand of the device. This is in general the manufacturer but can be different for example in the case of the Nexus line of Android devices.
+     * For those, the brand will be GOOGLE. */
     public Brand brand;
+    /** The manufacturer of the device. This is in general the brand but can be different for example in the case of the Nexus line of Android devices.
+     * For those, the manufacturer will be either ASUS, SAMSUNG, LG, whoever built the device. */
     public Brand manufacturer;
+    /** The architecture of the device. May be "i386", "arm", "x86_64", "Power PC" or any other architecture. */
     public String architecture;
+    /** The description of the device, for example "Galaxy S4" or "iPhone", ... */
     public String device;
-    public Device(String a, DeviceType dt, Brand b, String d) {
-        this(a,dt,b,b,d);
+    /** This constructor does not specify the <code>manufacturer</code> and assumes it is the same as the <code>brand</code>. */
+    public Device(String _architecture, DeviceType _type, Brand _brand, String _description) {
+        this(_architecture,_type,_brand,_brand,_description);
     }
-    public Device(String a, DeviceType dt, Brand b, Brand m, String d) {
-        brand = b;
-        manufacturer = m;
-        device = d;
-        deviceType = dt;
-        architecture = a;
+    /** This constructor allows for every field to be defined. */
+    public Device(String _architecture, DeviceType _type, Brand _brand, Brand _manufacturer, String _description) {
+        brand = _brand;
+        manufacturer = _manufacturer;
+        device = _description;
+        deviceType = _type;
+        architecture = _architecture;
     }
 
     /**
     * Sets the brand and the manufacturer of the device.
-    * @param b the Brand to set i both fields.
+    * @param b the Brand to set in both fields.
     */
     public void setBrandAndManufacturer(Brand b) {
         brand=b;

@@ -25,7 +25,9 @@ public class Extension {
         version = (v==null) ? "" : v;
     }
 
-    /** equivalent to calling <code>new Extension(s, null)</code>. */
+    /** Will try to find both name and version in the string, separated by a '#' character. If the separator is not found
+     * sets the <code>version</code> to an empty string.
+     */
     public Extension(String s) {
         if (s.contains("#")) {
             String[]ss = s.split("#");

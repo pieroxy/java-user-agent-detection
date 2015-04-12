@@ -4,27 +4,66 @@ import java.util.*;
 /**
 * A Browser is made of a Brand, a BrowserFamily, a description and a rendering engine. Description and rendering engine are defined as a String as of today.
 */
-public class Browser {
+public class Browser { /** The company shipping the browser */
     public Brand vendor;
+    /** The general family of the browser. Could be FIREFOX, IE, CHROME, LIBRARY (means a program not being a browser), ... */
     public BrowserFamily family;
+    /** The precise description of the browser. Can be "Firefox" or "Galeon" or "Seamonkey", ... */
     public String description;
+    /** The two first numbers in the version of the browser. Ex: 10.3 or 35.1 */
     public String version;
+    /** The full version number of the browser. Ex: 1.6.0.04 or 41.0.2272.76 */
     public String fullVersion;
+    /**
+     * A text description of the rendering engine. It is usually made of the name of the
+     * rendering engine and its version, separated by a space. For example "WebKit 537.36" or "Gecko 6.0.2".
+     * Empty if no rendering engine could be found (for example a library) */
     public String renderingEngine;
-    public Browser(Brand v, BrowserFamily f, String d, String r, String ver, String fullVer) {
-        family = f;
-        description = d;
-        renderingEngine = r;
-        vendor = v;
-        version = ver;
-        fullVersion = fullVer;
+
+    /**
+     * This is the most detailed constructor of the Browser object, where everything can be specified.
+     * @param  _brand           The vendor of this browser.
+     * @param  _family          The family of this browser.
+     * @param  _description     The text description of this browser.
+     * @param  _renderingEngine The rendering engine of this browser.
+     * @param  _version         The vendor of this browser.
+     * @param  _fullVersion     The vendor of this browser.
+    */
+    public Browser(Brand _brand, BrowserFamily _family, String _description, String _renderingEngine, String _version, String _fullVersion) {
+        family = _family;
+        description = _description;
+        renderingEngine = _renderingEngine;
+        vendor = _brand;
+        version = _version;
+        fullVersion = _fullVersion;
     }
-    public Browser(Brand v, BrowserFamily f, String d, String r) {
-        this(v, f, d, r, "", "");
+
+
+    /**
+     * This constructor of the Browser object does not specifie any of the version fields. They will be left as empty strings.
+     * @param  _brand           The vendor of this browser.
+     * @param  _family          The family of this browser.
+     * @param  _description     The text description of this browser.
+     * @param  _renderingEngine The rendering engine of this browser.
+     * @param  _version         The vendor of this browser.
+     * @param  _fullVersion     The vendor of this browser.
+    */
+    public Browser(Brand _brand, BrowserFamily _family, String _description, String _renderingEngine) {
+        this(_brand, _family, _description, _renderingEngine, "", "");
     }
-    public Browser(Brand v, BrowserFamily f, String d, String r, String oneVersion) {
-        this(v, f, d, r, "", "");
-        setFullVersionOneShot(oneVersion);
+
+    /**
+     * This constructor of the Browser object only specifies the <code>fullVersion</code>. The <code>version</code> is deduced by calling <code>setFullVersionOneShot(oneVersion)</code>.
+     * @param  _brand           The vendor of this browser.
+     * @param  _family          The family of this browser.
+     * @param  _description     The text description of this browser.
+     * @param  _renderingEngine The rendering engine of this browser.
+     * @param  _version         The vendor of this browser.
+     * @param  _fullVersion     The vendor of this browser.
+    */
+    public Browser(Brand _brand, BrowserFamily _family, String _description, String _renderingEngine, String _oneVersion) {
+        this(_brand, _family, _description, _renderingEngine, "", "");
+        setFullVersionOneShot(_oneVersion);
     }
     public boolean equals(Object o) {
         if (o == null) return false;
@@ -74,6 +113,11 @@ public class Browser {
         return res;
     }
 
+    /**
+     * This method sets both <code>version</code> and <code>fullVersion</code> attributes of this Browser object.
+     * It will set the <code>version</code> as the full version truncated to the first non numeric character, leaving the first '.' character in the mix.
+     * @param  version The full version number.
+    */
     public void setFullVersionOneShot(String version) {
         this.fullVersion = version;
         String sv = "";
