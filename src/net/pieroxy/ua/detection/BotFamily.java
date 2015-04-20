@@ -13,6 +13,10 @@ public enum BotFamily {  /**
     */
     SPAMBOT("Spam bot",true ),
     /**
+    * A robot that hides as a regular browser. There are considered to be nefarious (because they hide.)
+    */
+    HIDDEN_BOT("Hidden bot",true ),
+    /**
     * A robot used to crawl the web (Google's crawler, Bing's crawler, etc.)
     */
     CRAWLER("Web Crawler",false ),
