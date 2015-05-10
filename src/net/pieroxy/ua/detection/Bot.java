@@ -20,8 +20,8 @@ public class Bot { /** The vendor, usually the company that operates the bot, if
      * @param  _brand           The vendor of this bot.
      * @param  _family          The family of this bot.
      * @param  _description     The text description of this bot.
-     * @param  _version         The vendor of this bot.
-     * @param  _fullVersion     The url of this bot.
+     * @param  _version         The version of this bot.
+     * @param  _url             The url describing this bot.
     */
     public Bot(Brand _brand, BotFamily _family, String _description, String _version, String _url) {
         this(_brand,_family,_description,_version);
@@ -33,7 +33,7 @@ public class Bot { /** The vendor, usually the company that operates the bot, if
      * @param  _brand           The vendor of this bot.
      * @param  _family          The family of this bot.
      * @param  _description     The text description of this bot.
-     * @param  _version         The vendor of this bot.
+     * @param  _version         The version of this bot.
     */
     public Bot(Brand _brand, BotFamily _family, String _description, String _version) {
         family = _family;

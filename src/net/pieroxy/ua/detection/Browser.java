@@ -26,8 +26,8 @@ public class Browser { /** The company shipping the browser */
      * @param  _family          The family of this browser.
      * @param  _description     The text description of this browser.
      * @param  _renderingEngine The rendering engine of this browser.
-     * @param  _version         The vendor of this browser.
-     * @param  _fullVersion     The vendor of this browser.
+     * @param  _version         The version of this browser.
+     * @param  _fullVersion     The full version of this browser.
     */
     public Browser(Brand _brand, BrowserFamily _family, String _description, String _renderingEngine, String _version, String _fullVersion) {
         family = _family;
@@ -45,8 +45,6 @@ public class Browser { /** The company shipping the browser */
      * @param  _family          The family of this browser.
      * @param  _description     The text description of this browser.
      * @param  _renderingEngine The rendering engine of this browser.
-     * @param  _version         The vendor of this browser.
-     * @param  _fullVersion     The vendor of this browser.
     */
     public Browser(Brand _brand, BrowserFamily _family, String _description, String _renderingEngine) {
         this(_brand, _family, _description, _renderingEngine, "", "");
@@ -58,8 +56,7 @@ public class Browser { /** The company shipping the browser */
      * @param  _family          The family of this browser.
      * @param  _description     The text description of this browser.
      * @param  _renderingEngine The rendering engine of this browser.
-     * @param  _version         The vendor of this browser.
-     * @param  _fullVersion     The vendor of this browser.
+     * @param  _oneVersion      The full version of this browser.
     */
     public Browser(Brand _brand, BrowserFamily _family, String _description, String _renderingEngine, String _oneVersion) {
         this(_brand, _family, _description, _renderingEngine, "", "");
