@@ -573,7 +573,7 @@ public class UserAgentDetector implements IUserAgentDetector {
         }
 
 
-        return null;
+        return new Bot(Brand.UNKNOWN, BotFamily.NOT_A_BOT, "", "", "");
     }
 
     static boolean isKindle(UserAgentContext context, boolean expectConsumed) {

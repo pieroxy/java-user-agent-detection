@@ -27,7 +27,11 @@ public enum BotFamily {  /**
     /**
     * Unknown type of bot
     */
-    UNKNOWN("",false);
+    UNKNOWN("",false),
+    /**
+    * Thie UserAgentDetectionResult does not depict a bot:
+    */
+    NOT_A_BOT("Not a bot",false);
 
     private boolean nefarious;
     private String label;
