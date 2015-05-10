@@ -4,7 +4,11 @@ import java.util.*;
 /**
 * The brand can apply to Browsers, Devices or OSes.
 */
-public enum Brand {  DAUM("Daum Communications Corp.", "http://info.daum.net"),
+public enum Brand {  XIAOMI("Xiaomi", "http://www.mi.com/"),
+                     UCWEB("UC Web", "http://ucweb.com"),
+                     MAXTHON("Maxthon", "https://www.maxthon.com"),
+                     DUCKDUCKGO("DuckDuckGo", "https://duckduckgo.com"),
+                     DAUM("Daum Communications Corp.", "http://info.daum.net"),
                      ONEPLUS("OnePlus", "https://oneplus.net"),
                      HAOSOU("Haosou", "http://www.haosou.com"),
                      MEGAINDEX("MegaIndex", "https://www.megaindex.ru"),
