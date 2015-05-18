@@ -4,7 +4,8 @@ import java.util.*;
 /**
 * The brand can apply to Browsers, Devices or OSes.
 */
-public enum Brand {  XIAOMI("Xiaomi", "http://www.mi.com/"),
+public enum Brand {  POSHMOBILE("Posh Mobile", "http://www.poshmobile.com"),
+                     XIAOMI("Xiaomi", "http://www.mi.com/"),
                      UCWEB("UC Web", "http://ucweb.com"),
                      MAXTHON("Maxthon", "https://www.maxthon.com"),
                      DUCKDUCKGO("DuckDuckGo", "https://duckduckgo.com"),

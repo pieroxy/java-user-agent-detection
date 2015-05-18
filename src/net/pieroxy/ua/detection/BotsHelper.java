@@ -2,21 +2,84 @@ package net.pieroxy.ua.detection;
 import java.io.*;
 import java.util.*;
 class BotsHelper {
-    static Set<String> hiddenBots;
+    static private class GenericBot {
+        public java.util.regex.Pattern pattern;
+        public int[] groups;
+
+        public GenericBot(String pattern, int[]groups) {
+            this.pattern = java.util.regex.Pattern.compile(pattern);
+            this.groups = groups;
+        }
+    }
+
+    static private Set<String> hiddenBots;
+    static private Map<String, Bot> genericBotsBrandAndType;
+    static private Bot genericBotBase = new Bot(Brand.OTHER, BotFamily.ROBOT, "", "");
+    static private GenericBot[]genericBotsPatterns = new GenericBot[] {
+        new GenericBot("Mozilla/5\\.0 \\(compatible; ?([^\\);/]+)/([0-9\\.]+); ?(MirrorDetector; )?(\\+? ?https?://[^\\)]+)\\)", new int[]{1,2,4}),
+        new GenericBot("Mozilla/5\\.0 \\(compatible; ([^\\);/]+)\\-([0-9\\.]+); (\\+? ?https?://[^\\)]+)\\)", new int[]{1,2,3}),
+        new GenericBot("Mozilla/5\\.0 \\(compatible; ([^\\);/]+); (\\+? ?https?://[^\\)]+)\\)", new int[]{1,0,2}),
+    };
 
     static {
         hiddenBots = new HashSet<String>();
         hiddenBots.add("Mozilla/4.0 (compatible; MSIE8.0; Windows NT 6.0) .NET CLR 2.0.50727)");
         hiddenBots.add("Mozilla/0.6 Beta (Windows)");
         hiddenBots.add("Mozilla/0.91 Beta (Windows)");
+
+        genericBotsBrandAndType = new HashMap<String, Bot>();
+        // Complicated
+        genericBotsBrandAndType.put("YodaoBot", new Bot(Brand.NETEASE, BotFamily.CRAWLER, "Yodao Bot", ""));
+        genericBotsBrandAndType.put("Exabot", new Bot(Brand.EXALEAD, BotFamily.CRAWLER, "Exalead crawler", ""));
+        genericBotsBrandAndType.put("Baiduspider", new Bot(Brand.BAIDU, BotFamily.CRAWLER, "Baidu Web search", ""));
+
+        // Other form
+        genericBotsBrandAndType.put("bingbot", new Bot(Brand.MICROSOFT, BotFamily.CRAWLER, "Bing Bot", ""));
+
+        // Cleaned up:
+        genericBotsBrandAndType.put("YodaoBot-Image", new Bot(Brand.NETEASE, BotFamily.CRAWLER, "Yodao Image Bot", ""));
+        genericBotsBrandAndType.put("Googlebot", new Bot(Brand.GOOGLE, BotFamily.CRAWLER, "Google Bot", ""));
+        genericBotsBrandAndType.put("Yahoo! Slurp", new Bot(Brand.YAHOO, BotFamily.CRAWLER, "Yahoo! Slurp", ""));
+        genericBotsBrandAndType.put("YandexAntivirus", new Bot(Brand.BAIDU, BotFamily.CRAWLER, "Yandex Crawler", ""));
+        genericBotsBrandAndType.put("YandexFavicons", new Bot(Brand.BAIDU, BotFamily.CRAWLER, "Yandex Crawler", ""));
+        genericBotsBrandAndType.put("YandexMedia", new Bot(Brand.BAIDU, BotFamily.CRAWLER, "Yandex Crawler", ""));
+        genericBotsBrandAndType.put("YandexImages", new Bot(Brand.BAIDU, BotFamily.CRAWLER, "Yandex Crawler", ""));
+        genericBotsBrandAndType.put("YandexImageResizer", new Bot(Brand.BAIDU, BotFamily.CRAWLER, "Yandex Crawler", ""));
+        genericBotsBrandAndType.put("YandexBot", new Bot(Brand.BAIDU, BotFamily.CRAWLER, "Yandex Crawler", ""));
+        genericBotsBrandAndType.put("proximic", new Bot(Brand.OTHER, BotFamily.CRAWLER, "Proximic Crawler", ""));
+        genericBotsBrandAndType.put("Speedy Spider", new Bot(Brand.ENTIREWEB, BotFamily.CRAWLER, "Speedy Spider", ""));
+        genericBotsBrandAndType.put("yoozBot", new Bot(Brand.OTHER, BotFamily.CRAWLER, "Yooz Bot", ""));
+        genericBotsBrandAndType.put("Lipperhey Link Explorer", new Bot(Brand.OTHER, BotFamily.ROBOT, "Lipperhey", ""));
+        genericBotsBrandAndType.put("Lipperhey Site Explorer", new Bot(Brand.OTHER, BotFamily.ROBOT, "Lipperhey", ""));
+        genericBotsBrandAndType.put("Lipperhey SEO Service", new Bot(Brand.OTHER, BotFamily.ROBOT, "Lipperhey", ""));
+        genericBotsBrandAndType.put("Lipperhey-Kaus-Australis", new Bot(Brand.OTHER, BotFamily.ROBOT, "Lipperhey", ""));
+        genericBotsBrandAndType.put("Exabot-Images", new Bot(Brand.EXALEAD, BotFamily.CRAWLER, "Exalead crawler", ""));
+        genericBotsBrandAndType.put("MegaIndex.ru", new Bot(Brand.MEGAINDEX, BotFamily.ROBOT, "MegaIndex.ru crawler", ""));
+        genericBotsBrandAndType.put("spbot", new Bot(Brand.ENTIREWEB, BotFamily.CRAWLER, "SEO Profiler", ""));
+        genericBotsBrandAndType.put("WBSearchBot", new Bot(Brand.OTHER, BotFamily.CRAWLER, "Ware Bay Search Crawler", ""));
+        genericBotsBrandAndType.put("BLEXBot", new Bot(Brand.OTHER, BotFamily.ROBOT, "BLEX Bot", ""));
+        genericBotsBrandAndType.put("meanpathbot", new Bot(Brand.MEANPATH, BotFamily.ROBOT, "meanpath", ""));
+        genericBotsBrandAndType.put("DuckDuckGo-Favicons-Bot", new Bot(Brand.DUCKDUCKGO, BotFamily.ROBOT, "Favicons bot", ""));
+        genericBotsBrandAndType.put("DomainTunoCrawler", new Bot(Brand.OTHER, BotFamily.CRAWLER, "Domain Tuno Crawler", ""));
+        genericBotsBrandAndType.put("SeznamBot", new Bot(Brand.SEZNAM, BotFamily.CRAWLER, "SeznamBot crawler", ""));
+        genericBotsBrandAndType.put("AhrefsBot", new Bot(Brand.OTHER, BotFamily.CRAWLER, "AhrefsBot", ""));
+        genericBotsBrandAndType.put("oBot", new Bot(Brand.IBM, BotFamily.ROBOT, "oBot", ""));
+        genericBotsBrandAndType.put("Google Desktop", new Bot(Brand.GOOGLE, BotFamily.CRAWLER, "Google Desktop Bot", ""));
     }
 
     static String getAndConsumeUrl(UserAgentContext context, MatchingRegion region, String pattern) {
-        String url = context.getcToken(pattern, MatchingType.CONTAINS, region);
+        String url = sanitizeUrl(context.getcToken(pattern, MatchingType.CONTAINS, region));
+        return url;
+    }
+
+    static String sanitizeUrl(String url) {
         if (url==null) url="";
         if (url.startsWith("+http")) url = url.substring(1);
         if (url.startsWith("+ http")) url = url.substring(2);
-        return url;
+        if (url.endsWith(";")) url = url.substring(0, url.length()-1);
+        if (url.contains("; ")) url = url.substring(0, url.indexOf("; "));
+        if (url.contains(", ")) url = url.substring(0, url.indexOf(", "));
+        return url.trim();
     }
 
     static String consumeUrlAndMozilla(UserAgentContext context, String url) {
@@ -24,11 +87,38 @@ class BotsHelper {
         return getAndConsumeUrl(context, MatchingRegion.PARENTHESIS, url);
     }
 
+    static Bot getGenericBots(String userAgent) {
+        for (GenericBot gb : genericBotsPatterns) {
+            Bot b = getGenericBot(gb, userAgent);
+            if (b!=null) return b;
+        }
+        return null;
+    }
+    static Bot getGenericBot(GenericBot gb, String userAgent) {
+        java.util.regex.Matcher m = gb.pattern.matcher(userAgent);
+
+        if (m.matches()) {
+            String botName = m.group(gb.groups[0]);
+            Bot base = genericBotsBrandAndType.get(botName);
+            String description = base == null ? botName : base.description;
+            if (base == null) base = genericBotBase;
+            String version = gb.groups[1] == 0 ? "" : m.group(gb.groups[1]);
+            String url = gb.groups[2] == 0 ? "" : m.group(gb.groups[2]);
+            return new Bot(base.vendor, base.family, description, version, sanitizeUrl(url));
+        }
+        return null;
+    }
 
     static Bot getBot(UserAgentContext context) {
         int pos=0;
         String ver;
         String[]multi;
+
+        Bot b = getGenericBots(context.getUA()) ;
+        if (b != null) {
+            context.consumeAllTokens();
+            return b;
+        }
 
         if (hiddenBots.contains(context.getUA())) {
             context.consumeAllTokens();
@@ -52,17 +142,8 @@ class BotsHelper {
                  (ver=context.getcVersionAfterPattern("diffbot/", MatchingType.BEGINS,MatchingRegion.REGULAR))!=null ||
                  context.contains("+http://www.diffbot.com", MatchingType.BEGINS,MatchingRegion.PARENTHESIS))  {
             return new Bot(Brand.OTHER, BotFamily.ROBOT,"Diffbot ", ver==null?"":ver, consumeUrlAndMozilla(context, "http://"));
-        } else if ((ver=context.getcVersionAfterPattern("DuckDuckGo-Favicons-Bot/", MatchingType.BEGINS,MatchingRegion.PARENTHESIS))!=null)  {
-            return new Bot(Brand.DUCKDUCKGO, BotFamily.ROBOT,"Favicons bot", ver, consumeUrlAndMozilla(context, "http://"));
-        } else if ((ver=context.getcVersionAfterPattern("oBot/", MatchingType.BEGINS,MatchingRegion.BOTH))!=null)  {
-            return new Bot(Brand.IBM, BotFamily.ROBOT,"oBot", ver, consumeUrlAndMozilla(context, "http://"));
-        } else if ((ver=context.getcVersionAfterPattern("yoozBot-", MatchingType.BEGINS,MatchingRegion.PARENTHESIS))!=null)  {
-            context.consume("[0-9a-zA-Z\\.]+@[0-9a-zA-Z\\.]+", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);
-            return new Bot(Brand.OTHER, BotFamily.CRAWLER,"Yooz Bot ", ver, consumeUrlAndMozilla(context, "http://"));
         } else if ((ver=context.getcVersionAfterPattern("GWPImages/", MatchingType.BEGINS,MatchingRegion.PARENTHESIS))!=null)  {
             return new Bot(Brand.OTHER, BotFamily.ROBOT,"GWPImages ", ver, consumeUrlAndMozilla(context, "http://"));
-        } else if ((ver=context.getcVersionAfterPattern("BLEXBot/", MatchingType.BEGINS,MatchingRegion.PARENTHESIS))!=null)  {
-            return new Bot(Brand.OTHER, BotFamily.ROBOT,"BLEX Bot ", ver, consumeUrlAndMozilla(context, "http://"));
         } else if ((ver=context.getcVersionAfterPattern("LSSRocketCrawler/", MatchingType.BEGINS,MatchingRegion.REGULAR))!=null)  {
             context.consume("LightspeedSystems", MatchingType.EQUALS, MatchingRegion.REGULAR);
             return new Bot(Brand.OTHER, BotFamily.ROBOT,"LSSRocketCrawler ", ver);
@@ -92,8 +173,6 @@ class BotsHelper {
             context.consume(".*@porkbun.com", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);
             context.consume("Website Analysis", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
             return new Bot(Brand.OTHER,BotFamily.ROBOT,"Porkbun Website Analysis","", getAndConsumeUrl(context, MatchingRegion.PARENTHESIS, "http://"));
-        } else if (context.consume("proximic", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
-            return new Bot(Brand.OTHER,BotFamily.CRAWLER,"proximic crawler", "", consumeUrlAndMozilla(context, "http://"));
         } else if (context.consume("yacybot", MatchingType.EQUALS, MatchingRegion.REGULAR)) {
             context.consume("freeworld/global", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
             context.consume("yacy.net", MatchingType.EQUALS, MatchingRegion.REGULAR);
@@ -132,22 +211,12 @@ class BotsHelper {
             return new Bot(Brand.UNKNOWN,BotFamily.FEED_CRAWLER,"SimplePie", ver, getAndConsumeUrl(context, MatchingRegion.PARENTHESIS, "http://"));
         } else if ((ver = context.getcVersionAfterPattern("masscan/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
             return new Bot(Brand.UNKNOWN,BotFamily.CRAWLER,"Mass IP port scanner", ver, getAndConsumeUrl(context, MatchingRegion.PARENTHESIS, "https://"));
-        } else if ((ver = context.getcVersionAfterPattern("meanpathbot/",  MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
-            return new Bot(Brand.MEANPATH,BotFamily.ROBOT,"meanpath", ver, consumeUrlAndMozilla(context, "http://"));
-        } else if ((ver = context.getcVersionAfterPattern("DomainTunoCrawler/",  MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
-            return new Bot(Brand.OTHER,BotFamily.CRAWLER,"Domain Tuno Crawler", ver, consumeUrlAndMozilla(context, "http://"));
         } else if ((ver = context.getcVersionAfterPattern("Qwantify/",  MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
             return new Bot(Brand.OTHER,BotFamily.ROBOT,"Qwantify Crawler", ver, consumeUrlAndMozilla(context, "https://"));
-        } else if ((ver = context.getcVersionAfterPattern("WBSearchBot/",  MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
-            return new Bot(Brand.OTHER,BotFamily.CRAWLER,"Ware Bay Search Crawler", ver, consumeUrlAndMozilla(context, "http://"));
         } else if ((ver = context.getcVersionAfterPattern("PageAnalyzer/",  MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
             return new Bot(Brand.UNKNOWN,BotFamily.CRAWLER,"PageAnalyzer", ver, consumeUrlAndMozilla(context, "http://"));
         } else if ((ver = context.getcVersionAfterPattern("Pagespeed/",  MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
             return new Bot(Brand.UNKNOWN,BotFamily.ROBOT,"Pagespeed feed fetcher", ver, consumeUrlAndMozilla(context, "http://"));
-        } else if ((ver = context.getcVersionAfterPattern("SeznamBot/",  MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
-            return new Bot(Brand.SEZNAM,BotFamily.CRAWLER,"SeznamBot crawler", ver, consumeUrlAndMozilla(context, "http://fulltext.sblog.cz/"));
-        } else if ((ver = context.getcVersionAfterPattern("MegaIndex.ru/",  MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
-            return new Bot(Brand.MEGAINDEX,BotFamily.ROBOT,"MegaIndex.ru crawler", ver, consumeUrlAndMozilla(context, "https://"));
         } else if ((ver = context.getcVersionAfterPattern("ClearBot/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
             return new Bot(Brand.CLEARSWIFT,BotFamily.ROBOT,"ClearBot crawler", ver, getAndConsumeUrl(context, MatchingRegion.PARENTHESIS, "http://"));
         } else if ((ver = context.getcVersionAfterPattern("Mail.RU_Bot/",  MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
@@ -280,13 +349,10 @@ class BotsHelper {
         } else if ((ver=context.getcVersionAfterPattern("AdsBot-Google-",MatchingType.BEGINS, MatchingRegion.REGULAR))!=null ||
                    context.consume("AdsBot-Google",MatchingType.BEGINS, MatchingRegion.REGULAR)) {
             return new Bot(Brand.GOOGLE, BotFamily.CRAWLER, "Google Adsense Bot", ver, getAndConsumeUrl(context, MatchingRegion.PARENTHESIS, "http://"));
-        } else if ((ver=context.getcVersionAfterPattern("Google Desktop",MatchingType.BEGINS, MatchingRegion.PARENTHESIS, 2))!=null) {
+        } else if (context.consume("Google Desktop",MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
             context.consume("compatible", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
             context.consume("Mozilla/5.0", MatchingType.EQUALS, MatchingRegion.REGULAR);
-            return new Bot(Brand.GOOGLE, BotFamily.CRAWLER, "Google Desktop Bot", ver, getAndConsumeUrl(context, MatchingRegion.PARENTHESIS, "http://"));
-        } else if ((ver=context.getcVersionAfterPattern("Googlebot/",MatchingType.BEGINS, MatchingRegion.PARENTHESIS, 2))!=null ||
-                   (ver=context.getcVersionAfterPattern("Googlebot ",MatchingType.BEGINS, MatchingRegion.PARENTHESIS, 2))!=null) {
-            return new Bot(Brand.GOOGLE, BotFamily.CRAWLER, "Google Bot", ver);
+            return new Bot(Brand.GOOGLE, BotFamily.CRAWLER, "Google Desktop Bot", "", getAndConsumeUrl(context, MatchingRegion.PARENTHESIS, "http://"));
         } else if ((multi = context.getcNextTokens(new Matcher[] {new Matcher("Googlebot", MatchingType.EQUALS),
             new Matcher("[0-9\\.]+", MatchingType.REGEXP)
         },
@@ -323,8 +389,6 @@ class BotsHelper {
                 res = new Bot(Brand.BAIDU,BotFamily.CRAWLER,"Baidu Union search", UserAgentDetectionHelper.getVersionNumber(context.getUA(),pos+16));
             } else if (context.consume("Baiduspider-ads", MatchingType.BEGINS, MatchingRegion.BOTH)) {
                 res = new Bot(Brand.BAIDU,BotFamily.CRAWLER,"Baidu Business search", UserAgentDetectionHelper.getVersionNumber(context.getUA(),pos+16));
-            } else if ((ver=context.getcVersionAfterPattern("Baiduspider/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) != null) {
-                res = new Bot(Brand.BAIDU,BotFamily.CRAWLER,"Baidu Web search", ver);
             } else if (context.consume("Baiduspider", MatchingType.BEGINS, MatchingRegion.BOTH)) {
                 res = new Bot(Brand.BAIDU,BotFamily.CRAWLER,"Baidu Web search", "");
             }
@@ -337,24 +401,19 @@ class BotsHelper {
         } else
 
             // Yandex bots
-            if (null != (ver=context.getcToken("YandexBot/", MatchingType.BEGINS, MatchingRegion.BOTH)) || // main indexing robot;
-                    null != (ver=context.getcToken("Yandex/", MatchingType.BEGINS, MatchingRegion.REGULAR)) || // Yandex.Image indexer;
-                    null != (ver=context.getcToken("YandexImages/", MatchingType.BEGINS, MatchingRegion.BOTH)) || // Yandex.Image indexer;
-                    null != (ver=context.getcToken("YandexVideo/", MatchingType.BEGINS, MatchingRegion.BOTH)) || // Yandex.Video indexer;
-                    null != (ver=context.getcToken("YandexMedia/", MatchingType.BEGINS, MatchingRegion.BOTH)) || // robot indexing multimedia data;
-                    null != (ver=context.getcToken("YandexBlogs/", MatchingType.BEGINS, MatchingRegion.BOTH)) || // blog search robot, indexing post comments;
-                    null != (ver=context.getcToken("YandexFavicons/", MatchingType.BEGINS, MatchingRegion.BOTH)) || //  favicon indexing robot;
-                    null != (ver=context.getcToken("YandexWebmaster/", MatchingType.BEGINS, MatchingRegion.BOTH)) || //  a robot that has been directed to a page through the
-                    null != (ver=context.getcToken("YandexPagechecker/", MatchingType.BEGINS, MatchingRegion.BOTH)) || // a robot that validates the micro markup of a page using the "?" form;
-                    null != (ver=context.getcToken("YandexImageResizer/", MatchingType.BEGINS, MatchingRegion.BOTH)) || //  mobile services robot;
-                    null != (ver=context.getcToken("YandexDirect/", MatchingType.BEGINS, MatchingRegion.BOTH)) || // robot indexing pages of sites belonging to the Yandex Advertising Network;
-                    null != (ver=context.getcToken("YandexDirect/", MatchingType.BEGINS, MatchingRegion.BOTH)) || // Yandex.Direct robot. This checks the accuracy of an advertised link before moderation;
-                    null != (ver=context.getcToken("YandexMetrika/", MatchingType.BEGINS, MatchingRegion.BOTH)) || //  Yandex.Metrica robot;
-                    null != (ver=context.getcToken("YandexNews/", MatchingType.BEGINS, MatchingRegion.BOTH)) || // Yandex.News robot;
-                    null != (ver=context.getcToken("YandexCatalog/", MatchingType.BEGINS, MatchingRegion.BOTH)) || // Yandex.Catalog robot. If a site is offline for several days, it is removed from Catalog. As soon as the site comes online, it will automatically begin to appear in Catalog again.
-                    null != (ver=context.getcToken("YandexAntivirus/", MatchingType.BEGINS, MatchingRegion.BOTH)) || //  an antivirus robot that checks websites for the presence of malicious code.
-                    null != (ver=context.getcToken("YandexZakladki/", MatchingType.BEGINS, MatchingRegion.BOTH)) || // a robot used to verify the availability of pages added to Yandex.Bookmarks;
-                    null != (ver=context.getcToken("YandexMarket/", MatchingType.BEGINS, MatchingRegion.BOTH))) { // Yandex.Market robot.
+            if (
+                null != (ver=context.getcToken("Yandex/", MatchingType.BEGINS, MatchingRegion.REGULAR)) || // Yandex.Image indexer;
+                null != (ver=context.getcToken("YandexVideo/", MatchingType.BEGINS, MatchingRegion.BOTH)) || // Yandex.Video indexer;
+                null != (ver=context.getcToken("YandexBlogs/", MatchingType.BEGINS, MatchingRegion.BOTH)) || // blog search robot, indexing post comments;
+                null != (ver=context.getcToken("YandexWebmaster/", MatchingType.BEGINS, MatchingRegion.BOTH)) || //  a robot that has been directed to a page through the
+                null != (ver=context.getcToken("YandexPagechecker/", MatchingType.BEGINS, MatchingRegion.BOTH)) || // a robot that validates the micro markup of a page using the "?" form;
+                null != (ver=context.getcToken("YandexDirect/", MatchingType.BEGINS, MatchingRegion.BOTH)) || // robot indexing pages of sites belonging to the Yandex Advertising Network;
+                null != (ver=context.getcToken("YandexDirect/", MatchingType.BEGINS, MatchingRegion.BOTH)) || // Yandex.Direct robot. This checks the accuracy of an advertised link before moderation;
+                null != (ver=context.getcToken("YandexMetrika/", MatchingType.BEGINS, MatchingRegion.BOTH)) || //  Yandex.Metrica robot;
+                null != (ver=context.getcToken("YandexNews/", MatchingType.BEGINS, MatchingRegion.BOTH)) || // Yandex.News robot;
+                null != (ver=context.getcToken("YandexCatalog/", MatchingType.BEGINS, MatchingRegion.BOTH)) || // Yandex.Catalog robot. If a site is offline for several days, it is removed from Catalog. As soon as the site comes online, it will automatically begin to appear in Catalog again.
+                null != (ver=context.getcToken("YandexZakladki/", MatchingType.BEGINS, MatchingRegion.BOTH)) || // a robot used to verify the availability of pages added to Yandex.Bookmarks;
+                null != (ver=context.getcToken("YandexMarket/", MatchingType.BEGINS, MatchingRegion.BOTH))) { // Yandex.Market robot.
                 String[]vv = ver.split("/");
                 context.consume("Win16", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
                 context.consume("[HI]", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);
@@ -383,11 +442,7 @@ class BotsHelper {
 
         // MISC BOTS
 
-        else if ((ver = context.getcVersionAfterPattern("AhrefsBot/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) != null) {
-            context.consume("Mozilla/", MatchingType.BEGINS, MatchingRegion.REGULAR);
-            context.consume("compatible", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
-            return new Bot(Brand.OTHER, BotFamily.CRAWLER, "AhrefsBot", ver, getAndConsumeUrl(context, MatchingRegion.PARENTHESIS, "http://"));
-        } else if ((ver = context.getcVersionAfterPattern("Feedly/", MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+        else if ((ver = context.getcVersionAfterPattern("Feedly/", MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
             context.consume("like ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
             return new Bot(Brand.OTHER, BotFamily.FEED_CRAWLER, "Feedly", ver, getAndConsumeUrl(context, MatchingRegion.PARENTHESIS, "http://"));
 
@@ -442,8 +497,7 @@ class BotsHelper {
             return new Bot(Brand.NETEASE, BotFamily.CRAWLER, "Yodao Mobile Bot", ver);
         } else if (context.getcNextTokens(new Matcher[] {new Matcher("Speedy",MatchingType.EQUALS),
             new Matcher("Spider",MatchingType.EQUALS),
-        }, MatchingRegion.REGULAR) != null ||
-        context.consume("Speedy Spider",MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
+        }, MatchingRegion.REGULAR) != null) {
             context.consume("Entireweb", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
             ver = context.getcVersionAfterPattern("Beta/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
             return new Bot(Brand.ENTIREWEB, BotFamily.CRAWLER, "Speedy Spider", ver == null ? "" : (ver + " beta"), consumeUrlAndMozilla(context,"http://"));
@@ -454,9 +508,7 @@ class BotsHelper {
         }, MatchingRegion.REGULAR) != null) {
             return new Bot(Brand.OPENSOURCE, BotFamily.ROBOT, "Typhoeus library", "");
         }
-        else if (context.consume("spbot/",MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) {
-            return new Bot(Brand.ENTIREWEB, BotFamily.CRAWLER, "SEO Profiler", "", consumeUrlAndMozilla(context,"http://www.seoprofiler"));
-        } else if ((ver=context.getcVersionAfterPattern("FSPBot/",MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
+        else if ((ver=context.getcVersionAfterPattern("FSPBot/",MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
             return new Bot(Brand.OTHER, BotFamily.SPAMBOT, "FSPBot", ver);
         } else if ((ver=context.getcVersionAfterPattern("SiteSucker/",MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
             return new Bot(Brand.OTHER, BotFamily.ROBOT, "SiteSucker", ver);
@@ -469,7 +521,7 @@ class BotsHelper {
             return new Bot(Brand.OTHER, BotFamily.ROBOT, "360 Spider", "");
         } else if ((ver=context.getcVersionAfterPattern("FlipboardProxy/",MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
             return new Bot(Brand.OTHER, BotFamily.ROBOT, "Flipboard Proxy", ver, consumeUrlAndMozilla(context,"http://"));
-        } else if (context.consume("Exabot/",MatchingType.BEGINS, MatchingRegion.BOTH) || context.consume("Exabot-Images/",MatchingType.BEGINS, MatchingRegion.BOTH) || context.consume("Exabot-Test/",MatchingType.BEGINS, MatchingRegion.BOTH)) {
+        } else if (context.consume("Exabot/",MatchingType.BEGINS, MatchingRegion.BOTH) || context.consume("Exabot-Test/",MatchingType.BEGINS, MatchingRegion.BOTH)) {
             context.consume("BiggerBetter", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
             return new Bot(Brand.EXALEAD, BotFamily.CRAWLER, "Exalead crawler", "", consumeUrlAndMozilla(context,"http://"));
         } else if (context.consume("MRSPUTNIK (OW )?([0-9], )+[0-9]+( [SH]W)?",MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) {
@@ -482,15 +534,13 @@ class BotsHelper {
 
 
         /*else if ((pos=userAgent.indexOf("webcrawler/"))>-1) {
-              String browser = "WebCrawler " + getVersionNumber(userAgent,pos+11);
-            } else // The following two bots don't have any version number in their User-Agent strings.
-              if ((pos=userAgent.indexOf("inktomi"))>-1) {
-              String browser = "Inktomi";
-            } else if ((pos=userAgent.indexOf("teoma"))>-1) {
-              String browser = "Teoma";
-            }*/ else if ((ver=context.getcVersionAfterPattern("Yahoo! Slurp", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) != null) {
-            return new Bot(Brand.YAHOO, BotFamily.CRAWLER, "Yahoo! Slurp", ver, consumeUrlAndMozilla(context,"http://"));
-        }
+            String browser = "WebCrawler " + getVersionNumber(userAgent,pos+11);
+          } else // The following two bots don't have any version number in their User-Agent strings.
+            if ((pos=userAgent.indexOf("inktomi"))>-1) {
+            String browser = "Inktomi";
+          } else if ((pos=userAgent.indexOf("teoma"))>-1) {
+            String browser = "Teoma";
+          }*/
 
 
         return new Bot(Brand.UNKNOWN, BotFamily.NOT_A_BOT, "", "", "");
