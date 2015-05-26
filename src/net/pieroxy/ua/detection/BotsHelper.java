@@ -5,20 +5,39 @@ class BotsHelper {
     static private class GenericBot {
         public java.util.regex.Pattern pattern;
         public int[] groups;
+        public boolean discardAll;
 
-        public GenericBot(String pattern, int[]groups) {
+        public GenericBot(String pattern, int[]groups, boolean discardAll) {
             this.pattern = java.util.regex.Pattern.compile(pattern);
             this.groups = groups;
+            this.discardAll = discardAll;
         }
+    }
+
+    public static String[] getGroups(String regexp, String ua, int ... groups) {
+        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(regexp);
+        java.util.regex.Matcher m = pattern.matcher(ua);
+
+        if (m.matches()) {
+            String[]res = new String[groups.length];
+            for (int i=0 ; i<groups.length ; i++) {
+                res[i] = m.group(groups[i]);
+            }
+            return res;
+        }
+        return null;
+
     }
 
     static private Set<String> hiddenBots;
     static private Map<String, Bot> genericBotsBrandAndType;
     static private Bot genericBotBase = new Bot(Brand.OTHER, BotFamily.ROBOT, "", "");
     static private GenericBot[]genericBotsPatterns = new GenericBot[] {
-        new GenericBot("Mozilla/5\\.0 \\(compatible; ?([^\\);/]+)/([0-9\\.]+); ?(MirrorDetector; )?(\\+? ?https?://[^\\)]+)\\)", new int[]{1,2,4}),
-        new GenericBot("Mozilla/5\\.0 \\(compatible; ([^\\);/]+)\\-([0-9\\.]+); (\\+? ?https?://[^\\)]+)\\)", new int[]{1,2,3}),
-        new GenericBot("Mozilla/5\\.0 \\(compatible; ([^\\);/]+); (\\+? ?https?://[^\\)]+)\\)", new int[]{1,0,2}),
+        new GenericBot("Mozilla/5\\.0 \\(compatible; ?([^\\);/]+)/([0-9\\.]+); ?(MirrorDetector; )?(\\+? ?https?://[^\\)]+)\\)", new int[]{1,2,4}, true),
+        new GenericBot("Mozilla/5\\.0 \\(compatible; ([^\\);/]+)\\-([0-9\\.]+); (\\+? ?https?://[^\\)]+)\\)", new int[]{1,2,3}, true),
+        new GenericBot("Mozilla/5\\.0 \\(compatible; ([^\\);/]+); (\\+? ?https?://[^\\)]+)\\)", new int[]{1,0,2}, true),
+        new GenericBot("([^\\(\\);/]+)/([0-9RC\\.]+) \\((https?://[^\\);]+)\\)( .*)?", new int[]{1,2,3}, true),
+        new GenericBot("([^\\(\\);]+) \\((https?://[^\\);]+)\\)( .*)?", new int[]{1,0,2}, true),
     };
 
     static {
@@ -65,6 +84,12 @@ class BotsHelper {
         genericBotsBrandAndType.put("AhrefsBot", new Bot(Brand.OTHER, BotFamily.CRAWLER, "AhrefsBot", ""));
         genericBotsBrandAndType.put("oBot", new Bot(Brand.IBM, BotFamily.ROBOT, "oBot", ""));
         genericBotsBrandAndType.put("Google Desktop", new Bot(Brand.GOOGLE, BotFamily.CRAWLER, "Google Desktop Bot", ""));
+
+        genericBotsBrandAndType.put("ltx71 -", new Bot(Brand.OTHER,BotFamily.ROBOT,"ltx71",""));
+        genericBotsBrandAndType.put("masscan", new Bot(Brand.UNKNOWN,BotFamily.CRAWLER,"Mass IP port scanner",""));
+        genericBotsBrandAndType.put("Baiduspider+", new Bot(Brand.BAIDU,BotFamily.CRAWLER,"Baidu Web search",""));
+        genericBotsBrandAndType.put("FeedlyBot", new Bot(Brand.OTHER,BotFamily.FEED_CRAWLER,"Feedly",""));
+        genericBotsBrandAndType.put("Y!J-ASR/0.1 crawler", new Bot(Brand.YAHOO,BotFamily.CRAWLER,"Yahoo Japan",""));
     }
 
     static String getAndConsumeUrl(UserAgentContext context, MatchingRegion region, String pattern) {
@@ -87,17 +112,20 @@ class BotsHelper {
         return getAndConsumeUrl(context, MatchingRegion.PARENTHESIS, url);
     }
 
-    static Bot getGenericBots(String userAgent) {
+    static Bot getGenericBots(String userAgent, UserAgentContext context) {
         for (GenericBot gb : genericBotsPatterns) {
             Bot b = getGenericBot(gb, userAgent);
-            if (b!=null) return b;
+            if (b!=null) {
+                if (gb.discardAll) context.consumeAllTokens();
+                return b;
+            }
         }
         return null;
     }
     static Bot getGenericBot(GenericBot gb, String userAgent) {
         java.util.regex.Matcher m = gb.pattern.matcher(userAgent);
 
-        if (m.matches()) {
+        if (m.matches() && !userAgent.startsWith("Curl/PHP")) {
             String botName = m.group(gb.groups[0]);
             Bot base = genericBotsBrandAndType.get(botName);
             String description = base == null ? botName : base.description;
@@ -114,9 +142,8 @@ class BotsHelper {
         String ver;
         String[]multi;
 
-        Bot b = getGenericBots(context.getUA()) ;
+        Bot b = getGenericBots(context.getUA(), context) ;
         if (b != null) {
-            context.consumeAllTokens();
             return b;
         }
 
@@ -177,9 +204,6 @@ class BotsHelper {
             context.consume("freeworld/global", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
             context.consume("yacy.net", MatchingType.EQUALS, MatchingRegion.REGULAR);
             return new Bot(Brand.YACI,BotFamily.CRAWLER,"Yacy bot","", getAndConsumeUrl(context, MatchingRegion.REGULAR, "http://"));
-        } else if (context.consume("ltx71", MatchingType.EQUALS, MatchingRegion.REGULAR)) {
-            context.consume("-", MatchingType.EQUALS, MatchingRegion.REGULAR);
-            return new Bot(Brand.OTHER,BotFamily.ROBOT,"ltx71","", getAndConsumeUrl(context, MatchingRegion.PARENTHESIS, "http://"));
         } else if (context.consume("125LA", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) { // Will look for login forms and upload forms
             context.consume("Mozilla/4.0", MatchingType.EQUALS, MatchingRegion.REGULAR);
             context.consume("compatible", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
@@ -209,8 +233,6 @@ class BotsHelper {
             context.consume("Allow like Gecko",  MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
             context.consume("Feed Parser",  MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
             return new Bot(Brand.UNKNOWN,BotFamily.FEED_CRAWLER,"SimplePie", ver, getAndConsumeUrl(context, MatchingRegion.PARENTHESIS, "http://"));
-        } else if ((ver = context.getcVersionAfterPattern("masscan/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
-            return new Bot(Brand.UNKNOWN,BotFamily.CRAWLER,"Mass IP port scanner", ver, getAndConsumeUrl(context, MatchingRegion.PARENTHESIS, "https://"));
         } else if ((ver = context.getcVersionAfterPattern("Qwantify/",  MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
             return new Bot(Brand.OTHER,BotFamily.ROBOT,"Qwantify Crawler", ver, consumeUrlAndMozilla(context, "https://"));
         } else if ((ver = context.getcVersionAfterPattern("PageAnalyzer/",  MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
@@ -444,9 +466,6 @@ class BotsHelper {
 
         else if ((ver = context.getcVersionAfterPattern("Feedly/", MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
             context.consume("like ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
-            return new Bot(Brand.OTHER, BotFamily.FEED_CRAWLER, "Feedly", ver, getAndConsumeUrl(context, MatchingRegion.PARENTHESIS, "http://"));
-
-        } else if ((ver = context.getcVersionAfterPattern("FeedlyBot/", MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
             return new Bot(Brand.OTHER, BotFamily.FEED_CRAWLER, "Feedly", ver, getAndConsumeUrl(context, MatchingRegion.PARENTHESIS, "http://"));
 
         } else if (context.consume("TencentTraveler", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
@@ -695,6 +714,7 @@ class BotsHelper {
         String ua = context.getUA();
         int pos=0;
         String ver,token;
+        String[]groups;
 
         UserAgentDetectionResult res = new UserAgentDetectionResult(
             new Device("",DeviceType.COMPUTER,Brand.UNKNOWN,""),
@@ -702,8 +722,20 @@ class BotsHelper {
             new OS(Brand.LINUX,OSFamily.LINUX,"Linux",""));
 
 
+        if ((groups = getGroups("Curl/PHP ([0-9\\.]+)(-[0-9]ubuntu[0-9\\.]+)? \\(http://github.com/shuber/curl\\)", context.getUA(), 1, 2)) != null) {
+            res.browser.setFullVersionOneShot(groups[0]);
+            res.browser.description = "curl";
+            res.browser.family = BrowserFamily.LIBRARY;
+            res.browser.vendor = Brand.OPENSOURCE;
 
-        if ((ver=context.getcVersionAfterPattern("libcurl/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+            if (groups[1] != null) {
+                res.operatingSystem.family = OSFamily.LINUX;
+                res.operatingSystem.description = "Ubuntu";
+            }
+
+            context.consumeAllTokens();
+            return res;
+        } else if ((ver=context.getcVersionAfterPattern("libcurl/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
             String archTotal = context.getcToken("",MatchingType.ALWAYS_MATCH, MatchingRegion.PARENTHESIS);
             String arch;
             if ((pos=archTotal.indexOf("-"))>-1) {

@@ -1697,6 +1697,7 @@ public class UserAgentDetector implements IUserAgentDetector {
             if (context.consume("SM-A300FU ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy A3");
             if (context.consume("(SAMSUNG )?SM-G850F.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Alpha");
             if (context.consume("(SAMSUNG[ -])?SM-G920([TA]|W8)(-ORANGE| |/[A-Z0-9]+).*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy S6");
+            if (context.consume("(SAMSUNG[ -])?SM-G357FZ.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy Ace 4");
 
             // KTTECH
             if (context.consume("KM-E100", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.KTTECH,"KM-E100");
@@ -1963,6 +1964,7 @@ public class UserAgentDetector implements IUserAgentDetector {
             if (context.consume("XT1058 ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.MOTOROLA,"Moto X");
             if (context.consume("XT1097 ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.MOTOROLA,"Moto X XT1097");
             if (context.consume("XT890 ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(atom,DeviceType.PHONE,Brand.MOTOROLA,"RAZR i");
+            if (context.consume("XT321 ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.MOTOROLA,"Defy Mini");
 
             // Asus
             if (context.consume("ASUS Transformer Pad TF700T", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.TABLET,Brand.ASUS,"Transformer Pad Infinity");
@@ -2000,6 +2002,7 @@ public class UserAgentDetector implements IUserAgentDetector {
             if (context.consume("MI 3W Build/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.XIAOMI,"Mi3");
             if (context.consume("ADM712HC ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.TABLET,Brand.ODYS,"Neo X7");
             if (context.consume("WAX ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.WIKO,"Wax");
+            if (context.consume("JIMMY ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.WIKO,"Jimmy");
             if (context.consume("CINK PEAX ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.WIKO,"Cink Peax");
             if (context.consume("CINK FIVE Build/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.WIKO,"Cink Five");
             if (context.consume("Archos 50 Helium 4G ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.ARCHOS,"50 Helium");
