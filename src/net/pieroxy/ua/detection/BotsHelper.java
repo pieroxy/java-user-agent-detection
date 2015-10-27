@@ -84,6 +84,7 @@ class BotsHelper {
         genericBotsBrandAndType.put("AhrefsBot", new Bot(Brand.OTHER, BotFamily.CRAWLER, "AhrefsBot", ""));
         genericBotsBrandAndType.put("oBot", new Bot(Brand.IBM, BotFamily.ROBOT, "oBot", ""));
         genericBotsBrandAndType.put("Google Desktop", new Bot(Brand.GOOGLE, BotFamily.CRAWLER, "Google Desktop Bot", ""));
+        genericBotsBrandAndType.put("Google-Adwords-Instant-Mobile", new Bot(Brand.GOOGLE, BotFamily.ROBOT, "Google Landing page inspection bot", ""));
 
         genericBotsBrandAndType.put("ltx71 -", new Bot(Brand.OTHER,BotFamily.ROBOT,"ltx71",""));
         genericBotsBrandAndType.put("masscan", new Bot(Brand.UNKNOWN,BotFamily.CRAWLER,"Mass IP port scanner",""));
@@ -474,7 +475,10 @@ class BotsHelper {
 
         // MISC BOTS
 
-        else if ((ver = context.getcVersionAfterPattern("Feedly/", MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+        else if ((ver = context.getcVersionAfterPattern("Applebot/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) != null) {
+            return new Bot(Brand.APPLE, BotFamily.CRAWLER, "Applebot", ver, getAndConsumeUrl(context, MatchingRegion.PARENTHESIS, "http://"));
+
+        } else if ((ver = context.getcVersionAfterPattern("Feedly/", MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
             context.consume("like ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
             return new Bot(Brand.OTHER, BotFamily.FEED_CRAWLER, "Feedly", ver, getAndConsumeUrl(context, MatchingRegion.PARENTHESIS, "http://"));
 
