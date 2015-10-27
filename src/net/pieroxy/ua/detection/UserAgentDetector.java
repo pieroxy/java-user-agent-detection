@@ -1048,6 +1048,9 @@ public class UserAgentDetector implements IUserAgentDetector {
             } else if ((ver=context.getcVersionAfterPattern("Maxthon/", MatchingType.BEGINS,MatchingRegion.REGULAR))!=null) {
                 res = new Browser(Brand.OTHER,BrowserFamily.OTHER_WEBKIT,"Maxthon", getWebkitVersion(context), ver);
                 context.consume("Chrome/", MatchingType.BEGINS,MatchingRegion.REGULAR);
+            } else if ((ver=context.getcVersionAfterPattern("Dragon/", MatchingType.BEGINS,MatchingRegion.REGULAR))!=null) {
+                res = new Browser(Brand.COMODO,BrowserFamily.OTHER_WEBKIT,"Dragon", getWebkitVersion(context), ver);
+                context.consume("Chrome/", MatchingType.BEGINS,MatchingRegion.REGULAR);
             } else if ((ver=context.getcVersionAfterPattern("SamsungBrowser/", MatchingType.BEGINS,MatchingRegion.REGULAR))!=null) {
                 res = new Browser(Brand.SAMSUNG,BrowserFamily.OTHER_WEBKIT,"SamsungBrowser", getWebkitVersion(context), ver);
                 context.consume("Chrome/", MatchingType.BEGINS,MatchingRegion.REGULAR);

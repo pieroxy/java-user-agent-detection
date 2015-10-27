@@ -36,8 +36,8 @@ class BotsHelper {
         new GenericBot("Mozilla/5\\.0 \\(compatible; ?([^\\);/]+)/([0-9\\.]+); ?(MirrorDetector; )?(\\+? ?https?://[^\\)]+)\\)", new int[]{1,2,4}, true),
         new GenericBot("Mozilla/5\\.0 \\(compatible; ([^\\);/]+)\\-([0-9\\.]+); (\\+? ?https?://[^\\)]+)\\)", new int[]{1,2,3}, true),
         new GenericBot("Mozilla/5\\.0 \\(compatible; ([^\\);/]+); (\\+? ?https?://[^\\)]+)\\)", new int[]{1,0,2}, true),
-        new GenericBot("([^\\(\\);/]+)/([0-9RC\\.]+) \\((https?://[^\\);]+)\\)( .*)?", new int[]{1,2,3}, true),
-        new GenericBot("([^\\(\\);]+) \\((https?://[^\\);]+)\\)( .*)?", new int[]{1,0,2}, true),
+        new GenericBot("([^\\(\\);/]+)/([0-9RC\\.]+) \\((\\+?https?://[^\\);]+)\\)( .*)?", new int[]{1,2,3}, true),
+        new GenericBot("([^\\(\\);]+) \\((\\+?https?://[^\\);]+)\\)( .*)?", new int[]{1,0,2}, true),
     };
 
     static {
@@ -90,6 +90,7 @@ class BotsHelper {
         genericBotsBrandAndType.put("Baiduspider+", new Bot(Brand.BAIDU,BotFamily.CRAWLER,"Baidu Web search",""));
         genericBotsBrandAndType.put("FeedlyBot", new Bot(Brand.OTHER,BotFamily.FEED_CRAWLER,"Feedly",""));
         genericBotsBrandAndType.put("Y!J-ASR/0.1 crawler", new Bot(Brand.YAHOO,BotFamily.CRAWLER,"Yahoo Japan",""));
+        genericBotsBrandAndType.put("CCBot", new Bot(Brand.OTHER,BotFamily.CRAWLER,"Common Crawl",""));
     }
 
     static String getAndConsumeUrl(UserAgentContext context, MatchingRegion region, String pattern) {
@@ -150,6 +151,11 @@ class BotsHelper {
         if (hiddenBots.contains(context.getUA())) {
             context.consumeAllTokens();
             return new Bot(Brand.UNKNOWN,BotFamily.HIDDEN_BOT,"","");
+        } else if (context.consume("commoncrawl.org/research//", MatchingType.BEGINS, MatchingRegion.REGULAR)) {
+            ver = context.getcVersionAfterPattern("CCResearchBot/", MatchingType.BEGINS,MatchingRegion.BOTH);
+            if (ver == null) ver="";
+
+            return new Bot(Brand.OTHER,BotFamily.CRAWLER,"Common Crawl",ver , "http://commoncrawl.org/faqs/");
         } else if (context.consume("via ggpht.com GoogleImageProxy", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) { // http://serverfault.com/questions/581857/apache-logs-flooded-with-connections-via-ggpht-com-googleimageproxy.
             return new Bot(Brand.GOOGLE,BotFamily.ROBOT,"Gmail image downloader proxy","");
         } else if (context.consume("ONDOWN3.2", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) { // Looks like a bot to me.
