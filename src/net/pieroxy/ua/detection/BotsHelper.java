@@ -388,10 +388,12 @@ class BotsHelper {
         },
         MatchingRegion.REGULAR)) != null) {
             return new Bot(Brand.GOOGLE, BotFamily.CRAWLER, "Google Bot", multi[1]);
+        }
+        else if ((ver=context.getcVersionAfterPattern("Googlebot/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
+            return new Bot(Brand.GOOGLE, BotFamily.CRAWLER, "Google Bot", ver, getAndConsumeUrl(context, MatchingRegion.PARENTHESIS, "+http://"));
 
             // Microsoft Bots
-        }
-        else if ((ver=context.getcVersionAfterPattern("msnbot/", MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
+        } else if ((ver=context.getcVersionAfterPattern("msnbot/", MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
             return new Bot(Brand.MICROSOFT, BotFamily.CRAWLER, "MSN Bot", ver, getAndConsumeUrl(context, MatchingRegion.PARENTHESIS, "http://"));
         } else if ((ver=context.getcVersionAfterPattern("msnbot-NewsBlogs/", MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
             return new Bot(Brand.MICROSOFT, BotFamily.CRAWLER, "MSN Bot (news blogs)", ver, getAndConsumeUrl(context, MatchingRegion.PARENTHESIS, "http://"));
