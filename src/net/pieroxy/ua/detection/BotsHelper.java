@@ -158,6 +158,8 @@ class BotsHelper {
             return new Bot(Brand.OTHER,BotFamily.CRAWLER,"Common Crawl",ver , "http://commoncrawl.org/faqs/");
         } else if (context.consume("via ggpht.com GoogleImageProxy", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) { // http://serverfault.com/questions/581857/apache-logs-flooded-with-connections-via-ggpht-com-googleimageproxy.
             return new Bot(Brand.GOOGLE,BotFamily.ROBOT,"Gmail image downloader proxy","");
+        } else if (context.consume("Google-StructuredDataTestingTool", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
+            return new Bot(Brand.GOOGLE,BotFamily.ROBOT,"Google Structured Data Testing Tool",consumeUrlAndMozilla(context, "+http://"));
         } else if (context.consume("ONDOWN3.2", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) { // Looks like a bot to me.
             return new Bot(Brand.UNKNOWN,BotFamily.ROBOT,"ONDOWN","3.2");
         } else if (context.consume("Google Web Preview", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
