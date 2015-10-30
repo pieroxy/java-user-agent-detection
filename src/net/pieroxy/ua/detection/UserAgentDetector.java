@@ -1132,7 +1132,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                     context.consume("Mozilla/5.0", MatchingType.EQUALS,MatchingRegion.PARENTHESIS);
                 } else if (context.contains("Version/", MatchingType.BEGINS, MatchingRegion.REGULAR) &&
                            (context.contains("Mac OS", MatchingType.CONTAINS, MatchingRegion.CONSUMED) ||
-                            context.contains("Windows NT", MatchingType.BEGINS, MatchingRegion.PARENTHESIS))) {
+                            context.contains("Windows NT", MatchingType.BEGINS, MatchingRegion.CONSUMED))) {
                     context.getcNextTokens(new Matcher[] {new Matcher("Public", MatchingType.EQUALS),
                                                new Matcher("Beta", MatchingType.EQUALS)
                     },
