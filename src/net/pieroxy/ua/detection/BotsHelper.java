@@ -167,7 +167,13 @@ class BotsHelper {
             context.consume("generic", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
             context.consume("iPhone", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
             return new Bot(Brand.GOOGLE, BotFamily.ROBOT,"Web Preview","");
-        } else if (context.consume("Contact: backend@getprismatic.com", MatchingType.EQUALS, MatchingRegion.PARENTHESIS) ||
+        } else if ((multi = context.getcNextTokens(new Matcher[] {new Matcher("BusinessBot:", MatchingType.EQUALS),
+            new Matcher("^[A-Za-z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", MatchingType.REGEXP)
+        },
+        MatchingRegion.REGULAR)) != null) {
+            return new Bot(Brand.OTHER, BotFamily.ROBOT,"BusinessBot","", "");
+        }
+        else if (context.consume("Contact: backend@getprismatic.com", MatchingType.EQUALS, MatchingRegion.PARENTHESIS) ||
         (multi = context.getcNextTokens(new Matcher[] {new Matcher("Contact:", MatchingType.EQUALS),
             new Matcher("feedback@getprismatic.com", MatchingType.EQUALS)
         },
