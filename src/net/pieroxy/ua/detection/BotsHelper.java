@@ -31,13 +31,17 @@ class BotsHelper {
 
     static private Set<String> hiddenBots;
     static private Map<String, Bot> genericBotsBrandAndType;
+    static private Map<String, Bot> genericBotsLiteral;
     static private Bot genericBotBase = new Bot(Brand.OTHER, BotFamily.ROBOT, "", "");
     static private GenericBot[]genericBotsPatterns = new GenericBot[] {
         new GenericBot("Mozilla/5\\.0 \\(compatible; ?([^\\);/]+)/([0-9\\.]+); ?(MirrorDetector; )?(\\+? ?https?://[^\\)]+)\\)", new int[]{1,2,4}, true),
         new GenericBot("Mozilla/5\\.0 \\(compatible; ([^\\);/]+)\\-([0-9\\.]+); (\\+? ?https?://[^\\)]+)\\)", new int[]{1,2,3}, true),
         new GenericBot("Mozilla/5\\.0 \\(compatible; ([^\\);/]+); (\\+? ?https?://[^\\)]+)\\)", new int[]{1,0,2}, true),
+        new GenericBot("Mozilla/5\\.0 \\(compatible; ([^\\);/ ]+) (\\+? ?https?://[^\\)]+)\\)", new int[]{1,0,2}, true),
         new GenericBot("([^\\(\\);/]+)/([0-9RC\\.]+) \\((\\+?https?://[^\\);]+)\\)( .*)?", new int[]{1,2,3}, true),
         new GenericBot("([^\\(\\);]+) \\((\\+?https?://[^\\);]+)\\)( .*)?", new int[]{1,0,2}, true),
+        new GenericBot("([^\\(\\);/]+)/([0-9RC\\.]+) \\(([A-Za-z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})\\)( .*)?", new int[]{1,2,0}, true),
+        new GenericBot("([^<>\\(\\);]+) \\(([A-Za-z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})\\)", new int[]{1,0,0}, true),
     };
 
     static {
@@ -45,6 +49,9 @@ class BotsHelper {
         hiddenBots.add("Mozilla/4.0 (compatible; MSIE8.0; Windows NT 6.0) .NET CLR 2.0.50727)");
         hiddenBots.add("Mozilla/0.6 Beta (Windows)");
         hiddenBots.add("Mozilla/0.91 Beta (Windows)");
+
+        genericBotsLiteral = new HashMap<String, Bot>();
+        genericBotsLiteral.put("AdnormCrawler www.adnorm.com/crawler", new Bot(Brand.OTHER, BotFamily.ROBOT, "AdnormCrawler", ""));
 
         genericBotsBrandAndType = new HashMap<String, Bot>();
         // Complicated
@@ -85,6 +92,7 @@ class BotsHelper {
         genericBotsBrandAndType.put("oBot", new Bot(Brand.IBM, BotFamily.ROBOT, "oBot", ""));
         genericBotsBrandAndType.put("Google Desktop", new Bot(Brand.GOOGLE, BotFamily.CRAWLER, "Google Desktop Bot", ""));
         genericBotsBrandAndType.put("Google-Adwords-Instant-Mobile", new Bot(Brand.GOOGLE, BotFamily.ROBOT, "Google Landing page inspection bot", ""));
+        genericBotsBrandAndType.put("Google-Structured-Data-Testing-Tool", new Bot(Brand.GOOGLE, BotFamily.ROBOT, "Google Structured Data Testing Tool", ""));
 
         genericBotsBrandAndType.put("ltx71 -", new Bot(Brand.OTHER,BotFamily.ROBOT,"ltx71",""));
         genericBotsBrandAndType.put("masscan", new Bot(Brand.UNKNOWN,BotFamily.CRAWLER,"Mass IP port scanner",""));
@@ -115,6 +123,13 @@ class BotsHelper {
     }
 
     static Bot getGenericBots(String userAgent, UserAgentContext context) {
+        for (Map.Entry<String, Bot> e : genericBotsLiteral.entrySet()) {
+            if (userAgent.equals(e.getKey())) {
+                context.consumeAllTokens();
+                return e.getValue();
+            }
+        }
+
         for (GenericBot gb : genericBotsPatterns) {
             Bot b = getGenericBot(gb, userAgent);
             if (b!=null) {
