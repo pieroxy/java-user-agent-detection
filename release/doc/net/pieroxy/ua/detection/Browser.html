@@ -6,21 +6,34 @@
 <title>Browser</title>
 
 <link rel="stylesheet" type="text/css" href="../../../../stylesheet.css" title="Style">
+<script type="text/javascript" src="../../../../script.js"></script>
 </head>
 <body>
 <script type="text/javascript"><!--
-    if (location.href.indexOf('is-external=true') == -1) {
-        parent.document.title="Browser";
+    try {
+        if (location.href.indexOf('is-external=true') == -1) {
+            parent.document.title="Browser";
+        }
+    }
+    catch(err) {
     }
 //-->
+var methods = {"i0":10,"i1":10,"i2":10};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
+var altColor = "altColor";
+var rowColor = "rowColor";
+var tableTab = "tableTab";
+var activeTableTab = "activeTableTab";
 </script>
 <noscript>
 <div>JavaScript is disabled on your browser.</div>
 </noscript>
 <!-- ========= START OF TOP NAVBAR ======= -->
-<div class="topNav"><a name="navbar_top">
+<div class="topNav"><a name="navbar.top">
 <!--   -->
-</a><a href="#skip-navbar_top" title="Skip navigation links"></a><a name="navbar_top_firstrow">
+</a>
+<div class="skipNav"><a href="#skip.navbar.top" title="Skip navigation links">Skip navigation links</a></div>
+<a name="navbar.top.firstrow">
 <!--   -->
 </a>
 <ul class="navList" title="Navigation">
@@ -34,15 +47,15 @@
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?net/pieroxy/ua/detection/Browser.html" target="_top">Frames</a></li>
-<li><a href="Browser.html" target="_top">No Frames</a></li>
+<li><a href="Browser.html" target="_top">No&nbsp;Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_top">
-<li><a href="../../../../allclasses-noframe.html">All Classes</a></li>
+<li><a href="../../../../allclasses-noframe.html">All&nbsp;Classes</a></li>
 </ul>
 <div>
 <script type="text/javascript"><!--
@@ -60,18 +73,18 @@
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
-<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#method_summary">Method</a></li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
-<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#method_detail">Method</a></li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method.detail">Method</a></li>
 </ul>
 </div>
-<a name="skip-navbar_top">
+<a name="skip.navbar.top">
 <!--   -->
 </a></div>
 <!-- ========= END OF TOP NAVBAR ========= -->
@@ -94,9 +107,9 @@
 <li class="blockList">
 <hr>
 <br>
-<pre>public class <span class="strong">Browser</span>
+<pre>public class <span class="typeNameLabel">Browser</span>
 extends java.lang.Object</pre>
-<div class="block">A Browser is made of a Brand, a BrowserFamily, a description and a rendering engine. Description and rendering engine are defined as a String as of today.</div>
+<div class="block">A Browser is made of a Brand, a BrowserFamily, a description and a rendering engine. Description is defined as a String as of today.</div>
 </li>
 </ul>
 </div>
@@ -105,11 +118,11 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <!-- =========== FIELD SUMMARY =========== -->
 <ul class="blockList">
-<li class="blockList"><a name="field_summary">
+<li class="blockList"><a name="field.summary">
 <!--   -->
 </a>
 <h3>Field Summary</h3>
-<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
 <caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
@@ -117,37 +130,37 @@ extends java.lang.Object</pre>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#description">description</a></strong></code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/pieroxy/ua/detection/Browser.html#description">description</a></span></code>
 <div class="block">The precise description of the browser.</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code><a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#family">family</a></strong></code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/pieroxy/ua/detection/Browser.html#family">family</a></span></code>
 <div class="block">The general family of the browser.</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#fullVersion">fullVersion</a></strong></code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/pieroxy/ua/detection/Browser.html#fullVersion">fullVersion</a></span></code>
 <div class="block">The full version number of the browser.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#renderingEngine">renderingEngine</a></strong></code>
-<div class="block">A text description of the rendering engine.</div>
+<td class="colFirst"><code><a href="../../../../net/pieroxy/ua/detection/RenderingEngine.html" title="class in net.pieroxy.ua.detection">RenderingEngine</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/pieroxy/ua/detection/Browser.html#renderingEngine">renderingEngine</a></span></code>
+<div class="block">The rendering engine</div>
 </td>
 </tr>
 <tr class="altColor">
 <td class="colFirst"><code><a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a></code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#vendor">vendor</a></strong></code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/pieroxy/ua/detection/Browser.html#vendor">vendor</a></span></code>
 <div class="block">The company shipping the browser</div>
 </td>
 </tr>
 <tr class="rowColor">
 <td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#version">version</a></strong></code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/pieroxy/ua/detection/Browser.html#version">version</a></span></code>
 <div class="block">The two first numbers in the version of the browser.</div>
 </td>
 </tr>
@@ -156,37 +169,37 @@ extends java.lang.Object</pre>
 </ul>
 <!-- ======== CONSTRUCTOR SUMMARY ======== -->
 <ul class="blockList">
-<li class="blockList"><a name="constructor_summary">
+<li class="blockList"><a name="constructor.summary">
 <!--   -->
 </a>
 <h3>Constructor Summary</h3>
-<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Constructor Summary table, listing constructors, and an explanation">
 <caption><span>Constructors</span><span class="tabEnd">&nbsp;</span></caption>
 <tr>
 <th class="colOne" scope="col">Constructor and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#Browser(net.pieroxy.ua.detection.Brand, net.pieroxy.ua.detection.BrowserFamily, java.lang.String, java.lang.String)">Browser</a></strong>(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;_brand,
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../net/pieroxy/ua/detection/Browser.html#Browser-net.pieroxy.ua.detection.Brand-net.pieroxy.ua.detection.BrowserFamily-java.lang.String-net.pieroxy.ua.detection.RenderingEngine-">Browser</a></span>(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;_brand,
        <a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a>&nbsp;_family,
        java.lang.String&nbsp;_description,
-       java.lang.String&nbsp;_renderingEngine)</code>
+       <a href="../../../../net/pieroxy/ua/detection/RenderingEngine.html" title="class in net.pieroxy.ua.detection">RenderingEngine</a>&nbsp;_renderingEngine)</code>
 <div class="block">This constructor of the Browser object does not specifie any of the version fields.</div>
 </td>
 </tr>
 <tr class="rowColor">
-<td class="colOne"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#Browser(net.pieroxy.ua.detection.Brand, net.pieroxy.ua.detection.BrowserFamily, java.lang.String, java.lang.String, java.lang.String)">Browser</a></strong>(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;_brand,
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../net/pieroxy/ua/detection/Browser.html#Browser-net.pieroxy.ua.detection.Brand-net.pieroxy.ua.detection.BrowserFamily-java.lang.String-net.pieroxy.ua.detection.RenderingEngine-java.lang.String-">Browser</a></span>(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;_brand,
        <a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a>&nbsp;_family,
        java.lang.String&nbsp;_description,
-       java.lang.String&nbsp;_renderingEngine,
+       <a href="../../../../net/pieroxy/ua/detection/RenderingEngine.html" title="class in net.pieroxy.ua.detection">RenderingEngine</a>&nbsp;_renderingEngine,
        java.lang.String&nbsp;_oneVersion)</code>
 <div class="block">This constructor of the Browser object only specifies the <code>fullVersion</code>.</div>
 </td>
 </tr>
 <tr class="altColor">
-<td class="colOne"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#Browser(net.pieroxy.ua.detection.Brand, net.pieroxy.ua.detection.BrowserFamily, java.lang.String, java.lang.String, java.lang.String, java.lang.String)">Browser</a></strong>(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;_brand,
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../net/pieroxy/ua/detection/Browser.html#Browser-net.pieroxy.ua.detection.Brand-net.pieroxy.ua.detection.BrowserFamily-java.lang.String-net.pieroxy.ua.detection.RenderingEngine-java.lang.String-java.lang.String-">Browser</a></span>(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;_brand,
        <a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a>&nbsp;_family,
        java.lang.String&nbsp;_description,
-       java.lang.String&nbsp;_renderingEngine,
+       <a href="../../../../net/pieroxy/ua/detection/RenderingEngine.html" title="class in net.pieroxy.ua.detection">RenderingEngine</a>&nbsp;_renderingEngine,
        java.lang.String&nbsp;_version,
        java.lang.String&nbsp;_fullVersion)</code>
 <div class="block">This is the most detailed constructor of the Browser object, where everything can be specified.</div>
@@ -197,33 +210,33 @@ extends java.lang.Object</pre>
 </ul>
 <!-- ========== METHOD SUMMARY =========== -->
 <ul class="blockList">
-<li class="blockList"><a name="method_summary">
+<li class="blockList"><a name="method.summary">
 <!--   -->
 </a>
 <h3>Method Summary</h3>
-<table class="overviewSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span>Methods</span><span class="tabEnd">&nbsp;</span></caption>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t4" class="tableTab"><span><a href="javascript:show(8);">Concrete Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
 </tr>
-<tr class="altColor">
+<tr id="i0" class="altColor">
 <td class="colFirst"><code>boolean</code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#equals(java.lang.Object)">equals</a></strong>(java.lang.Object&nbsp;o)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/pieroxy/ua/detection/Browser.html#equals-java.lang.Object-">equals</a></span>(java.lang.Object&nbsp;o)</code>&nbsp;</td>
 </tr>
-<tr class="rowColor">
+<tr id="i1" class="rowColor">
 <td class="colFirst"><code>int</code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#hashCode()">hashCode</a></strong>()</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/pieroxy/ua/detection/Browser.html#hashCode--">hashCode</a></span>()</code>&nbsp;</td>
 </tr>
-<tr class="altColor">
+<tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><strong><a href="../../../../net/pieroxy/ua/detection/Browser.html#setFullVersionOneShot(java.lang.String)">setFullVersionOneShot</a></strong>(java.lang.String&nbsp;version)</code>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../net/pieroxy/ua/detection/Browser.html#setFullVersionOneShot-java.lang.String-">setFullVersionOneShot</a></span>(java.lang.String&nbsp;version)</code>
 <div class="block">This method sets both <code>version</code> and <code>fullVersion</code> attributes of this Browser object.</div>
 </td>
 </tr>
 </table>
 <ul class="blockList">
-<li class="blockList"><a name="methods_inherited_from_class_java.lang.Object">
+<li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
 <!--   -->
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
@@ -239,7 +252,7 @@ extends java.lang.Object</pre>
 <li class="blockList">
 <!-- ============ FIELD DETAIL =========== -->
 <ul class="blockList">
-<li class="blockList"><a name="field_detail">
+<li class="blockList"><a name="field.detail">
 <!--   -->
 </a>
 <h3>Field Detail</h3>
@@ -299,74 +312,93 @@ extends java.lang.Object</pre>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>renderingEngine</h4>
-<pre>public&nbsp;java.lang.String renderingEngine</pre>
-<div class="block">A text description of the rendering engine. It is usually made of the name of the
- rendering engine and its version, separated by a space. For example "WebKit 537.36" or "Gecko 6.0.2".
- Empty if no rendering engine could be found (for example a library)</div>
+<pre>public&nbsp;<a href="../../../../net/pieroxy/ua/detection/RenderingEngine.html" title="class in net.pieroxy.ua.detection">RenderingEngine</a> renderingEngine</pre>
+<div class="block">The rendering engine</div>
 </li>
 </ul>
 </li>
 </ul>
 <!-- ========= CONSTRUCTOR DETAIL ======== -->
 <ul class="blockList">
-<li class="blockList"><a name="constructor_detail">
+<li class="blockList"><a name="constructor.detail">
 <!--   -->
 </a>
 <h3>Constructor Detail</h3>
-<a name="Browser(net.pieroxy.ua.detection.Brand, net.pieroxy.ua.detection.BrowserFamily, java.lang.String, java.lang.String, java.lang.String, java.lang.String)">
+<a name="Browser-net.pieroxy.ua.detection.Brand-net.pieroxy.ua.detection.BrowserFamily-java.lang.String-net.pieroxy.ua.detection.RenderingEngine-java.lang.String-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>Browser</h4>
 <pre>public&nbsp;Browser(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;_brand,
-       <a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a>&nbsp;_family,
-       java.lang.String&nbsp;_description,
-       java.lang.String&nbsp;_renderingEngine,
-       java.lang.String&nbsp;_version,
-       java.lang.String&nbsp;_fullVersion)</pre>
+               <a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a>&nbsp;_family,
+               java.lang.String&nbsp;_description,
+               <a href="../../../../net/pieroxy/ua/detection/RenderingEngine.html" title="class in net.pieroxy.ua.detection">RenderingEngine</a>&nbsp;_renderingEngine,
+               java.lang.String&nbsp;_version,
+               java.lang.String&nbsp;_fullVersion)</pre>
 <div class="block">This is the most detailed constructor of the Browser object, where everything can be specified.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>_brand</code> - The vendor of this browser.</dd><dd><code>_family</code> - The family of this browser.</dd><dd><code>_description</code> - The text description of this browser.</dd><dd><code>_renderingEngine</code> - The rendering engine of this browser.</dd><dd><code>_version</code> - The version of this browser.</dd><dd><code>_fullVersion</code> - The full version of this browser.</dd></dl>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>_brand</code> - The vendor of this browser.</dd>
+<dd><code>_family</code> - The family of this browser.</dd>
+<dd><code>_description</code> - The text description of this browser.</dd>
+<dd><code>_renderingEngine</code> - The rendering engine of this browser.</dd>
+<dd><code>_version</code> - The version of this browser.</dd>
+<dd><code>_fullVersion</code> - The full version of this browser.</dd>
+</dl>
 </li>
 </ul>
-<a name="Browser(net.pieroxy.ua.detection.Brand, net.pieroxy.ua.detection.BrowserFamily, java.lang.String, java.lang.String)">
+<a name="Browser-net.pieroxy.ua.detection.Brand-net.pieroxy.ua.detection.BrowserFamily-java.lang.String-net.pieroxy.ua.detection.RenderingEngine-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>Browser</h4>
 <pre>public&nbsp;Browser(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;_brand,
-       <a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a>&nbsp;_family,
-       java.lang.String&nbsp;_description,
-       java.lang.String&nbsp;_renderingEngine)</pre>
+               <a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a>&nbsp;_family,
+               java.lang.String&nbsp;_description,
+               <a href="../../../../net/pieroxy/ua/detection/RenderingEngine.html" title="class in net.pieroxy.ua.detection">RenderingEngine</a>&nbsp;_renderingEngine)</pre>
 <div class="block">This constructor of the Browser object does not specifie any of the version fields. They will be left as empty strings.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>_brand</code> - The vendor of this browser.</dd><dd><code>_family</code> - The family of this browser.</dd><dd><code>_description</code> - The text description of this browser.</dd><dd><code>_renderingEngine</code> - The rendering engine of this browser.</dd></dl>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>_brand</code> - The vendor of this browser.</dd>
+<dd><code>_family</code> - The family of this browser.</dd>
+<dd><code>_description</code> - The text description of this browser.</dd>
+<dd><code>_renderingEngine</code> - The rendering engine of this browser.</dd>
+</dl>
 </li>
 </ul>
-<a name="Browser(net.pieroxy.ua.detection.Brand, net.pieroxy.ua.detection.BrowserFamily, java.lang.String, java.lang.String, java.lang.String)">
+<a name="Browser-net.pieroxy.ua.detection.Brand-net.pieroxy.ua.detection.BrowserFamily-java.lang.String-net.pieroxy.ua.detection.RenderingEngine-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>Browser</h4>
 <pre>public&nbsp;Browser(<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a>&nbsp;_brand,
-       <a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a>&nbsp;_family,
-       java.lang.String&nbsp;_description,
-       java.lang.String&nbsp;_renderingEngine,
-       java.lang.String&nbsp;_oneVersion)</pre>
+               <a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection">BrowserFamily</a>&nbsp;_family,
+               java.lang.String&nbsp;_description,
+               <a href="../../../../net/pieroxy/ua/detection/RenderingEngine.html" title="class in net.pieroxy.ua.detection">RenderingEngine</a>&nbsp;_renderingEngine,
+               java.lang.String&nbsp;_oneVersion)</pre>
 <div class="block">This constructor of the Browser object only specifies the <code>fullVersion</code>. The <code>version</code> is deduced by calling <code>setFullVersionOneShot(oneVersion)</code>.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>_brand</code> - The vendor of this browser.</dd><dd><code>_family</code> - The family of this browser.</dd><dd><code>_description</code> - The text description of this browser.</dd><dd><code>_renderingEngine</code> - The rendering engine of this browser.</dd><dd><code>_oneVersion</code> - The full version of this browser.</dd></dl>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>_brand</code> - The vendor of this browser.</dd>
+<dd><code>_family</code> - The family of this browser.</dd>
+<dd><code>_description</code> - The text description of this browser.</dd>
+<dd><code>_renderingEngine</code> - The rendering engine of this browser.</dd>
+<dd><code>_oneVersion</code> - The full version of this browser.</dd>
+</dl>
 </li>
 </ul>
 </li>
 </ul>
 <!-- ============ METHOD DETAIL ========== -->
 <ul class="blockList">
-<li class="blockList"><a name="method_detail">
+<li class="blockList"><a name="method.detail">
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="equals(java.lang.Object)">
+<a name="equals-java.lang.Object-">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -374,12 +406,12 @@ extends java.lang.Object</pre>
 <h4>equals</h4>
 <pre>public&nbsp;boolean&nbsp;equals(java.lang.Object&nbsp;o)</pre>
 <dl>
-<dt><strong>Overrides:</strong></dt>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code>equals</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
 </dl>
 </li>
 </ul>
-<a name="hashCode()">
+<a name="hashCode--">
 <!--   -->
 </a>
 <ul class="blockList">
@@ -387,12 +419,12 @@ extends java.lang.Object</pre>
 <h4>hashCode</h4>
 <pre>public&nbsp;int&nbsp;hashCode()</pre>
 <dl>
-<dt><strong>Overrides:</strong></dt>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
 <dd><code>hashCode</code>&nbsp;in class&nbsp;<code>java.lang.Object</code></dd>
 </dl>
 </li>
 </ul>
-<a name="setFullVersionOneShot(java.lang.String)">
+<a name="setFullVersionOneShot-java.lang.String-">
 <!--   -->
 </a>
 <ul class="blockListLast">
@@ -401,7 +433,10 @@ extends java.lang.Object</pre>
 <pre>public&nbsp;void&nbsp;setFullVersionOneShot(java.lang.String&nbsp;version)</pre>
 <div class="block">This method sets both <code>version</code> and <code>fullVersion</code> attributes of this Browser object.
  It will set the <code>version</code> as the full version truncated to the first non numeric character, leaving the first '.' character in the mix.</div>
-<dl><dt><span class="strong">Parameters:</span></dt><dd><code>version</code> - The full version number.</dd></dl>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>version</code> - The full version number.</dd>
+</dl>
 </li>
 </ul>
 </li>
@@ -412,9 +447,11 @@ extends java.lang.Object</pre>
 </div>
 <!-- ========= END OF CLASS DATA ========= -->
 <!-- ======= START OF BOTTOM NAVBAR ====== -->
-<div class="bottomNav"><a name="navbar_bottom">
+<div class="bottomNav"><a name="navbar.bottom">
 <!--   -->
-</a><a href="#skip-navbar_bottom" title="Skip navigation links"></a><a name="navbar_bottom_firstrow">
+</a>
+<div class="skipNav"><a href="#skip.navbar.bottom" title="Skip navigation links">Skip navigation links</a></div>
+<a name="navbar.bottom.firstrow">
 <!--   -->
 </a>
 <ul class="navList" title="Navigation">
@@ -428,15 +465,15 @@ extends java.lang.Object</pre>
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection"><span class="strong">Prev Class</span></a></li>
-<li><a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection"><span class="strong">Next Class</span></a></li>
+<li><a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../net/pieroxy/ua/detection/BrowserFamily.html" title="enum in net.pieroxy.ua.detection"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?net/pieroxy/ua/detection/Browser.html" target="_top">Frames</a></li>
-<li><a href="Browser.html" target="_top">No Frames</a></li>
+<li><a href="Browser.html" target="_top">No&nbsp;Frames</a></li>
 </ul>
 <ul class="navList" id="allclasses_navbar_bottom">
-<li><a href="../../../../allclasses-noframe.html">All Classes</a></li>
+<li><a href="../../../../allclasses-noframe.html">All&nbsp;Classes</a></li>
 </ul>
 <div>
 <script type="text/javascript"><!--
@@ -454,18 +491,18 @@ extends java.lang.Object</pre>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li><a href="#field_summary">Field</a>&nbsp;|&nbsp;</li>
-<li><a href="#constructor_summary">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#method_summary">Method</a></li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor.summary">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li><a href="#field_detail">Field</a>&nbsp;|&nbsp;</li>
-<li><a href="#constructor_detail">Constr</a>&nbsp;|&nbsp;</li>
-<li><a href="#method_detail">Method</a></li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
+<li><a href="#constructor.detail">Constr</a>&nbsp;|&nbsp;</li>
+<li><a href="#method.detail">Method</a></li>
 </ul>
 </div>
-<a name="skip-navbar_bottom">
+<a name="skip.navbar.bottom">
 <!--   -->
 </a></div>
 <!-- ======== END OF BOTTOM NAVBAR ======= -->

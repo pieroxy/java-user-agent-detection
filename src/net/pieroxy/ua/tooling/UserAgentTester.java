@@ -11,18 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
-import net.pieroxy.ua.detection.Bot;
-import net.pieroxy.ua.detection.BotFamily;
-import net.pieroxy.ua.detection.Brand;
-import net.pieroxy.ua.detection.Browser;
-import net.pieroxy.ua.detection.BrowserFamily;
-import net.pieroxy.ua.detection.Device;
-import net.pieroxy.ua.detection.DeviceType;
-import net.pieroxy.ua.detection.Locale;
-import net.pieroxy.ua.detection.OS;
-import net.pieroxy.ua.detection.OSFamily;
-import net.pieroxy.ua.detection.UserAgentDetectionResult;
-import net.pieroxy.ua.detection.UserAgentDetector;
+import net.pieroxy.ua.detection.*;
 
 public class UserAgentTester {
 
@@ -219,11 +208,13 @@ public class UserAgentTester {
 
   private static class UserAgentDetection {
     String id, string, browser_family, browser_description,
-        browser_renderingEngine, os_family, os_description, os_version,
+        os_family, os_description, os_version,
         device_type, device_brand, device_manufacturer, device, lang, country,
         comment, ignored_tokens, unknown_tokens, device_arch, browser_vendor,
         os_vendor, bot_family, bot_vendor, bot_description, bot_version,
-        bot_url, browser_version, browser_fullVersion;
+        bot_url, browser_version, browser_fullVersion, re_brand, re_family,
+        re_version, re_fullversion;
+
 
     public UserAgentDetection(String line) {
       String[] elements = line.split("\t", -1);
@@ -231,7 +222,6 @@ public class UserAgentTester {
       string = elements[1];
       browser_family = elements[2];
       browser_description = elements[3];
-      browser_renderingEngine = elements[4];
       os_family = elements[5];
       os_description = elements[6];
       os_version = elements[7];
@@ -254,6 +244,10 @@ public class UserAgentTester {
       bot_url = getStringOrNull(elements[26]);
       browser_version = getStringOrNull(elements[27]);
       browser_fullVersion = getStringOrNull(elements[28]);
+      re_brand = getStringOrNull(elements[29]);
+      re_family = getStringOrNull(elements[30]);
+      re_version  = getStringOrNull(elements[31]);
+      re_fullversion = getStringOrNull(elements[32]);
     }
 
     private String getStringOrNull(String s) {
@@ -274,10 +268,16 @@ public class UserAgentTester {
       return new UserAgentDetectionResult(
           new Device(device_arch, Enum.valueOf(DeviceType.class, device_type),
               Enum.valueOf(Brand.class, device_brand), Enum.valueOf(
-                  Brand.class, device_manufacturer), device), new Browser(
-              Enum.valueOf(Brand.class, browser_vendor), Enum.valueOf(
-                  BrowserFamily.class, browser_family), browser_description,
-              browser_renderingEngine, browser_version, browser_fullVersion),
+                  Brand.class, device_manufacturer), device),
+          new Browser(Enum.valueOf(Brand.class, browser_vendor),
+                  Enum.valueOf(BrowserFamily.class, browser_family),
+                  browser_description,
+                  new RenderingEngine(
+                          Enum.valueOf(Brand.class, re_brand),
+                          Enum.valueOf(RenderingEngineFamily.class, re_family),
+                          re_version, re_fullversion),
+                  browser_version,
+                  browser_fullVersion),
           new OS(Enum.valueOf(Brand.class, os_vendor), Enum.valueOf(
               OSFamily.class, os_family), os_description, os_version),
           new Locale(lang, country), comment, ignored_tokens, unknown_tokens,

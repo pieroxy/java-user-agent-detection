@@ -753,7 +753,7 @@ class BotsHelper {
 
         UserAgentDetectionResult res = new UserAgentDetectionResult(
             new Device("",DeviceType.COMPUTER,Brand.UNKNOWN,""),
-            new Browser(Brand.UNKNOWN,BrowserFamily.LIBRARY,"","n/a"),
+            new Browser(Brand.UNKNOWN,BrowserFamily.LIBRARY,"",RenderingEngine.getUnknown()),
             new OS(Brand.LINUX,OSFamily.LINUX,"Linux",""));
 
 
@@ -1047,7 +1047,7 @@ class BotsHelper {
             context.consume("beta",MatchingType.BEGINS, MatchingRegion.BOTH);
             return new UserAgentDetectionResult(
                        new Device("",DeviceType.COMPUTER,Brand.UNKNOWN,""),
-                       new Browser(Brand.UNKNOWN,BrowserFamily.UNKNOWN,"",""),
+                       new Browser(Brand.UNKNOWN,BrowserFamily.UNKNOWN,"",RenderingEngine.getUnknown()),
                        new OS(Brand.UNKNOWN,OSFamily.UNKNOWN,"",""),
                        new Bot(Brand.OTHER, BotFamily.ROBOT, "Xenu Link Sleuth", token));
 

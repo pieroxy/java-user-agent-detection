@@ -2,7 +2,7 @@ package net.pieroxy.ua.detection;
 import java.io.*;
 import java.util.*;
 /**
-* A Browser is made of a Brand, a BrowserFamily, a description and a rendering engine. Description and rendering engine are defined as a String as of today.
+* A Browser is made of a Brand, a BrowserFamily, a description and a rendering engine. Description is defined as a String as of today.
 */
 public class Browser { /** The company shipping the browser */
     public Brand vendor;
@@ -14,11 +14,8 @@ public class Browser { /** The company shipping the browser */
     public String version;
     /** The full version number of the browser. Ex: 1.6.0.04 or 41.0.2272.76 */
     public String fullVersion;
-    /**
-     * A text description of the rendering engine. It is usually made of the name of the
-     * rendering engine and its version, separated by a space. For example "WebKit 537.36" or "Gecko 6.0.2".
-     * Empty if no rendering engine could be found (for example a library) */
-    public String renderingEngine;
+    /** The rendering engine */
+    public RenderingEngine renderingEngine;
 
     /**
      * This is the most detailed constructor of the Browser object, where everything can be specified.
@@ -29,7 +26,7 @@ public class Browser { /** The company shipping the browser */
      * @param  _version         The version of this browser.
      * @param  _fullVersion     The full version of this browser.
     */
-    public Browser(Brand _brand, BrowserFamily _family, String _description, String _renderingEngine, String _version, String _fullVersion) {
+    public Browser(Brand _brand, BrowserFamily _family, String _description, RenderingEngine _renderingEngine, String _version, String _fullVersion) {
         family = _family;
         description = _description;
         renderingEngine = _renderingEngine;
@@ -46,7 +43,7 @@ public class Browser { /** The company shipping the browser */
      * @param  _description     The text description of this browser.
      * @param  _renderingEngine The rendering engine of this browser.
     */
-    public Browser(Brand _brand, BrowserFamily _family, String _description, String _renderingEngine) {
+    public Browser(Brand _brand, BrowserFamily _family, String _description, RenderingEngine _renderingEngine) {
         this(_brand, _family, _description, _renderingEngine, "", "");
     }
 
@@ -58,7 +55,7 @@ public class Browser { /** The company shipping the browser */
      * @param  _renderingEngine The rendering engine of this browser.
      * @param  _oneVersion      The full version of this browser.
     */
-    public Browser(Brand _brand, BrowserFamily _family, String _description, String _renderingEngine, String _oneVersion) {
+    public Browser(Brand _brand, BrowserFamily _family, String _description, RenderingEngine _renderingEngine, String _oneVersion) {
         this(_brand, _family, _description, _renderingEngine, "", "");
         setFullVersionOneShot(_oneVersion);
     }
@@ -74,7 +71,6 @@ public class Browser { /** The company shipping the browser */
         if (d.renderingEngine==null && renderingEngine!=d.renderingEngine) return false;
         return
             ( (d.family==null && family==null) || d.family.equals(family) ) &&
-            ( (d.description==null && description==null) || d.description.equals(description) ) &&
             ( (d.version==null && version==null) || d.version.equals(version) ) &&
             ( (d.vendor==null && vendor==null) || d.vendor.equals(vendor) ) &&
             ( (d.description==null && description==null) || d.description.equals(description) ) &&
