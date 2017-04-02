@@ -78,7 +78,7 @@ public enum OSFamily {
     */
     BADA("Bada",false),
     /**
-    * RISC OS, by Castle Technology & RISC OS Open (version 5), and RISCOS Ltd (versions 4 & 6)
+    * RISC OS, by Castle Technology &amp; RISC OS Open (version 5), and RISCOS Ltd (versions 4 &amp; 6)
     */
     RISC("RISC OS",false),
     /**
