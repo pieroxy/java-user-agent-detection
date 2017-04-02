@@ -66,12 +66,12 @@ class BotsHelper {
         genericBotsBrandAndType.put("YodaoBot-Image", new Bot(Brand.NETEASE, BotFamily.CRAWLER, "Yodao Image Bot", ""));
         genericBotsBrandAndType.put("Googlebot", new Bot(Brand.GOOGLE, BotFamily.CRAWLER, "Google Bot", ""));
         genericBotsBrandAndType.put("Yahoo! Slurp", new Bot(Brand.YAHOO, BotFamily.CRAWLER, "Yahoo! Slurp", ""));
-        genericBotsBrandAndType.put("YandexAntivirus", new Bot(Brand.BAIDU, BotFamily.CRAWLER, "Yandex Crawler", ""));
-        genericBotsBrandAndType.put("YandexFavicons", new Bot(Brand.BAIDU, BotFamily.CRAWLER, "Yandex Crawler", ""));
-        genericBotsBrandAndType.put("YandexMedia", new Bot(Brand.BAIDU, BotFamily.CRAWLER, "Yandex Crawler", ""));
-        genericBotsBrandAndType.put("YandexImages", new Bot(Brand.BAIDU, BotFamily.CRAWLER, "Yandex Crawler", ""));
-        genericBotsBrandAndType.put("YandexImageResizer", new Bot(Brand.BAIDU, BotFamily.CRAWLER, "Yandex Crawler", ""));
-        genericBotsBrandAndType.put("YandexBot", new Bot(Brand.BAIDU, BotFamily.CRAWLER, "Yandex Crawler", ""));
+        genericBotsBrandAndType.put("YandexAntivirus", new Bot(Brand.YANDEX, BotFamily.CRAWLER, "Yandex Crawler", ""));
+        genericBotsBrandAndType.put("YandexFavicons", new Bot(Brand.YANDEX, BotFamily.CRAWLER, "Yandex Crawler", ""));
+        genericBotsBrandAndType.put("YandexMedia", new Bot(Brand.YANDEX, BotFamily.CRAWLER, "Yandex Crawler", ""));
+        genericBotsBrandAndType.put("YandexImages", new Bot(Brand.YANDEX, BotFamily.CRAWLER, "Yandex Crawler", ""));
+        genericBotsBrandAndType.put("YandexImageResizer", new Bot(Brand.YANDEX, BotFamily.CRAWLER, "Yandex Crawler", ""));
+        genericBotsBrandAndType.put("YandexBot", new Bot(Brand.YANDEX, BotFamily.CRAWLER, "Yandex Crawler", ""));
         genericBotsBrandAndType.put("proximic", new Bot(Brand.OTHER, BotFamily.CRAWLER, "Proximic Crawler", ""));
         genericBotsBrandAndType.put("Speedy Spider", new Bot(Brand.ENTIREWEB, BotFamily.CRAWLER, "Speedy Spider", ""));
         genericBotsBrandAndType.put("yoozBot", new Bot(Brand.OTHER, BotFamily.CRAWLER, "Yooz Bot", ""));
