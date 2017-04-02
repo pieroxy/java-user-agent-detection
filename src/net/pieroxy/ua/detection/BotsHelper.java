@@ -772,6 +772,7 @@ class BotsHelper {
             return res;
         } else if ((ver=context.getcVersionAfterPattern("libcurl/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
             String archTotal = context.getcToken("",MatchingType.ALWAYS_MATCH, MatchingRegion.PARENTHESIS);
+            if (archTotal == null) archTotal = "";
             String arch;
             if ((pos=archTotal.indexOf("-"))>-1) {
                 arch = archTotal.substring(0,pos);
@@ -827,6 +828,12 @@ class BotsHelper {
                 res.operatingSystem.version =  (UserAgentDetectionHelper.getVersionNumber(archTotal,pos+16) + " "+arch).trim();
                 return res;
             }
+        } else if ((ver=context.getcVersionAfterPattern("curl/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
+            res.browser.setFullVersionOneShot(ver);
+            res.browser.description = "curl";
+            res.browser.family = BrowserFamily.LIBRARY;
+            res.browser.vendor = Brand.OPENSOURCE;
+            return res;
         } else if ((ver=context.getcVersionAfterPattern("CFNetwork/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
             // A library on MacOS and iOS to make network calls.
             res.browser.family = BrowserFamily.LIBRARY;
