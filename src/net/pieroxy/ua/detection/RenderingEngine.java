@@ -4,14 +4,11 @@ import java.util.*;
 /**
 * A RenderingEngine is made of a Brand, a RenderingEngineFamily and two versions.
 */
-public class RenderingEngine { /** The main company behind the browser */
-    public Brand vendor;
-    /** The general family of the rendering engine. Could be GECKO, TRIDENT, WEBKIT, ... */
-    public RenderingEngineFamily family;
-    /** The two first numbers in the version of the rendering engine. Ex: 1.7 or 533.17 */
-    public String version;
-    /** The full version number of the rendering engine. Ex: 1.6.8 or 533.17.9 */
-    public String fullVersion;
+public class RenderingEngine {
+    private Brand vendor;
+    private RenderingEngineFamily family;
+    private String version;
+    private String fullVersion;
 
     /**
      * This is the most detailed constructor of the RenderingEngine object, where everything can be specified.
@@ -133,4 +130,22 @@ public class RenderingEngine { /** The main company behind the browser */
         }
         this.version = sv;
     }
+
+    /** The main company behind the browser */
+    public Brand getVendor() {
+        return vendor;
+    }
+    /** The general family of the rendering engine. Could be GECKO, TRIDENT, WEBKIT, ... */
+    public RenderingEngineFamily getFamily() {
+        return family;
+    }
+    /** The two first numbers in the version of the rendering engine. Ex: 1.7 or 533.17 */
+    public String getVersion() {
+        return version;
+    }
+    /** The full version number of the rendering engine. Ex: 1.6.8 or 533.17.9 */
+    public String getFullVersion() {
+        return fullVersion;
+    }
+
 }

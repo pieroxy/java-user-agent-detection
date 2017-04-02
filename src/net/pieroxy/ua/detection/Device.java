@@ -5,18 +5,12 @@ import java.util.*;
 * Describes the device that produced the user-agent string.
 */
 public class Device {
-    /** The type of the device. For example, COMPUTER, PHONE, TABLET, ... */
-    public DeviceType deviceType;
-    /** The brand of the device. This is in general the manufacturer but can be different for example in the case of the Nexus line of Android devices.
-     * For those, the brand will be GOOGLE. */
-    public Brand brand;
-    /** The manufacturer of the device. This is in general the brand but can be different for example in the case of the Nexus line of Android devices.
-     * For those, the manufacturer will be either ASUS, SAMSUNG, LG, whoever built the device. */
-    public Brand manufacturer;
-    /** The architecture of the device. May be "i386", "arm", "x86_64", "Power PC" or any other architecture. */
-    public String architecture;
-    /** The description of the device, for example "Galaxy S4" or "iPhone", ... */
-    public String device;
+    DeviceType deviceType;
+    Brand brand;
+    Brand manufacturer;
+    String architecture;
+    String device;
+
     /** This constructor does not specify the <code>manufacturer</code> and assumes it is the same as the <code>brand</code>. */
     public Device(String _architecture, DeviceType _type, Brand _brand, String _description) {
         this(_architecture,_type,_brand,_brand,_description);
@@ -73,4 +67,28 @@ public class Device {
         }
         return res;
     }
+
+    /** The type of the device. For example, COMPUTER, PHONE, TABLET, ... */
+    public DeviceType getDeviceType() {
+        return deviceType;
+    }
+    /** The brand of the device. This is in general the manufacturer but can be different for example in the case of the Nexus line of Android devices.
+     * For those, the brand will be GOOGLE. */
+    public Brand getBrand() {
+        return brand;
+    }
+    /** The manufacturer of the device. This is in general the brand but can be different for example in the case of the Nexus line of Android devices.
+     * For those, the manufacturer will be either ASUS, SAMSUNG, LG, whoever built the device. */
+    public Brand getManufacturer() {
+        return manufacturer;
+    }
+    /** The architecture of the device. May be "i386", "arm", "x86_64", "Power PC" or any other architecture. */
+    public String getArchitecture() {
+        return architecture;
+    }
+    /** The description of the device, for example "Galaxy S4" or "iPhone", ... */
+    public String getDevice() {
+        return device;
+    }
+
 }

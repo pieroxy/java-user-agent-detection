@@ -5,8 +5,8 @@ import java.util.*;
 * The Locale class is made of a Language and a Country. It can helpful to help build statistics about your audience. While not all user agents report these two values, some do and it can give a statistically significant trend.
 */
 public class Locale {
-    public Language lang;
-    public Country country;
+    private Language lang;
+    private Country country;
 
     public int hashCode() {
         return (lang +"-"+ country).hashCode();
@@ -47,4 +47,12 @@ public class Locale {
         this.country = LocaleHelper.getCountry(c);
         if (this.country == null) this.country = Country.UNKNOWN;
     }
+
+    public Language getLanguage() {
+        return lang;
+    }
+    public Country getCountry() {
+        return country;
+    }
+
 }

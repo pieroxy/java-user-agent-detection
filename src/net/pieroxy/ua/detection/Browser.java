@@ -4,18 +4,13 @@ import java.util.*;
 /**
 * A Browser is made of a Brand, a BrowserFamily, a description and a rendering engine. Description is defined as a String as of today.
 */
-public class Browser { /** The company shipping the browser */
-    public Brand vendor;
-    /** The general family of the browser. Could be FIREFOX, IE, CHROME, LIBRARY (means a program not being a browser), ... */
-    public BrowserFamily family;
-    /** The precise description of the browser. Can be "Firefox" or "Galeon" or "Seamonkey", ... */
-    public String description;
-    /** The two first numbers in the version of the browser. Ex: 10.3 or 35.1 */
-    public String version;
-    /** The full version number of the browser. Ex: 1.6.0.04 or 41.0.2272.76 */
-    public String fullVersion;
-    /** The rendering engine */
-    public RenderingEngine renderingEngine;
+public class Browser {
+    Brand vendor;
+    BrowserFamily family;
+    String description;
+    String version;
+    String fullVersion;
+    RenderingEngine renderingEngine;
 
     /**
      * This is the most detailed constructor of the Browser object, where everything can be specified.
@@ -77,6 +72,7 @@ public class Browser { /** The company shipping the browser */
             ( (d.fullVersion==null && fullVersion==null) || d.fullVersion.equals(fullVersion) ) &&
             ( (d.renderingEngine==null && renderingEngine==null) || d.renderingEngine.equals(renderingEngine) );
     }
+
     public int hashCode() {
         int res = 0;
         if (family != null) {
@@ -127,4 +123,31 @@ public class Browser { /** The company shipping the browser */
         }
         this.version = sv;
     }
+
+    /** The company shipping the browser */
+    public Brand getVendor() {
+        return vendor;
+    }
+    /** The general family of the browser. Could be FIREFOX, IE, CHROME, LIBRARY (means a program not being a browser), ... */
+    public BrowserFamily getFamily() {
+        return family;
+    }
+    /** The precise description of the browser. Can be "Firefox" or "Galeon" or "Seamonkey", ... */
+    public String getDescription() {
+        return description;
+    }
+    /** The two first numbers in the version of the browser. Ex: 10.3 or 35.1 */
+    public String getVersion() {
+        return version;
+    }
+    /** The full version number of the browser. Ex: 1.6.0.04 or 41.0.2272.76 */
+    public String getFullVersion() {
+        return fullVersion;
+    }
+    /** The rendering engine */
+    public RenderingEngine getRenderingEngine() {
+        return renderingEngine;
+    }
+
+
 }

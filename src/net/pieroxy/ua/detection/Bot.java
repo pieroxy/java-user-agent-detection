@@ -4,16 +4,12 @@ import java.util.*;
 /**
 * Describe a bot, which is a program that access sites automatically rather than a human browsing the web.
 */
-public class Bot { /** The vendor, usually the company that operates the bot, if known. */
-    public Brand vendor;
-    /** The family of the bot. SPAMBOT, WEB_CRAWLER, ... */
-    public BotFamily family;
-    /** The description of the bot. For example "Google Bot" or "Flipboard Proxy".  */
-    public String description;
-    /** The version number */
-    public String version;
-    /** The URL the bot points at or a url describing the bot. */
-    public String url;
+public class Bot {
+    Brand vendor;
+    BotFamily family;
+    String description;
+    String version;
+    String url;
 
     /**
      * This is the most detailed constructor of the Bot object. You can specifiy all of its fields.
@@ -82,4 +78,26 @@ public class Bot { /** The vendor, usually the company that operates the bot, if
         }
         return res;
     }
+
+    /** The vendor, usually the company that operates the bot, if known. */
+    public Brand getVendor() {
+        return vendor;
+    }
+    /** The family of the bot. SPAMBOT, WEB_CRAWLER, ... */
+    public BotFamily getFamily() {
+        return family;
+    }
+    /** The description of the bot. For example "Google Bot" or "Flipboard Proxy".  */
+    public String getDescription() {
+        return description;
+    }
+    /** The version number */
+    public String getVersion() {
+        return version;
+    }
+    /** The URL the bot points at or a url describing the bot. */
+    public String getUrl() {
+        return url;
+    }
+
 }

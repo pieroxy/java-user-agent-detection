@@ -5,15 +5,18 @@ import java.util.*;
 * This is the class returned by the detection API.
 */
 public class UserAgentDetectionResult {
-    public Device device;
-    public Bot bot;
-    public Browser browser;
-    public OS operatingSystem;
-    Locale locale;
+    String debug;
     private Set<Extension> extensions = new HashSet<Extension>();
+
     public String ignoredTokens;
     public String unknownTokens;
-    String debug;
+
+    Locale locale;
+    Device device;
+    Bot bot;
+    Browser browser;
+    OS operatingSystem;
+
     private boolean objectEquals(Object a, Object b) {
         if (a == null && b == null) return true;
         if (a == null || b == null) return false;

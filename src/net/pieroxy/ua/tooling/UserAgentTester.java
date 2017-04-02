@@ -126,48 +126,57 @@ public class UserAgentTester {
     if (a.equals(b))
       return null;
     StringBuilder result = new StringBuilder();
-    addErrorReport(result, "browser", a.browser, b.browser);
-    addErrorReport(result, "browser description", a.browser.description,
-        b.browser.description);
-    addErrorReport(result, "browser family", a.browser.family, b.browser.family);
+    addErrorReport(result, "browser", a.getBrowser(), b.getBrowser());
+    addErrorReport(result, "browser description", a.getBrowser().getDescription(),
+        b.getBrowser().getDescription());
+    addErrorReport(result, "browser family", a.getBrowser().getFamily(), b.getBrowser().getFamily());
     addErrorReport(result, "browser rendering engine",
-        a.browser.renderingEngine, b.browser.renderingEngine);
-    addErrorReport(result, "browser vendor", a.browser.vendor, b.browser.vendor);
-    addErrorReport(result, "browser version", a.browser.version,
-        b.browser.version);
-    addErrorReport(result, "browser fullVersion", a.browser.fullVersion,
-        b.browser.fullVersion);
+        a.getBrowser().getRenderingEngine(), b.getBrowser().getRenderingEngine());
+    addErrorReport(result, "browser vendor", a.getBrowser().getVendor(), b.getBrowser().getVendor());
+    addErrorReport(result, "browser version", a.getBrowser().getVersion(),
+        b.getBrowser().getVersion());
+    addErrorReport(result, "browser fullVersion", a.getBrowser().getFullVersion(),
+        b.getBrowser().getFullVersion());
 
-    addErrorReport(result, "device", a.device, b.device);
-    addErrorReport(result, "device architecture", a.device.architecture,
-        b.device.architecture);
-    addErrorReport(result, "device brand", a.device.brand, b.device.brand);
-    addErrorReport(result, "device name", a.device.device, b.device.device);
-    addErrorReport(result, "device type", a.device.deviceType,
-        b.device.deviceType);
-    addErrorReport(result, "device manufacturer", a.device.manufacturer,
-        b.device.manufacturer);
+    addErrorReport(result, "device", a.getDevice(), b.getDevice());
+    addErrorReport(result, "device architecture", a.getDevice().getArchitecture(),
+            b.getDevice().getArchitecture());
+    addErrorReport(result, "device brand", a.getDevice().getBrand(), b.getDevice().getBrand());
+    addErrorReport(result, "device name", a.getDevice().getDevice(), b.getDevice().getDevice());
+    addErrorReport(result, "device type", a.getDevice().getDeviceType(),
+            b.getDevice().getDeviceType());
+    addErrorReport(result, "device manufacturer", a.getDevice().getManufacturer(),
+            b.getDevice().getManufacturer());
 
-    addErrorReport(result, "OS", a.operatingSystem, b.operatingSystem);
-    addErrorReport(result, "OS", a.operatingSystem.description,
-        b.operatingSystem.description);
-    addErrorReport(result, "OS family", a.operatingSystem.family,
-        b.operatingSystem.family);
-    addErrorReport(result, "OS vendor", a.operatingSystem.vendor,
-        b.operatingSystem.vendor);
-    addErrorReport(result, "OS version", a.operatingSystem.version,
-        b.operatingSystem.version);
+    addErrorReport(result, "OS", a.getOperatingSystem(), b.getOperatingSystem());
+    addErrorReport(result, "OS", a.getOperatingSystem().getDescription(),
+            b.getOperatingSystem().getDescription());
+    addErrorReport(result, "OS family", a.getOperatingSystem().getFamily(),
+        b.getOperatingSystem().getFamily());
+    addErrorReport(result, "OS vendor", a.getOperatingSystem().getVendor(),
+            b.getOperatingSystem().getVendor());
+    addErrorReport(result, "OS version", a.getOperatingSystem().getVersion(),
+            b.getOperatingSystem().getVersion());
 
-    addErrorReport(result, "bot brand", a.bot == null ? null : a.bot.vendor,
-        b.bot == null ? null : b.bot.vendor);
-    addErrorReport(result, "bot type", a.bot == null ? null : a.bot.family,
-        b.bot == null ? null : b.bot.family);
-    addErrorReport(result, "bot description", a.bot == null ? null
-        : a.bot.description, b.bot == null ? null : b.bot.description);
-    addErrorReport(result, "bot version", a.bot == null ? null : a.bot.version,
-        b.bot == null ? null : b.bot.version);
-    addErrorReport(result, "bot url", a.bot == null ? null : a.bot.url,
-        b.bot == null ? null : b.bot.url);
+    addErrorReport(result, "bot brand", a.getBot() == null ? null : a.getBot().getVendor(),
+            (b.getBot() == null) ? null : b.getBot().getVendor());
+    addErrorReport(result, "bot type", a.getBot() == null ? null : a.getBot().getFamily(),
+        b.getBot() == null ? null : b.getBot().getFamily());
+    addErrorReport(result, "bot description", a.getBot() == null ? null
+        : a.getBot().getDescription(), b.getBot() == null ? null : b.getBot().getDescription());
+    addErrorReport(result, "bot version", a.getBot() == null ? null : a.getBot().getVersion(),
+            (b.getBot() == null) ? null : b.getBot().getVersion());
+    addErrorReport(result, "bot url", a.getBot() == null ? null : a.getBot().getUrl(),
+        b.getBot() == null ? null : b.getBot().getUrl());
+
+    {
+      RenderingEngine ra = a.getBrowser().getRenderingEngine();
+      RenderingEngine rb = b.getBrowser().getRenderingEngine();
+      addErrorReport(result, "rendering engine vendor", ra.getVendor(), rb.getVendor());
+      addErrorReport(result, "rendering engine family", ra.getFamily(), rb.getFamily());
+      addErrorReport(result, "rendering engine version", ra.getVersion(), rb.getVersion());
+      addErrorReport(result, "rendering engine fullVersion", ra.getFullVersion(), rb.getFullVersion());
+    }
 
     addErrorReport(result, "ignored tokens", a.ignoredTokens, b.ignoredTokens);
     addErrorReport(result, "unknown tokens", a.unknownTokens, b.unknownTokens);
