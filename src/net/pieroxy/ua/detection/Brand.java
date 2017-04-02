@@ -126,7 +126,8 @@ public enum Brand {  COMODO("Comodo", "https://www.comodo.com"),
                      ACORN("Acorn", "http://en.wikipedia.org/wiki/Acorn_Computers"),
                      BAIDU("Baidu", "http://www.baidu.com"),
                      ARCHOS("Archos", "http://www.archos.com"),
-                     UTSTARCOM("UTStarcom", "http://www.utstar.com");
+                     UTSTARCOM("UTStarcom", "http://www.utstar.com"),
+                     YUANDAO("Yuandao (VIDO)", "http://en.yuandaocn.com/");
 
                      private String label;
                      private String website;

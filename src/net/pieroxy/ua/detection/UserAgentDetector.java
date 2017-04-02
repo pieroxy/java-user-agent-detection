@@ -39,6 +39,7 @@ public class UserAgentDetector implements IUserAgentDetector {
         MatchingRegion region = (expectConsumed)?MatchingRegion.CONSUMED:MatchingRegion.PARENTHESIS;
         return context.consume("KFTT", MatchingType.BEGINS, region) ||
                context.consume("KFOTE", MatchingType.BEGINS, region) ||
+               context.consume("KFOT", MatchingType.BEGINS, region) ||
                context.consume("KFJWI", MatchingType.BEGINS, region) ||
                context.consume("KFTHWI", MatchingType.BEGINS, region);
     }
@@ -657,14 +658,41 @@ public class UserAgentDetector implements IUserAgentDetector {
     }
 
     static RenderingEngine getWebkitVersion(UserAgentContext context) {
+        return getWebkitVersion(context, null, false, false);
+    }
+    static RenderingEngine getWebkitVersion(UserAgentContext context, String chromeVersion, boolean couldBeBlink, boolean isBlink) {
         try {
-            String ver = context.getcVersionAfterPattern("AppleWebKit/", MatchingType.BEGINS, MatchingRegion.REGULAR);
-            if (ver != null) return new RenderingEngine(Brand.APPLE, RenderingEngineFamily.WEBKIT, ver);
+            Brand brand = Brand.APPLE;
+            RenderingEngineFamily ref = RenderingEngineFamily.WEBKIT;
+            // Blink
+            String ver = chromeVersion;
+
+            if (couldBeBlink && !isBlink) {
+                if (ver == null)
+                    ver = context.getcVersionAfterPattern("Chrome/", MatchingType.BEGINS, MatchingRegion.REGULAR);
+                if (ver != null && ver.indexOf(".")>-1) {
+                    try {
+                        int v = Integer.parseInt(ver.substring(0, ver.indexOf(".")));
+                        isBlink = v > 27; // See https://en.wikipedia.org/wiki/Blink_(web_engine)
+                    } catch (NumberFormatException e) {
+                        // Meh...
+                    }
+                }
+            }
+
+            if (isBlink) {
+                brand = Brand.GOOGLE;
+                ref = RenderingEngineFamily.BLINK;
+            }
+
+            // Webkit
+            ver = context.getcVersionAfterPattern("AppleWebKit/", MatchingType.BEGINS, MatchingRegion.REGULAR);
+            if (ver != null) return new RenderingEngine(brand, ref, ver);
             ver = context.getcVersionAfterPattern("Safari/", MatchingType.BEGINS, MatchingRegion.REGULAR);
-            if (ver != null) return new RenderingEngine(Brand.APPLE, RenderingEngineFamily.WEBKIT, ver);
+            if (ver != null) return new RenderingEngine(brand, ref, ver);
             ver = context.getcVersionAfterPattern("KHTML/", MatchingType.BEGINS, MatchingRegion.REGULAR);
-            if (ver != null) return new RenderingEngine(Brand.APPLE, RenderingEngineFamily.WEBKIT, ver);
-            return new RenderingEngine(Brand.APPLE, RenderingEngineFamily.WEBKIT, "?");
+            if (ver != null) return new RenderingEngine(brand, ref, ver);
+            return new RenderingEngine(brand, ref, "?");
         } finally {
             consumeWebKitBullshit(context);
         }
@@ -971,7 +999,7 @@ public class UserAgentDetector implements IUserAgentDetector {
 
     }
 
-    static Browser getBrowser(UserAgentContext context, OS os) {
+    static Browser getBrowser(UserAgentContext context, OS os, OS[]override) {
         String userAgent = context.getUA();
         Browser res = null;
         int pos;
@@ -1030,7 +1058,7 @@ public class UserAgentDetector implements IUserAgentDetector {
             if ((ver=context.getcVersionAfterPattern("NokiaBrowser/", MatchingType.BEGINS,MatchingRegion.REGULAR))!=null) {
                 res = new Browser(Brand.NOKIA,BrowserFamily.OTHER_WEBKIT,"NokiaBrowser",getWebkitVersion(context), ver);
             } else if ((ver=context.getcVersionAfterPattern("Chromium/", MatchingType.BEGINS,MatchingRegion.REGULAR))!=null) {
-                res = new Browser(Brand.CHROMIUM,BrowserFamily.CHROME,"Chromium", getWebkitVersion(context), ver);
+                res = new Browser(Brand.CHROMIUM,BrowserFamily.CHROME,"Chromium", getWebkitVersion(context, null, true, false), ver);
                 context.consume("Chrome/", MatchingType.BEGINS,MatchingRegion.REGULAR);
             } else if ((ver=context.getcVersionAfterPattern("MxNitro/", MatchingType.BEGINS,MatchingRegion.REGULAR))!=null) {
                 res = new Browser(Brand.MAXTHON,BrowserFamily.OTHER_WEBKIT,"Nitro", getWebkitVersion(context), ver);
@@ -1069,7 +1097,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                 context.consume("Safari/", MatchingType.BEGINS,MatchingRegion.REGULAR);
                 context.consume("AppleWebKit/", MatchingType.BEGINS,MatchingRegion.REGULAR);
             } else if ((ver=context.getcVersionAfterPattern("OPR/", MatchingType.BEGINS,MatchingRegion.REGULAR))!=null) {
-                res = new Browser(Brand.OPERA,BrowserFamily.NEW_OPERA,"Opera", getWebkitVersion(context), ver);
+                res = new Browser(Brand.OPERA,BrowserFamily.NEW_OPERA,"Opera", getWebkitVersion(context, null, false, true), ver);
                 context.consume("Chrome/", MatchingType.BEGINS,MatchingRegion.REGULAR);
             } else if (context.consume("Avant TriCore", MatchingType.EQUALS,MatchingRegion.PARENTHESIS)) {
                 res = new Browser(Brand.AVANT,BrowserFamily.OTHER_WEBKIT,"Avant Browser", getWebkitVersion(context));
@@ -1080,7 +1108,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                 if ((ver=context.getcVersionAfterPattern("GSA/", MatchingType.BEGINS,MatchingRegion.REGULAR,2))!=null) {
                     app += " (with Google Search App "+ver+")";
                 }
-                res = new Browser(Brand.GOOGLE,BrowserFamily.CHROME,"Chrome", getWebkitVersion(context), cv+app);
+                res = new Browser(Brand.GOOGLE,BrowserFamily.CHROME,"Chrome", getWebkitVersion(context, cv, true, false), cv+app);
             } else if ((ver=context.getcVersionAfterPattern("Arora/", MatchingType.BEGINS,MatchingRegion.REGULAR))!=null) {
                 res = new Browser(Brand.OTHER,BrowserFamily.OTHER_WEBKIT,"Arora", getWebkitVersion(context), ver);
                 context.consume("KHTML, like Gecko, Safari/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
@@ -1093,7 +1121,14 @@ public class UserAgentDetector implements IUserAgentDetector {
                 context.consume("Safari", MatchingType.EQUALS,MatchingRegion.PARENTHESIS);
                 res = new Browser(Brand.UNKNOWN,BrowserFamily.OTHER_WEBKIT,"Surf", getWebkitVersion(context), ver);
             } else if ((ver=context.getcVersionAfterPattern("Silk/", MatchingType.BEGINS,MatchingRegion.BOTH))!=null) {
-                res = new Browser(Brand.AMAZON,BrowserFamily.OTHER_WEBKIT,"Silk", getWebkitVersion(context), ver);
+                if (os.getVendor() == Brand.SONY) {
+                    res = new Browser(Brand.SONY,BrowserFamily.OTHER_WEBKIT,"NetFront fork", getWebkitVersion(context), ver); // According to http://console.maban.co.uk/device/psvita/
+                } else {
+                    res = new Browser(Brand.AMAZON,BrowserFamily.OTHER_WEBKIT,"Silk", getWebkitVersion(context, null, false, true), ver);
+                    if (os.getVendor() == Brand.APPLE) {
+                        override[0] = new OS(Brand.AMAZON, OSFamily.ANDROID, "Amazon Android", "");
+                    }
+                }
             } else if ((ver=context.getcVersionAfterPattern("BrowserNG/", MatchingType.BEGINS,MatchingRegion.REGULAR))!=null) {
                 res = new Browser(Brand.NOKIA,BrowserFamily.OTHER_WEBKIT,"BrowserNG", getWebkitVersion(context), ver);
             } else if ((ver=context.getcVersionAfterPattern("Epiphany/", MatchingType.BEGINS,MatchingRegion.REGULAR))!=null) {
@@ -1902,6 +1937,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                 if (context.consume("LG-US670", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Optimus U");
                 if (context.consume("LG-GT540", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Optimus GT540");
                 if (context.consume("LG-E400", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Optimus L3");
+                if (context.consume("LG-LS720",MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Optimus F3");
                 if (context.consume("LG-E739", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"myTouch");
                 if (context.consume("LG-C800 ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"myTouch Q");
                 if (context.consume("LG-VS700", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) res = new Device(arm,DeviceType.PHONE,Brand.LG,"Enlighten");
@@ -1994,6 +2030,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                 if (context.consume("KFTT", MatchingType.BEGINS, MatchingRegion.CONSUMED)) return new Device(arm,DeviceType.TABLET,Brand.AMAZON,"Kindle Fire");
                 if (context.consume("KFJWI", MatchingType.BEGINS, MatchingRegion.CONSUMED)) return new Device(arm,DeviceType.TABLET,Brand.AMAZON,"Kindle Fire HD 8.9");
                 if (context.consume("KFOTE", MatchingType.BEGINS, MatchingRegion.CONSUMED)) return new Device(arm,DeviceType.TABLET,Brand.AMAZON,"Kindle Fire (2nd gen)");
+                if (context.consume("KFOT ", MatchingType.BEGINS, MatchingRegion.CONSUMED)) return new Device(arm,DeviceType.TABLET,Brand.AMAZON,"Kindle Fire 7");
                 if (context.consume("KFTHWI", MatchingType.BEGINS, MatchingRegion.CONSUMED)) return new Device(arm,DeviceType.TABLET,Brand.AMAZON,"Kindle Fire HDX 7 (3rd gen)");
             }
 
@@ -2022,6 +2059,7 @@ public class UserAgentDetector implements IUserAgentDetector {
             if (context.consume("A0001 Build/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.ONEPLUS,"One");
             if (context.consume("Tabra QAV801 Build/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.TABLET,Brand.UNKNOWN,"QAV 801");
             if (context.consume("ALCATEL ONE TOUCH 7041D Build/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.ALCATEL,"OneTouch Pop C7");
+            if (context.consume("M6 Build/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(atom,DeviceType.TABLET,Brand.YUANDAO,"M6");
 
 
             // Generic Android
@@ -3480,9 +3518,13 @@ public class UserAgentDetector implements IUserAgentDetector {
         res.locale = getLocale(context);
 
         res.operatingSystem = getOS(context);
+        OS[]override = new OS[1];
         //res.operatingSystem = new OS(Brand.UNKNOWN,OSFamily.UNKNOWN,"browser", "browser");
 
-        res.browser = getBrowser(context, res.operatingSystem);
+        res.browser = getBrowser(context, res.operatingSystem, override);
+        if (override[0] != null) {
+            res.operatingSystem = override[0];
+        }
 
         res.device = getDevice(context,res.browser,res.operatingSystem);
 
