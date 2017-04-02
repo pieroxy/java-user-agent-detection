@@ -178,8 +178,8 @@ public class UserAgentTester {
       addErrorReport(result, "rendering engine fullVersion", ra.getFullVersion(), rb.getFullVersion());
     }
 
-    addErrorReport(result, "ignored tokens", a.ignoredTokens, b.ignoredTokens);
-    addErrorReport(result, "unknown tokens", a.unknownTokens, b.unknownTokens);
+    addErrorReport(result, "ignored tokens", a.getIgnoredTokens(), b.getIgnoredTokens());
+    addErrorReport(result, "unknown tokens", a.getUnknownTokens(), b.getUnknownTokens());
     addErrorReport(result, "extensions", a.getExtensionsAsString(),
         b.getExtensionsAsString());
     return result.length() == 0 ? null : result.toString();

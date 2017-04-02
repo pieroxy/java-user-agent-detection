@@ -8,8 +8,8 @@ public class UserAgentDetectionResult {
     String debug;
     private Set<Extension> extensions = new HashSet<Extension>();
 
-    public String ignoredTokens;
-    public String unknownTokens;
+    String ignoredTokens;
+    String unknownTokens;
 
     Locale locale;
     Device device;
