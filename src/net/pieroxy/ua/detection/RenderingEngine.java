@@ -24,16 +24,29 @@ public class RenderingEngine {
         fullVersion = _fullVersion;
     }
 
+    /**
+     * This is the constructor that does not specify a version.
+     * @param  _brand           The vendor of this browser.
+     * @param  _family          The family of this browser.
+    */
+    public RenderingEngine(Brand _brand, RenderingEngineFamily _family) {
+        family = _family;
+        vendor = _brand;
+        version = "";
+        fullVersion = "";
+    }
+
 
     /**
      * This constructor of the RenderingEngine object only specifies the <code>fullVersion</code>. The <code>version</code> is deduced by calling <code>setFullVersionOneShot(oneVersion)</code>.
      * @param  _brand           The vendor of this browser.
      * @param  _family          The family of this browser.
      * @param  _oneVersion      The full version of this browser.
+     * @param  _nbChunks        How mnany chunks of numbers should the small version keep.
     */
-    public RenderingEngine(Brand _brand, RenderingEngineFamily _family, String _oneVersion) {
+    public RenderingEngine(Brand _brand, RenderingEngineFamily _family, String _oneVersion, int _nbChunks) {
         this(_brand, _family, "", "");
-        setFullVersionOneShot(_oneVersion);
+        setFullVersionOneShot(_oneVersion, _nbChunks);
     }
 
     /**
@@ -42,27 +55,27 @@ public class RenderingEngine {
      * @param  _family          The family of this browser.
      * @param  _oneVersion      The full version of this browser, as a floating-point number.
     */
-    public RenderingEngine(Brand _brand, RenderingEngineFamily _family, float _oneVersion) {
+    public RenderingEngine(Brand _brand, RenderingEngineFamily _family, float _oneVersion, int _nbChunks) {
         this(_brand, _family, "", "");
         String version = String.valueOf(_oneVersion);
         if (version.indexOf(".")==-1) version += ".0";
-        setFullVersionOneShot(version);
+        setFullVersionOneShot(version, 2);
     }
 
     public static RenderingEngine getUnknown() {
-        return new RenderingEngine(Brand.UNKNOWN, RenderingEngineFamily.UNKNOWN, "");
+        return new RenderingEngine(Brand.UNKNOWN, RenderingEngineFamily.UNKNOWN);
     }
 
     public static RenderingEngine getOther(Brand brand) {
-        return new RenderingEngine(brand, RenderingEngineFamily.OTHER, "");
+        return new RenderingEngine(brand, RenderingEngineFamily.OTHER);
     }
 
     public static RenderingEngine getText() {
-        return new RenderingEngine(Brand.UNKNOWN, RenderingEngineFamily.TEXT, "");
+        return new RenderingEngine(Brand.UNKNOWN, RenderingEngineFamily.TEXT);
     }
 
     public static RenderingEngine getNone() {
-        return new RenderingEngine(Brand.UNKNOWN, RenderingEngineFamily.NONE, "");
+        return new RenderingEngine(Brand.UNKNOWN, RenderingEngineFamily.NONE);
     }
 
     public String toString() {
@@ -114,15 +127,15 @@ public class RenderingEngine {
      * It will set the <code>version</code> as the full version truncated to the first non numeric character, leaving the first '.' character in the mix.
      * @param  version The full version number.
     */
-    public void setFullVersionOneShot(String version) {
+    public void setFullVersionOneShot(String version, int nbChunks) {
         this.fullVersion = version;
         String sv = "";
-        boolean dot = false;
+        int chunk = 0;
         for (int i=0 ; i<version.length() ; i++) {
             char c = version.charAt(i);
             if (c == '.') {
-                if (dot) break;
-                dot = true;
+                chunk++;
+                if (chunk >= nbChunks) break;
                 sv += c;
             } else if (Character.isDigit(c)) {
                 sv += c;

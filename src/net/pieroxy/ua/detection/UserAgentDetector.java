@@ -626,13 +626,13 @@ public class UserAgentDetector implements IUserAgentDetector {
     static RenderingEngine getKHTMLVersion(UserAgentContext context) {
         try {
             String ver = context.getcVersionAfterPattern("KHTML/", MatchingType.BEGINS, MatchingRegion.REGULAR);
-            if (ver != null) return new RenderingEngine(Brand.OPENSOURCE, RenderingEngineFamily.KHTML, ver);
+            if (ver != null) return new RenderingEngine(Brand.OPENSOURCE, RenderingEngineFamily.KHTML, ver, 2);
             ver = context.getcVersionAfterPattern("KHTML/", MatchingType.BEGINS, MatchingRegion.CONSUMED);
-            if (ver != null) return new RenderingEngine(Brand.OPENSOURCE, RenderingEngineFamily.KHTML, ver);
+            if (ver != null) return new RenderingEngine(Brand.OPENSOURCE, RenderingEngineFamily.KHTML, ver, 2);
             ver = context.getcVersionAfterPattern("Konqueror/", MatchingType.BEGINS, MatchingRegion.REGULAR);
-            if (ver != null) return new RenderingEngine(Brand.OPENSOURCE, RenderingEngineFamily.KHTML, "for Konqueror " + ver);
+            if (ver != null) return new RenderingEngine(Brand.OPENSOURCE, RenderingEngineFamily.KHTML, "for Konqueror " + ver, 2);
             ver = context.getcVersionAfterPattern("Konqueror/", MatchingType.BEGINS, MatchingRegion.CONSUMED);
-            if (ver != null) return new RenderingEngine(Brand.OPENSOURCE, RenderingEngineFamily.KHTML, "for Konqueror " + ver);
+            if (ver != null) return new RenderingEngine(Brand.OPENSOURCE, RenderingEngineFamily.KHTML, "for Konqueror " + ver, 2);
             return RenderingEngine.getUnknown();
         } finally {
         }
@@ -640,19 +640,19 @@ public class UserAgentDetector implements IUserAgentDetector {
 
     static RenderingEngine getTridentVersion(UserAgentContext context, String ieWithVersion) {
         String tver = context.getcVersionAfterPattern("Trident/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
-        if (tver != null) return new RenderingEngine(Brand.MICROSOFT, RenderingEngineFamily.TRIDENT, tver);
+        if (tver != null) return new RenderingEngine(Brand.MICROSOFT, RenderingEngineFamily.TRIDENT, tver, 2);
         tver = context.getcVersionAfterPattern("Trident ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
-        if (tver != null) return new RenderingEngine(Brand.MICROSOFT, RenderingEngineFamily.TRIDENT, tver);
-        return new RenderingEngine(Brand.MICROSOFT, RenderingEngineFamily.TRIDENT, "for IE " + ieWithVersion);
+        if (tver != null) return new RenderingEngine(Brand.MICROSOFT, RenderingEngineFamily.TRIDENT, tver, 2);
+        return new RenderingEngine(Brand.MICROSOFT, RenderingEngineFamily.TRIDENT, "for IE " + ieWithVersion, 2);
     }
 
     static RenderingEngine getPrestoVersion(UserAgentContext context, String matched) {
         String ver;
         if ((ver=context.getcVersionAfterPattern("Presto/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
-            return new RenderingEngine(Brand.OPERA, RenderingEngineFamily.PRESTO, ver);
+            return new RenderingEngine(Brand.OPERA, RenderingEngineFamily.PRESTO, ver, 2);
         }
         if (matched != null) {
-            return new RenderingEngine(Brand.OPERA, RenderingEngineFamily.PRESTO, "Opera "+matched);
+            return new RenderingEngine(Brand.OPERA, RenderingEngineFamily.PRESTO, "Opera "+matched, 2);
         }
         return RenderingEngine.getUnknown();
     }
@@ -687,12 +687,12 @@ public class UserAgentDetector implements IUserAgentDetector {
 
             // Webkit
             ver = context.getcVersionAfterPattern("AppleWebKit/", MatchingType.BEGINS, MatchingRegion.REGULAR);
-            if (ver != null) return new RenderingEngine(brand, ref, ver);
+            if (ver != null) return new RenderingEngine(brand, ref, ver, 2);
             ver = context.getcVersionAfterPattern("Safari/", MatchingType.BEGINS, MatchingRegion.REGULAR);
-            if (ver != null) return new RenderingEngine(brand, ref, ver);
+            if (ver != null) return new RenderingEngine(brand, ref, ver, 2);
             ver = context.getcVersionAfterPattern("KHTML/", MatchingType.BEGINS, MatchingRegion.REGULAR);
-            if (ver != null) return new RenderingEngine(brand, ref, ver);
-            return new RenderingEngine(brand, ref, "?");
+            if (ver != null) return new RenderingEngine(brand, ref, ver, 2);
+            return new RenderingEngine(brand, ref);
         } finally {
             consumeWebKitBullshit(context);
         }
@@ -749,7 +749,7 @@ public class UserAgentDetector implements IUserAgentDetector {
         if (ver.length() > 8) ver = ver.substring(0,8);
         String gv = context.getcVersionAfterPattern("rv:", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
         if (gv == null) gv = ver;
-        RenderingEngine re = new RenderingEngine(Brand.MOZILLA, RenderingEngineFamily.GECKO, gv);
+        RenderingEngine re = new RenderingEngine(Brand.MOZILLA, RenderingEngineFamily.GECKO, gv, 2);
         Browser res = new Browser(Brand.MOZILLA, BrowserFamily.OTHER_GECKO,"Gecko-based",re);
         boolean found = false;
         for (Map.Entry<String, GeckoSpinoff> so : geckoSpinOffs.entrySet()) {
@@ -908,7 +908,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                     (vertr=context.getcVersionAfterPattern("Trident ",  MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
                 float trver = tryParseVersionNumber(vertr);
 
-                res = new Browser(Brand.MICROSOFT,BrowserFamily.IE,"IE",new RenderingEngine(Brand.MICROSOFT, RenderingEngineFamily.TRIDENT, trver), verie);
+                res = new Browser(Brand.MICROSOFT,BrowserFamily.IE,"IE",new RenderingEngine(Brand.MICROSOFT, RenderingEngineFamily.TRIDENT, trver, 2), verie);
 
                 if (trver == 4.0 && iever < 8) {
                     res.description = "IE 8 in compatibility mode " + res.description + verie;
@@ -919,7 +919,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                     res.description = "IE 10 in compatibility mode " + res.description + verie;
                 }
             } else {
-                res = new Browser(Brand.MICROSOFT,BrowserFamily.IE,"IE",new RenderingEngine(Brand.MICROSOFT, RenderingEngineFamily.TRIDENT, "for IE " + iever), verie);
+                res = new Browser(Brand.MICROSOFT,BrowserFamily.IE,"IE",new RenderingEngine(Brand.MICROSOFT, RenderingEngineFamily.TRIDENT, "for IE " + iever, 2), verie);
             }
 
             if (possibleVersions.indexOf(String.valueOf((int)Math.floor(iever))+",")==-1) res = null;
@@ -984,7 +984,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                 (vertr=context.getcVersionAfterPattern("Trident/",  MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
             if ((ver=context.getcVersionAfterPattern("rv:",  MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
                 if (vertr.equals("7.0") && ver.startsWith("11")) {
-                    res = new Browser(Brand.MICROSOFT,BrowserFamily.IE,"IE",new RenderingEngine(Brand.MICROSOFT, RenderingEngineFamily.TRIDENT, vertr), ver);
+                    res = new Browser(Brand.MICROSOFT,BrowserFamily.IE,"IE",new RenderingEngine(Brand.MICROSOFT, RenderingEngineFamily.TRIDENT, vertr, 2), ver);
 
                     context.getcNextTokens(new Matcher[] {new Matcher("like", MatchingType.EQUALS),
                                                new Matcher("Gecko", MatchingType.REGEXP)
@@ -1047,10 +1047,10 @@ public class UserAgentDetector implements IUserAgentDetector {
             context.consume("KHTML, like Gecko", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
 
             if ((ver=context.getcVersionAfterPattern("AppleWebKit/", MatchingType.BEGINS,MatchingRegion.REGULAR))!=null) {
-                res.renderingEngine = new RenderingEngine(Brand.APPLE, RenderingEngineFamily.WEBKIT, ver);
+                res.renderingEngine = new RenderingEngine(Brand.APPLE, RenderingEngineFamily.WEBKIT, ver, 2);
             }
         } else if (os.description.endsWith("Nintendo 3DS") && (ver=context.getcVersionAfterPattern("Version/", MatchingType.BEGINS,MatchingRegion.REGULAR))!=null) {
-            res = new Browser(Brand.NINTENDO,BrowserFamily.OTHER_WEBKIT,"Nintendo Browser 3DS",new RenderingEngine(Brand.UNKNOWN, RenderingEngineFamily.WEBKIT, "", ""), ver);
+            res = new Browser(Brand.NINTENDO,BrowserFamily.OTHER_WEBKIT,"Nintendo Browser 3DS",new RenderingEngine(Brand.UNKNOWN, RenderingEngineFamily.WEBKIT), ver);
             context.consume("Mozilla/5.0", MatchingType.EQUALS, MatchingRegion.REGULAR);
         } else if (context.contains("WebKit", MatchingType.CONTAINS, MatchingRegion.BOTH) ||
                    context.contains("Webkit", MatchingType.CONTAINS, MatchingRegion.BOTH) ||
@@ -1090,7 +1090,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                 res = new Browser(Brand.UNKNOWN,BrowserFamily.OTHER_WEBKIT,"Yandex Browser", getWebkitVersion(context), ver);
                 context.consume("Chrome/", MatchingType.BEGINS,MatchingRegion.REGULAR);
             } else if ((ver=context.getcVersionAfterPattern("Edge/", MatchingType.BEGINS,MatchingRegion.REGULAR))!=null) {
-                res = new Browser(Brand.MICROSOFT,BrowserFamily.IE,"IE", new RenderingEngine(Brand.MICROSOFT, RenderingEngineFamily.EDGE, ver), ver);
+                res = new Browser(Brand.MICROSOFT,BrowserFamily.IE,"Edge", new RenderingEngine(Brand.MICROSOFT, RenderingEngineFamily.EDGE, ver, 1), ver);
                 context.consume("KHTML, like Gecko", MatchingType.BEGINS,MatchingRegion.PARENTHESIS);
                 context.consume("Chrome/", MatchingType.BEGINS,MatchingRegion.REGULAR);
                 context.consume("Mozilla/", MatchingType.BEGINS,MatchingRegion.REGULAR);
@@ -1341,7 +1341,7 @@ public class UserAgentDetector implements IUserAgentDetector {
             context.consume("Compatible", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
         } else if (os.vendor == Brand.NINTENDO && context.getUA().startsWith("Opera/9.50") && context.getUA().contains("DSi") &&
                    (ver = context.getcVersionAfterPattern("Opera/",  MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
-            res = new Browser(Brand.OPERA,BrowserFamily.OPERA,"Opera For DSi",new RenderingEngine(Brand.OPERA, RenderingEngineFamily.PRESTO, "2.1"), ver); // See http://en.wikipedia.org/wiki/Nintendo_DS_%26_DSi_Browser
+            res = new Browser(Brand.OPERA,BrowserFamily.OPERA,"Opera For DSi",new RenderingEngine(Brand.OPERA, RenderingEngineFamily.PRESTO, "2.1", 2), ver); // See http://en.wikipedia.org/wiki/Nintendo_DS_%26_DSi_Browser
             context.consume("Opera/9.50", MatchingType.EQUALS, MatchingRegion.REGULAR);
         } else
 
@@ -2454,7 +2454,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                 if (b.family == BrowserFamily.UNKNOWN && (ver = context.getcVersionAfterPattern("Dolfin/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
                     b.description = "Dolfin " + ver;
                     b.family = BrowserFamily.OTHER;
-                    b.renderingEngine = new RenderingEngine(Brand.SAMSUNG, RenderingEngineFamily.OTHER, ver);
+                    b.renderingEngine = new RenderingEngine(Brand.SAMSUNG, RenderingEngineFamily.OTHER, ver, 2);
                     b.vendor = Brand.SAMSUNG;
                 } else if (b.family == BrowserFamily.UNKNOWN && (ver = context.getcVersionAfterPattern("Jasmine/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
                     // Not so sure this is actually a web browser...
@@ -2540,7 +2540,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                 b.family = BrowserFamily.OPERA;
                 b.description = "Opera";
                 b.setFullVersionOneShot(ver);
-                b.renderingEngine = new RenderingEngine(Brand.OPERA, RenderingEngineFamily.PRESTO, ver);
+                b.renderingEngine = new RenderingEngine(Brand.OPERA, RenderingEngineFamily.PRESTO, ver, 2);
                 b.vendor = Brand.OPERA;
             }
             return new Device(arm,DeviceType.PHONE,Brand.HUAWEI,"M735");
