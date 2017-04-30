@@ -216,7 +216,7 @@ class BotsHelper {
                 ver += " dev";
             }
             context.consume("Unknown", MatchingType.EQUALS,MatchingRegion.PARENTHESIS);
-            return new Bot(Brand.OPENSOURCE,BotFamily.ROBOT,"PhantomJS", ver);
+            return new Bot(Brand.OPENSOURCE_COMMUNITY,BotFamily.ROBOT,"PhantomJS", ver);
         } else if (context.consume("theoldreader.com", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
             context.consume("feed-id=", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
             context.consume("[0-9]+ subscribers", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);
@@ -285,7 +285,7 @@ class BotsHelper {
             return new Bot(Brand.OTHER,BotFamily.ROBOT,"Nerdy Bot", "", "http://nerdybot.com");
         } else if (context.getUA().equals("PHPCrawl")) {
             context.consumeAllTokens();
-            return new Bot(Brand.OPENSOURCE,BotFamily.ROBOT,"PHP Crawl", "", "http://phpcrawl.cuab.de");
+            return new Bot(Brand.OPENSOURCE_COMMUNITY,BotFamily.ROBOT,"PHP Crawl", "", "http://phpcrawl.cuab.de");
         } else if (context.getUA().equals("updown_tester")) {
             context.consume("updown_tester", MatchingType.EQUALS, MatchingRegion.REGULAR);
             return new Bot(Brand.UNKNOWN,BotFamily.ROBOT,"Unknown (updown_tester)", "");
@@ -560,7 +560,7 @@ class BotsHelper {
                  new Matcher("-",MatchingType.EQUALS),
                  new Matcher("https://github.com/typhoeus/typhoeus",MatchingType.EQUALS),
         }, MatchingRegion.REGULAR) != null) {
-            return new Bot(Brand.OPENSOURCE, BotFamily.ROBOT, "Typhoeus library", "");
+            return new Bot(Brand.OPENSOURCE_COMMUNITY, BotFamily.ROBOT, "Typhoeus library", "");
         }
         else if ((ver=context.getcVersionAfterPattern("FSPBot/",MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
             return new Bot(Brand.OTHER, BotFamily.SPAMBOT, "FSPBot", ver);
@@ -761,7 +761,7 @@ class BotsHelper {
             res.browser.setFullVersionOneShot(groups[0], 2);
             res.browser.description = "curl";
             res.browser.family = BrowserFamily.LIBRARY;
-            res.browser.vendor = Brand.OPENSOURCE;
+            res.browser.vendor = Brand.OPENSOURCE_COMMUNITY;
 
             if (groups[1] != null) {
                 res.operatingSystem.family = OSFamily.LINUX;
@@ -783,7 +783,7 @@ class BotsHelper {
             res.browser.setFullVersionOneShot(ver, 2);
             res.browser.description = "curl";
             res.browser.family = BrowserFamily.LIBRARY;
-            res.browser.vendor = Brand.OPENSOURCE;
+            res.browser.vendor = Brand.OPENSOURCE_COMMUNITY;
 
             context.consume("curl/",MatchingType.BEGINS, MatchingRegion.REGULAR);
             context.consume("NSS/",MatchingType.BEGINS, MatchingRegion.REGULAR);
@@ -832,7 +832,7 @@ class BotsHelper {
             res.browser.setFullVersionOneShot(ver, 2);
             res.browser.description = "curl";
             res.browser.family = BrowserFamily.LIBRARY;
-            res.browser.vendor = Brand.OPENSOURCE;
+            res.browser.vendor = Brand.OPENSOURCE_COMMUNITY;
             return res;
         } else if ((ver=context.getcVersionAfterPattern("CFNetwork/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
             // A library on MacOS and iOS to make network calls.
@@ -940,7 +940,7 @@ class BotsHelper {
             return res;
         } else if ((ver=context.getcVersionAfterPattern("HTTP_Request2/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
             res.browser.family = BrowserFamily.LIBRARY;
-            res.browser.vendor = Brand.OPENSOURCE;
+            res.browser.vendor = Brand.OPENSOURCE_COMMUNITY;
             res.browser.description = "PHP HttpRequest2";
             res.browser.setFullVersionOneShot(ver, 2);
 
@@ -965,7 +965,7 @@ class BotsHelper {
             String rver = ver;
 
             res.browser.family = BrowserFamily.LIBRARY;
-            res.browser.vendor = Brand.OPENSOURCE;
+            res.browser.vendor = Brand.OPENSOURCE_COMMUNITY;
             res.browser.description = "Ruby";
             res.operatingSystem = new OS(Brand.UNKNOWN,OSFamily.UNKNOWN,"","");
 
@@ -1014,7 +1014,7 @@ class BotsHelper {
             return res;
         } else if ((ver=context.getcVersionAfterPattern("Wget/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
             res.browser.family = BrowserFamily.LIBRARY;
-            res.browser.vendor = Brand.OPENSOURCE;
+            res.browser.vendor = Brand.OPENSOURCE_COMMUNITY;
             res.browser.description = "wget";
             res.browser.setFullVersionOneShot(ver, 2);
 

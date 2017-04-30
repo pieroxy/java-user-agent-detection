@@ -626,13 +626,13 @@ public class UserAgentDetector implements IUserAgentDetector {
     static RenderingEngine getKHTMLVersion(UserAgentContext context) {
         try {
             String ver = context.getcVersionAfterPattern("KHTML/", MatchingType.BEGINS, MatchingRegion.REGULAR);
-            if (ver != null) return new RenderingEngine(Brand.OPENSOURCE, RenderingEngineFamily.KHTML, ver, 2);
+            if (ver != null) return new RenderingEngine(Brand.OPENSOURCE_COMMUNITY, RenderingEngineFamily.KHTML, ver, 2);
             ver = context.getcVersionAfterPattern("KHTML/", MatchingType.BEGINS, MatchingRegion.CONSUMED);
-            if (ver != null) return new RenderingEngine(Brand.OPENSOURCE, RenderingEngineFamily.KHTML, ver, 2);
+            if (ver != null) return new RenderingEngine(Brand.OPENSOURCE_COMMUNITY, RenderingEngineFamily.KHTML, ver, 2);
             ver = context.getcVersionAfterPattern("Konqueror/", MatchingType.BEGINS, MatchingRegion.REGULAR);
-            if (ver != null) return new RenderingEngine(Brand.OPENSOURCE, RenderingEngineFamily.KHTML, "for Konqueror " + ver, 2);
+            if (ver != null) return new RenderingEngine(Brand.OPENSOURCE_COMMUNITY, RenderingEngineFamily.KHTML, "for Konqueror " + ver, 2);
             ver = context.getcVersionAfterPattern("Konqueror/", MatchingType.BEGINS, MatchingRegion.CONSUMED);
-            if (ver != null) return new RenderingEngine(Brand.OPENSOURCE, RenderingEngineFamily.KHTML, "for Konqueror " + ver, 2);
+            if (ver != null) return new RenderingEngine(Brand.OPENSOURCE_COMMUNITY, RenderingEngineFamily.KHTML, "for Konqueror " + ver, 2);
             return RenderingEngine.getUnknown();
         } finally {
         }
