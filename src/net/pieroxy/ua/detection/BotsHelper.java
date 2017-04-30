@@ -754,7 +754,7 @@ class BotsHelper {
         UserAgentDetectionResult res = new UserAgentDetectionResult(
             new Device("",DeviceType.COMPUTER,Brand.UNKNOWN,""),
             new Browser(Brand.UNKNOWN,BrowserFamily.LIBRARY,"",RenderingEngine.getUnknown()),
-            new OS(Brand.LINUX,OSFamily.LINUX,"Linux",""));
+            new OS(Brand.UNKNOWN,OSFamily.LINUX,"Linux",""));
 
 
         if ((groups = getGroups("Curl/PHP ([0-9\\.]+)(-[0-9]ubuntu[0-9\\.]+)? \\(http://github.com/shuber/curl\\)", context.getUA(), 1, 2)) != null) {
@@ -801,13 +801,13 @@ class BotsHelper {
                 res.operatingSystem.version = ("Red Hat " + arch).trim();
                 return res;
             } else if (archTotal.endsWith("-pc-win32")) {
-                res.device.setBrandAndManufacturer(Brand.WINDOWS);
+                res.device.setBrandAndManufacturer(Brand.UNKNOWN);
                 res.operatingSystem.family = OSFamily.WINDOWS;
                 res.operatingSystem.description = "Windows";
                 res.operatingSystem.version = arch;
                 return res;
             } else if (archTotal.endsWith("pc-mingw32msvc")) {
-                res.device.setBrandAndManufacturer(Brand.WINDOWS);
+                res.device.setBrandAndManufacturer(Brand.UNKNOWN);
                 res.operatingSystem.family = OSFamily.WINDOWS;
                 res.operatingSystem.description = "Windows";
                 res.operatingSystem.version = (arch + " through MinGW").trim();
@@ -1034,7 +1034,7 @@ class BotsHelper {
                 res.operatingSystem.version = ver;
                 return res;
             } else if (context.consume("cygwin",MatchingType.EQUALS, MatchingRegion.BOTH)) {
-                res.device.setBrandAndManufacturer(Brand.WINDOWS);
+                res.device.setBrandAndManufacturer(Brand.UNKNOWN);
                 res.operatingSystem.family = OSFamily.WINDOWS;
                 res.operatingSystem.description = "Windows";
                 res.operatingSystem.version = "through cygwin";

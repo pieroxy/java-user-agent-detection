@@ -335,7 +335,7 @@ public class UserAgentDetector implements IUserAgentDetector {
         } else if ((ver = context.getcToken(".*el([0-9]+)\\.centos.*", MatchingType.REGEXP, MatchingRegion.BOTH))!=null) {
             java.util.regex.Matcher m = java.util.regex.Pattern.compile(".*el([0-9]+)\\.centos.*").matcher(ver);
             ver = m.find() ? "EL"+m.group(1) : "";
-            res = new OS(Brand.LINUX,OSFamily.LINUX,"CentOS", ver);
+            res = new OS(Brand.UNKNOWN,OSFamily.LINUX,"CentOS", ver);
         } else if ((ver=context.getcVersionAfterPattern("hpwOS/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
             res = new OS(Brand.HP,OSFamily.WEBOS,"WebOS",ver);
             context.consume("Linux", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
@@ -480,12 +480,12 @@ public class UserAgentDetector implements IUserAgentDetector {
                     med = "Ubuntu";
                     detail = "";
                 }
-                res = new OS(Brand.LINUX,OSFamily.LINUX,med,detail);
+                res = new OS(Brand.UNKNOWN,OSFamily.LINUX,med,detail);
             }
         } else if (context.consume("CentOS", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
-            res = new OS(Brand.LINUX,OSFamily.LINUX,"CentOS","");
+            res = new OS(Brand.UNKNOWN,OSFamily.LINUX,"CentOS","");
         } else if ((ver = context.getcVersionAfterPattern("GNU Fedora fc ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) != null) {
-            res = new OS(Brand.LINUX,OSFamily.LINUX,"Linux","Fedora " + ver);
+            res = new OS(Brand.UNKNOWN,OSFamily.LINUX,"Linux","Fedora " + ver);
         } else if ((ver = context.getcToken("NetBSD", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) != null) {
             String[]vv = ver.split(" ");
             if (vv.length == 3) {
@@ -574,7 +574,7 @@ public class UserAgentDetector implements IUserAgentDetector {
         } else if (context.consume("X11", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) {
             if (context.consume("Gentoo/", MatchingType.BEGINS, MatchingRegion.BOTH) ||
                     context.consume("Gentoo", MatchingType.EQUALS, MatchingRegion.BOTH)) {
-                res = new OS(Brand.LINUX,OSFamily.LINUX,"Gentoo","");
+                res = new OS(Brand.UNKNOWN,OSFamily.LINUX,"Gentoo","");
             } else {
                 res = new OS(Brand.UNKNOWN,OSFamily.UNIX,"Unix-like","X11 capable");
                 context.consume("I", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
@@ -2063,8 +2063,8 @@ public class UserAgentDetector implements IUserAgentDetector {
 
 
             // Generic Android
-            if (context.consume("Tablet", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) return new Device("",DeviceType.TABLET,Brand.UNKNOWN_ANDROID,"Unknown");
-            return new Device("",DeviceType.UNKNOWN_MOBILE,Brand.UNKNOWN_ANDROID,"Unknown");
+            if (context.consume("Tablet", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) return new Device("",DeviceType.TABLET,Brand.UNKNOWN,"Unknown");
+            return new Device("",DeviceType.UNKNOWN_MOBILE,Brand.UNKNOWN,"Unknown");
         }
         if (o.family == OSFamily.LINUX) {
             if (context.consume("Transformer TF101", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.TABLET,Brand.ASUS,"Eee Pad Transformer");
@@ -2578,7 +2578,7 @@ public class UserAgentDetector implements IUserAgentDetector {
         if (o.family == OSFamily.WINDOWS_NT) {
             String arch = "";
             DeviceType deviceType = DeviceType.COMPUTER;
-            Brand brand = Brand.WINDOWS;
+            Brand brand = Brand.UNKNOWN;
             String device = "PC";
 
             boolean highBits = context.consume("WOW64", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
