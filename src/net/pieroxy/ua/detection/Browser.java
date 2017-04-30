@@ -4,12 +4,10 @@ import java.util.*;
 /**
 * A Browser is made of a Brand, a BrowserFamily, a description and a rendering engine. Description is defined as a String as of today.
 */
-public class Browser {
+public class Browser extends VersionedObject {
     Brand vendor;
     BrowserFamily family;
     String description;
-    String version;
-    String fullVersion;
     RenderingEngine renderingEngine;
 
     /**
@@ -116,17 +114,6 @@ public class Browser {
         return res;
     }
 
-    /**
-     * This method sets both <code>version</code> and <code>fullVersion</code> attributes of this object.
-     * It will set the <code>version</code> as the full version truncated to the first non numeric character, leaving the first '.' character in the mix.
-     * @param  version The full version number.
-     * @nbChunks  The number of chunks that should be kept for the short version.
-    */
-    public void setFullVersionOneShot(String version, int nbChunks) {
-        this.fullVersion = version;
-        this.version = StringUtils.getShortVersion(version, nbChunks);
-    }
-
     /** The company shipping the browser */
     public Brand getVendor() {
         return vendor;
@@ -138,14 +125,6 @@ public class Browser {
     /** The precise description of the browser. Can be "Firefox" or "Galeon" or "Seamonkey", ... */
     public String getDescription() {
         return description;
-    }
-    /** The two first numbers in the version of the browser. Ex: 10.3 or 35.1 */
-    public String getVersion() {
-        return version;
-    }
-    /** The full version number of the browser. Ex: 1.6.0.04 or 41.0.2272.76 */
-    public String getFullVersion() {
-        return fullVersion;
     }
     /** The rendering engine */
     public RenderingEngine getRenderingEngine() {
