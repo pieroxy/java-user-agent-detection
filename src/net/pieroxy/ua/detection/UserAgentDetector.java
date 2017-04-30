@@ -1079,7 +1079,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                 res = new Browser(Brand.COMODO,BrowserFamily.OTHER_WEBKIT,"Dragon", getWebkitVersion(context), ver);
                 context.consume("Chrome/", MatchingType.BEGINS,MatchingRegion.REGULAR);
             } else if ((ver=context.getcVersionAfterPattern("SamsungBrowser/", MatchingType.BEGINS,MatchingRegion.REGULAR))!=null) {
-                res = new Browser(Brand.SAMSUNG,BrowserFamily.OTHER_WEBKIT,"SamsungBrowser", getWebkitVersion(context), ver);
+                res = new Browser(Brand.SAMSUNG,BrowserFamily.OTHER_WEBKIT,"Samsung Browser", getWebkitVersion(context), ver);
                 context.consume("Chrome/", MatchingType.BEGINS,MatchingRegion.REGULAR);
             } else if (os.family == OSFamily.BADA && (ver = context.getcVersionAfterPattern("Dolfin/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
                 res = new Browser(Brand.SAMSUNG,BrowserFamily.OTHER,"Dolfin",getWebkitVersion(context), ver);
@@ -1150,18 +1150,18 @@ public class UserAgentDetector implements IUserAgentDetector {
                         } else if ((ver=context.getcVersionAfterPattern("MQQBrowser/", MatchingType.BEGINS,MatchingRegion.REGULAR,2))!=null) {
                             app += " (with QQ Mobile Browser "+ver+")";
                         }
-                        res = new Browser(Brand.GOOGLE,BrowserFamily.ANDROID,"Stock Browser" + app,getWebkitVersion(context));
+                        res = new Browser(Brand.GOOGLE,BrowserFamily.ANDROID,"Stock" + app,getWebkitVersion(context));
                         context.consume("Version/", MatchingType.BEGINS,MatchingRegion.REGULAR);
                     }
                 } else if (context.contains("BlackBerry/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) {
-                    res = new Browser(Brand.RIM,BrowserFamily.OTHER_WEBKIT,"Stock Browser",getWebkitVersion(context));
+                    res = new Browser(Brand.RIM,BrowserFamily.OTHER_WEBKIT,"Stock",getWebkitVersion(context));
                 } else if (os.family == OSFamily.WEBOS) {
                     context.consume("Version/", MatchingType.BEGINS,MatchingRegion.REGULAR);
                     if (os.vendor == Brand.HP)
                         context.consume("wOSBrowser/", MatchingType.BEGINS,MatchingRegion.REGULAR);
-                    res = new Browser(os.vendor,BrowserFamily.OTHER_WEBKIT,"Stock Browser",getWebkitVersion(context));
+                    res = new Browser(os.vendor,BrowserFamily.OTHER_WEBKIT,"Stock",getWebkitVersion(context));
                 } else if (context.contains("Symbian", MatchingType.BEGINS, MatchingRegion.CONSUMED)) {
-                    res = new Browser(Brand.NOKIA,BrowserFamily.OTHER_WEBKIT,"Stock Browser",getWebkitVersion(context));
+                    res = new Browser(Brand.NOKIA,BrowserFamily.OTHER_WEBKIT,"Stock",getWebkitVersion(context));
                     context.consume("KHTML,like Gecko", MatchingType.EQUALS,MatchingRegion.PARENTHESIS);
                     context.consume("Mozilla/5.0", MatchingType.EQUALS,MatchingRegion.PARENTHESIS);
                 } else if (context.contains("Version/", MatchingType.BEGINS, MatchingRegion.REGULAR) &&
@@ -1222,7 +1222,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                     if (app.length()>0) {
 
                     }
-                    res = new Browser(Brand.APPLE,BrowserFamily.IOS,"Stock Browser",getWebkitVersion(context), app);
+                    res = new Browser(Brand.APPLE,BrowserFamily.IOS,"Stock",getWebkitVersion(context), app);
 
                     context.consume("Mobile/", MatchingType.BEGINS,MatchingRegion.REGULAR);
                 } else {
