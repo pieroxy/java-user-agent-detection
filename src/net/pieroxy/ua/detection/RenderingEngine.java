@@ -123,25 +123,14 @@ public class RenderingEngine {
     }
 
     /**
-     * This method sets both <code>version</code> and <code>fullVersion</code> attributes of this Browser object.
+     * This method sets both <code>version</code> and <code>fullVersion</code> attributes of this object.
      * It will set the <code>version</code> as the full version truncated to the first non numeric character, leaving the first '.' character in the mix.
      * @param  version The full version number.
+     * @nbChunks  The number of chunks that should be kept for the short version.
     */
     public void setFullVersionOneShot(String version, int nbChunks) {
         this.fullVersion = version;
-        String sv = "";
-        int chunk = 0;
-        for (int i=0 ; i<version.length() ; i++) {
-            char c = version.charAt(i);
-            if (c == '.') {
-                chunk++;
-                if (chunk >= nbChunks) break;
-                sv += c;
-            } else if (Character.isDigit(c)) {
-                sv += c;
-            } else break;
-        }
-        this.version = sv;
+        this.version = StringUtils.getShortVersion(version, nbChunks);
     }
 
     /** The main company behind the browser */

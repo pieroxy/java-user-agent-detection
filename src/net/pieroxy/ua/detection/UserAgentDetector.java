@@ -754,7 +754,7 @@ public class UserAgentDetector implements IUserAgentDetector {
         boolean found = false;
         for (Map.Entry<String, GeckoSpinoff> so : geckoSpinOffs.entrySet()) {
             if ((ver = context.getcVersionAfterPattern(so.getKey() + "/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
-                res.setFullVersionOneShot(ver);
+                res.setFullVersionOneShot(ver, 2);
                 res.description=so.getValue().name==null?so.getKey():so.getValue().name;
                 if (so.getValue().brand != null) res.vendor = so.getValue().brand;
                 context.consume("like Firefox", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
@@ -776,12 +776,12 @@ public class UserAgentDetector implements IUserAgentDetector {
             context.consume("N",  MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
             context.consume("m18",  MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
         } else if ((ver = context.getcVersionAfterPattern("Seamonkey-",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
-            res.setFullVersionOneShot(ver);
+            res.setFullVersionOneShot(ver, 2);
             res.description="SeaMonkey";
         } else if ((ver = context.getcVersionAfterPattern("GranParadiso/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
             res.family=BrowserFamily.FIREFOX;
             res.description="Firefox";
-            res.setFullVersionOneShot(ver);
+            res.setFullVersionOneShot(ver, 2);
             res.fullVersion += " beta - GranParadiso";
             context.consume("Firefox",MatchingType.BEGINS, MatchingRegion.REGULAR);
         } else if (context.consume("AvantBrowser/Tri-Core", MatchingType.EQUALS, MatchingRegion.REGULAR) ||
@@ -791,7 +791,7 @@ public class UserAgentDetector implements IUserAgentDetector {
             context.consume("Firefox/", MatchingType.BEGINS, MatchingRegion.REGULAR);
         } else if ((ver = context.getcVersionAfterPattern("Firefox/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
             context.consume("Fennec/",MatchingType.BEGINS, MatchingRegion.REGULAR); // This is FF for Android, but we already have the OS to tell us that.
-            res.setFullVersionOneShot(ver);
+            res.setFullVersionOneShot(ver, 2);
             res.description="Firefox";
             res.family=BrowserFamily.FIREFOX;
             if (ver.startsWith("2.") || ver.startsWith("3."))
@@ -801,20 +801,20 @@ public class UserAgentDetector implements IUserAgentDetector {
         } else if ((ver = context.getcVersionAfterPattern("Namoroka/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null ||
                    (ver = context.getcVersionAfterPattern("Shiretoko/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
             res.family=BrowserFamily.FIREFOX;
-            res.setFullVersionOneShot(ver);
+            res.setFullVersionOneShot(ver, 2);
             res.description="Firefox";
         } else if ((ver = context.getcVersionAfterPattern("SWB/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
             res.vendor = Brand.HP;
             res.description="Secure Web Browser";
             if (ver.charAt(0) == 'V') ver = ver.substring(1);
-            res.setFullVersionOneShot(ver);
+            res.setFullVersionOneShot(ver, 2);
         } else if ((ver = context.getcVersionAfterPattern("Minefield/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
             res.family=BrowserFamily.FIREFOX;
-            res.setFullVersionOneShot(ver);
+            res.setFullVersionOneShot(ver, 2);
             res.description="Firefox";
             res.fullVersion+=" nightly build";
         } else if ((ver = context.getcVersionAfterPattern("BonEcho/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
-            res.setFullVersionOneShot(ver);
+            res.setFullVersionOneShot(ver, 2);
             res.description="Firefox";
             res.family = BrowserFamily.FIREFOX;
         }
@@ -949,18 +949,18 @@ public class UserAgentDetector implements IUserAgentDetector {
                 if ((ver=context.getcVersionAfterPattern("Crazy Browser ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
                     res.family = BrowserFamily.OTHER_TRIDENT;
                     res.description = "Crazy Browser";
-                    res.setFullVersionOneShot(ver);
+                    res.setFullVersionOneShot(ver, 2);
                 }
                 if ((ver=context.getcVersionAfterPattern("Lunascape ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
                     res.family = BrowserFamily.OTHER_TRIDENT;
                     res.vendor = Brand.LUNASCAPE;
                     res.description = "Lunascape";
-                    res.setFullVersionOneShot(ver);
+                    res.setFullVersionOneShot(ver, 2);
                 }
                 if ((ver=context.getcVersionAfterPattern("America Online Browser ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
                     res.family = BrowserFamily.OTHER_TRIDENT;
                     res.description = "AOL Browser";
-                    res.setFullVersionOneShot(ver);
+                    res.setFullVersionOneShot(ver, 2);
                     context.consume("rev[0-9]\\.[0-9]", MatchingType.REGEXP, MatchingRegion.PARENTHESIS);
                 }
                 if (context.consume("MyIE2", MatchingType.EQUALS, MatchingRegion.PARENTHESIS) || context.consume("Maxthon", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) {
@@ -1090,7 +1090,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                 res = new Browser(Brand.UNKNOWN,BrowserFamily.OTHER_WEBKIT,"Yandex Browser", getWebkitVersion(context), ver);
                 context.consume("Chrome/", MatchingType.BEGINS,MatchingRegion.REGULAR);
             } else if ((ver=context.getcVersionAfterPattern("Edge/", MatchingType.BEGINS,MatchingRegion.REGULAR))!=null) {
-                res = new Browser(Brand.MICROSOFT,BrowserFamily.IE,"Edge", new RenderingEngine(Brand.MICROSOFT, RenderingEngineFamily.EDGE, ver, 1), ver);
+                res = new Browser(Brand.MICROSOFT,BrowserFamily.IE,"Edge", new RenderingEngine(Brand.MICROSOFT, RenderingEngineFamily.EDGE, ver, 1), ver, 1);
                 context.consume("KHTML, like Gecko", MatchingType.BEGINS,MatchingRegion.PARENTHESIS);
                 context.consume("Chrome/", MatchingType.BEGINS,MatchingRegion.REGULAR);
                 context.consume("Mozilla/", MatchingType.BEGINS,MatchingRegion.REGULAR);
@@ -2470,7 +2470,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                     b.vendor = Brand.SAMSUNG;
                 } else if (b.family == BrowserFamily.UNKNOWN && (ver = context.getcVersionAfterPattern("TELECA-/",  MatchingType.BEGINS, MatchingRegion.REGULAR, 2))!=null) {
                     b.description = "Teleca";
-                    b.setFullVersionOneShot(ver);
+                    b.setFullVersionOneShot(ver, 2);
                     b.family = BrowserFamily.OTHER;
                     b.renderingEngine = RenderingEngine.getOther(Brand.OBIGO);
                     b.vendor = Brand.OBIGO;
@@ -2539,7 +2539,7 @@ public class UserAgentDetector implements IUserAgentDetector {
             if ((ver=context.getcVersionAfterPattern("Opera/", MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
                 b.family = BrowserFamily.OPERA;
                 b.description = "Opera";
-                b.setFullVersionOneShot(ver);
+                b.setFullVersionOneShot(ver, 2);
                 b.renderingEngine = new RenderingEngine(Brand.OPERA, RenderingEngineFamily.PRESTO, ver, 2);
                 b.vendor = Brand.OPERA;
             }

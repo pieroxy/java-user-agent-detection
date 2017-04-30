@@ -758,7 +758,7 @@ class BotsHelper {
 
 
         if ((groups = getGroups("Curl/PHP ([0-9\\.]+)(-[0-9]ubuntu[0-9\\.]+)? \\(http://github.com/shuber/curl\\)", context.getUA(), 1, 2)) != null) {
-            res.browser.setFullVersionOneShot(groups[0]);
+            res.browser.setFullVersionOneShot(groups[0], 2);
             res.browser.description = "curl";
             res.browser.family = BrowserFamily.LIBRARY;
             res.browser.vendor = Brand.OPENSOURCE;
@@ -780,7 +780,7 @@ class BotsHelper {
                 arch = "";
             }
             res.device.architecture = arch;
-            res.browser.setFullVersionOneShot(ver);
+            res.browser.setFullVersionOneShot(ver, 2);
             res.browser.description = "curl";
             res.browser.family = BrowserFamily.LIBRARY;
             res.browser.vendor = Brand.OPENSOURCE;
@@ -829,7 +829,7 @@ class BotsHelper {
                 return res;
             }
         } else if ((ver=context.getcVersionAfterPattern("curl/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-            res.browser.setFullVersionOneShot(ver);
+            res.browser.setFullVersionOneShot(ver, 2);
             res.browser.description = "curl";
             res.browser.family = BrowserFamily.LIBRARY;
             res.browser.vendor = Brand.OPENSOURCE;
@@ -840,7 +840,7 @@ class BotsHelper {
             res.browser.description = "CFNetwork";
             res.browser.vendor = Brand.APPLE;
             String cfnver = ver;
-            res.browser.setFullVersionOneShot(cfnver);
+            res.browser.setFullVersionOneShot(cfnver, 2);
             String dver = context.getcVersionAfterPattern("Darwin/",MatchingType.BEGINS, MatchingRegion.REGULAR);
             if (dver == null) dver = "";
             if ((ver=context.getcVersionAfterPattern("Flipboard/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
@@ -942,7 +942,7 @@ class BotsHelper {
             res.browser.family = BrowserFamily.LIBRARY;
             res.browser.vendor = Brand.OPENSOURCE;
             res.browser.description = "PHP HttpRequest2";
-            res.browser.setFullVersionOneShot(ver);
+            res.browser.setFullVersionOneShot(ver, 2);
 
             context.consume("http://",MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
             String phpVer = context.getcVersionAfterPattern("PHP/",MatchingType.BEGINS, MatchingRegion.REGULAR);
@@ -998,8 +998,8 @@ class BotsHelper {
                 context.consume("http.rb", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
                 context.consume("net-irc", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
             }
-            if (ver != null) res.browser.setFullVersionOneShot(ver);
-            else if (rver != null) res.browser.setFullVersionOneShot(rver);
+            if (ver != null) res.browser.setFullVersionOneShot(ver, 2);
+            else if (rver != null) res.browser.setFullVersionOneShot(rver, 2);
 
             return res;
         } else if ((ver=context.getcVersionAfterPattern("Commons-HttpClient/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null ||
@@ -1009,14 +1009,14 @@ class BotsHelper {
             res.browser.family = BrowserFamily.LIBRARY;
             res.browser.vendor = Brand.APACHE;
             res.browser.description = "Commons HttpClient";
-            res.browser.setFullVersionOneShot(ver);
+            res.browser.setFullVersionOneShot(ver, 2);
             res.operatingSystem = new OS(Brand.UNKNOWN,OSFamily.UNKNOWN,"","");
             return res;
         } else if ((ver=context.getcVersionAfterPattern("Wget/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
             res.browser.family = BrowserFamily.LIBRARY;
             res.browser.vendor = Brand.OPENSOURCE;
             res.browser.description = "wget";
-            res.browser.setFullVersionOneShot(ver);
+            res.browser.setFullVersionOneShot(ver, 2);
 
             if (context.consume("Red Hat modified",MatchingType.EQUALS, MatchingRegion.PARENTHESIS) ||
             context.getcNextTokens(new Matcher[] {new Matcher("Red",MatchingType.EQUALS),
@@ -1076,7 +1076,7 @@ class BotsHelper {
                 res.browser.family = BrowserFamily.LIBRARY;
                 res.browser.vendor = Brand.SUN;
                 res.browser.description = "Java";
-                res.browser.setFullVersionOneShot(jv);
+                res.browser.setFullVersionOneShot(jv, 2);
             }
         }
     }

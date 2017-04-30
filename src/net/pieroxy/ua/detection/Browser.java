@@ -52,8 +52,22 @@ public class Browser {
     */
     public Browser(Brand _brand, BrowserFamily _family, String _description, RenderingEngine _renderingEngine, String _oneVersion) {
         this(_brand, _family, _description, _renderingEngine, "", "");
-        setFullVersionOneShot(_oneVersion);
+        setFullVersionOneShot(_oneVersion, 2);
     }
+
+    /**
+    * This constructor of the Browser object only specifies the <code>fullVersion</code>. The <code>version</code> is deduced by calling <code>setFullVersionOneShot(oneVersion)</code>.
+    * @param  _brand           The vendor of this browser.
+    * @param  _family          The family of this browser.
+    * @param  _description     The text description of this browser.
+    * @param  _renderingEngine The rendering engine of this browser.
+    * @param  _oneVersion      The full version of this browser.
+    */
+    public Browser(Brand _brand, BrowserFamily _family, String _description, RenderingEngine _renderingEngine, String _oneVersion, int _nbChunks) {
+        this(_brand, _family, _description, _renderingEngine, "", "");
+        setFullVersionOneShot(_oneVersion, _nbChunks);
+    }
+
     public boolean equals(Object o) {
         if (o == null) return false;
         if (! (o instanceof Browser)) return false;
@@ -103,25 +117,14 @@ public class Browser {
     }
 
     /**
-     * This method sets both <code>version</code> and <code>fullVersion</code> attributes of this Browser object.
+     * This method sets both <code>version</code> and <code>fullVersion</code> attributes of this object.
      * It will set the <code>version</code> as the full version truncated to the first non numeric character, leaving the first '.' character in the mix.
      * @param  version The full version number.
+     * @nbChunks  The number of chunks that should be kept for the short version.
     */
-    public void setFullVersionOneShot(String version) {
+    public void setFullVersionOneShot(String version, int nbChunks) {
         this.fullVersion = version;
-        String sv = "";
-        boolean dot = false;
-        for (int i=0 ; i<version.length() ; i++) {
-            char c = version.charAt(i);
-            if (c == '.') {
-                if (dot) break;
-                dot = true;
-                sv += c;
-            } else if (Character.isDigit(c)) {
-                sv += c;
-            } else break;
-        }
-        this.version = sv;
+        this.version = StringUtils.getShortVersion(version, nbChunks);
     }
 
     /** The company shipping the browser */
