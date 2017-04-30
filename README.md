@@ -19,7 +19,7 @@ I will not merge pull requests, as most of this code and tests are generated. Wh
 
 Building with ant is as simple as installing ant and typing ```ant```.
 
-Your jar can then be found in the ```build/``` directory.
+Your jar can then be found in the ```build/``` directory and the javadoc in ```build/doc/index.html```.
 
 
 ## How to build with Maven
