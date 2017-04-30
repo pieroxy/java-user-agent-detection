@@ -503,6 +503,9 @@ extends java.lang.Enum&lt;<a href="../../../../net/pieroxy/ua/detection/Brand.ht
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../net/pieroxy/ua/detection/Brand.html#YANDEX">YANDEX</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../net/pieroxy/ua/detection/Brand.html#YUANDAO">YUANDAO</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../net/pieroxy/ua/detection/Brand.html#ZTE">ZTE</a></span></code>&nbsp;</td>
 </tr>
 </table>
@@ -1675,10 +1678,19 @@ the order they are declared.</div>
 <a name="UTSTARCOM">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>UTSTARCOM</h4>
 <pre>public static final&nbsp;<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a> UTSTARCOM</pre>
+</li>
+</ul>
+<a name="YUANDAO">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>YUANDAO</h4>
+<pre>public static final&nbsp;<a href="../../../../net/pieroxy/ua/detection/Brand.html" title="enum in net.pieroxy.ua.detection">Brand</a> YUANDAO</pre>
 </li>
 </ul>
 </li>
@@ -1740,7 +1752,7 @@ not permitted.)</div>
 <pre>public&nbsp;java.lang.String&nbsp;getLabel()</pre>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the string representation of the brand.</dd>
+<dd>the string representation of the brand, in English.</dd>
 </dl>
 </li>
 </ul>
@@ -1753,7 +1765,9 @@ not permitted.)</div>
 <pre>public&nbsp;java.lang.String&nbsp;getWebsite()</pre>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>the url of the official website of this brand. If the website is not available anymore, the english wikipedia page of the brand is returned, or the url for the company having bought it, or the official notice of acquisition.</dd>
+<dd>the url of the official website of this brand. If the website is not available anymore,
+ the english wikipedia page of the brand is returned, or the url for the company having bought it,
+ or the official notice of acquisition. The point being to make it meaningful for a human being.</dd>
 </dl>
 </li>
 </ul>
