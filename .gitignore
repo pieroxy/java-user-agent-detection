@@ -1,4 +1,5 @@
 build/*
 release/tmp
+release/doc
 target/*
 .idea
