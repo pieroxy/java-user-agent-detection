@@ -1,5 +1,5 @@
 <project name="user-agent-tools" default="compile" basedir=".">
-  <property name="src" value="src"/>
+  <property name="src" value="src/main/java"/>
   <property name="dst" value="build"/>
 
   <target name="clean" description="clean">
