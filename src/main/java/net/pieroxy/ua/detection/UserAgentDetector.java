@@ -1456,6 +1456,7 @@ public class UserAgentDetector implements IUserAgentDetector {
 
         int pos;
         String ver;
+        String[]vers;
         // Bots & SDKs
         if (o.family == OSFamily.ANDROID &&
                 (context.consume("sdk ", MatchingType.BEGINS, MatchingRegion.PARENTHESIS) ||
@@ -2338,42 +2339,14 @@ public class UserAgentDetector implements IUserAgentDetector {
                     return new Device(arm,DeviceType.PHONE,Brand.NOKIA,"Lumia 1520");
                 if (context.consume("Lumia 925",MatchingType.EQUALS, MatchingRegion.PARENTHESIS))
                     return new Device(arm,DeviceType.PHONE,Brand.NOKIA,"Lumia 925");
-                if (context.getcNextTokens(new Matcher[] {new Matcher("NOKIA",MatchingType.EQUALS),
-                    new Matcher("Lumia 520",MatchingType.BEGINS)
-                }, MatchingRegion.PARENTHESIS)!=null)
-                return new Device(arm,DeviceType.PHONE,Brand.NOKIA,"Lumia 520");
-                if (context.getcNextTokens(new Matcher[] {new Matcher("NOKIA",MatchingType.EQUALS),
-                    new Matcher("Lumia 822",MatchingType.BEGINS)
-                }, MatchingRegion.PARENTHESIS)!=null)
-                return new Device(arm,DeviceType.PHONE,Brand.NOKIA,"Lumia 822");
-                if (context.getcNextTokens(new Matcher[] {new Matcher("NOKIA",MatchingType.EQUALS),
-                    new Matcher("Lumia 920",MatchingType.BEGINS)
-                }, MatchingRegion.PARENTHESIS)!=null)
-                return new Device(arm,DeviceType.PHONE,Brand.NOKIA,"Lumia 920");
-                if (context.getcNextTokens(new Matcher[] {new Matcher("NOKIA",MatchingType.EQUALS),
-                    new Matcher("Lumia 900",MatchingType.BEGINS)
-                }, MatchingRegion.PARENTHESIS)!=null)
-                return new Device(arm,DeviceType.PHONE,Brand.NOKIA,"Lumia 900");
-                if (context.getcNextTokens(new Matcher[] {new Matcher("NOKIA",MatchingType.EQUALS),
-                    new Matcher("Lumia 800",MatchingType.BEGINS)
-                }, MatchingRegion.PARENTHESIS)!=null)
-                return new Device(arm,DeviceType.PHONE,Brand.NOKIA,"Lumia 800");
-                if (context.getcNextTokens(new Matcher[] {new Matcher("NOKIA",MatchingType.EQUALS),
-                    new Matcher("Lumia 710",MatchingType.BEGINS)
-                }, MatchingRegion.PARENTHESIS)!=null)
-                return new Device(arm,DeviceType.PHONE,Brand.NOKIA,"Lumia 710");
-                if (context.getcNextTokens(new Matcher[] {new Matcher("NOKIA",MatchingType.EQUALS),
-                    new Matcher("Lumia 720",MatchingType.BEGINS)
-                }, MatchingRegion.PARENTHESIS)!=null)
-                return new Device(arm,DeviceType.PHONE,Brand.NOKIA,"Lumia 720");
-                if (context.getcNextTokens(new Matcher[] {new Matcher("NOKIA",MatchingType.EQUALS),
-                    new Matcher("Lumia 820",MatchingType.BEGINS)
-                }, MatchingRegion.PARENTHESIS)!=null)
-                return new Device(arm,DeviceType.PHONE,Brand.NOKIA,"Lumia 820");
-                if (context.getcNextTokens(new Matcher[] {new Matcher("NOKIA",MatchingType.EQUALS),
-                    new Matcher("Lumia 610",MatchingType.BEGINS)
-                }, MatchingRegion.PARENTHESIS)!=null)
-                return new Device(arm,DeviceType.PHONE,Brand.NOKIA,"Lumia 610");
+                if ((vers=context.getcNextTokens(new Matcher[] {new Matcher("NOKIA",MatchingType.EQUALS),
+                    new Matcher("Lumia ",MatchingType.BEGINS)
+                }, MatchingRegion.PARENTHESIS))!=null)
+                return new Device(arm,DeviceType.PHONE,Brand.NOKIA,vers[1]);
+                if ((vers=context.getcNextTokens(new Matcher[] {new Matcher("Microsoft",MatchingType.EQUALS),
+                    new Matcher("Lumia ",MatchingType.BEGINS)
+                }, MatchingRegion.PARENTHESIS))!=null)
+                return new Device(arm,DeviceType.PHONE,Brand.MICROSOFT,vers[1]);
 
                 if (context.getcNextTokens(new Matcher[] {new Matcher("SAMSUNG",MatchingType.EQUALS),
                     new Matcher("SGH-i917",MatchingType.BEGINS)
