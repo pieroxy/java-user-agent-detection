@@ -5,8 +5,35 @@
   <artifactId>user_agent_detector</artifactId>
   <packaging>jar</packaging>
   <version>2015-10-31-SNAPSHOT</version>
-  <name>ua-user_agent_detector</name>
+  <name>User Agent Detection Library</name>
+  <description>A library to extract bot, browser, device and OS from a User-Agent in Java 6 or newer.</description>
   <url>https://github.com/pieroxy/java-user-agent-detection/</url>
+  <licenses>
+    <license>
+        <name>WTFPL</name>
+        <url>http://www.wtfpl.net/</url>
+    </license>
+  </licenses>
+  <developers>
+    <developer>
+      <name>Pierre Grimaud</name>
+      <email>pieroxy@pieroxy.net</email>
+    </developer>
+  </developers>
+
+  <scm>
+    <connection>scm:git:git://github.com/pieroxy/java-user-agent-detection.git</connection>
+    <developerConnection>scm:git:ssh://github.com/pieroxy/java-user-agent-detection.git</developerConnection>
+    <url>https://github.com/pieroxy/java-user-agent-detection/tree/master</url>
+  </scm>
+
+  <issueManagement>
+      <url>https://github.com/pieroxy/java-user-agent-detection/issues</url>
+      <system>GitHub Issues</system>
+  </issueManagement>
+
+
+
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
