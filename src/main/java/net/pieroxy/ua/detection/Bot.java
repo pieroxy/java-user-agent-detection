@@ -79,23 +79,25 @@ public class Bot {
         return res;
     }
 
-    /** The vendor, usually the company that operates the bot, if known. */
+    /**
+     * @return The vendor, usually the company that operates the bot, if known.
+     */
     public Brand getVendor() {
         return vendor;
     }
-    /** The family of the bot. SPAMBOT, WEB_CRAWLER, ... */
+    /** @return The family of the bot. SPAMBOT, WEB_CRAWLER, ... */
     public BotFamily getFamily() {
         return family;
     }
-    /** The description of the bot. For example "Google Bot" or "Flipboard Proxy".  */
+    /** @return The description of the bot. For example "Google Bot" or "Flipboard Proxy".  */
     public String getDescription() {
         return description;
     }
-    /** The version number */
+    /** @return The version number */
     public String getVersion() {
         return version;
     }
-    /** The URL the bot points at or a url describing the bot. */
+    /** @return The URL the bot points at or a url describing the bot. */
     public String getUrl() {
         return url;
     }

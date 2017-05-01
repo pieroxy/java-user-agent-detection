@@ -60,6 +60,7 @@ public class Browser extends VersionedObject {
     * @param  _description     The text description of this browser.
     * @param  _renderingEngine The rendering engine of this browser.
     * @param  _oneVersion      The full version of this browser.
+    * @param  _nbChunks        Number of chunks of digits to keep in the short version.
     */
     public Browser(Brand _brand, BrowserFamily _family, String _description, RenderingEngine _renderingEngine, String _oneVersion, int _nbChunks) {
         this(_brand, _family, _description, _renderingEngine, "", "");
@@ -114,19 +115,19 @@ public class Browser extends VersionedObject {
         return res;
     }
 
-    /** The company shipping the browser */
+    /** @return The company shipping the browser */
     public Brand getVendor() {
         return vendor;
     }
-    /** The general family of the browser. Could be FIREFOX, IE, CHROME, LIBRARY (means a program not being a browser), ... */
+    /** @return The general family of the browser. Could be FIREFOX, IE, CHROME, LIBRARY (means a program not being a browser), ... */
     public BrowserFamily getFamily() {
         return family;
     }
-    /** The precise description of the browser. Can be "Firefox" or "Galeon" or "Seamonkey", ... */
+    /** @return The precise description of the browser. Can be "Firefox" or "Galeon" or "Seamonkey", ... */
     public String getDescription() {
         return description;
     }
-    /** The rendering engine */
+    /** @return The rendering engine */
     public RenderingEngine getRenderingEngine() {
         return renderingEngine;
     }

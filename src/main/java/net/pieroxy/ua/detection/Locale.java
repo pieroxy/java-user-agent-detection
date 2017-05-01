@@ -24,12 +24,17 @@ public class Locale {
         lang = Language.UNKNOWN;
         country = Country.UNKNOWN;
     }
-    /** This constructor defines the <code>language</code> and sets the <code>country</code> to UNKNOWN. */
+    /** This constructor defines the <code>language</code> and sets the <code>country</code> to UNKNOWN.
+     * @param l The language of this locale
+     */
     public Locale(Language l) {
         country = Country.UNKNOWN;
         this.lang = l;
     }
-    /** This constructor defines both <code>kanguage</code> and <code>country</code>. */
+    /** This constructor defines both <code>kanguage</code> and <code>country</code>.
+     * @param l The language of this locale
+     * @param c The country of this locale
+     */
     public Locale(Language l, Country c) {
         this.lang = l;
         this.country = c;
@@ -40,6 +45,8 @@ public class Locale {
      * Their string representation is the 2-letter ISO code for the country and the language. Thay can be provided
      * in either uppercase or lowercase form but not in a mixed-case form. If one or both parameters cannot be found
      * in the known languages/countries, they are set to their respective UNKNOWN value.
+     * @param l The language of this locale
+     * @param c The country of this locale
      */
     public Locale(String l, String c) {
         this.lang = LocaleHelper.getLanguage(l);
@@ -48,9 +55,11 @@ public class Locale {
         if (this.country == null) this.country = Country.UNKNOWN;
     }
 
+    /** @return The language of this locale */
     public Language getLanguage() {
         return lang;
     }
+    /** @return The country of this locale */
     public Country getCountry() {
         return country;
     }

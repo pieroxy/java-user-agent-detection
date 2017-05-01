@@ -12,6 +12,10 @@ public class OS {
 
     /**
      * This constructor of the OS object allows to set all of its fields.
+     * @param  _brand           The vendor of this operating system.
+     * @param  _family          The family of this operating system.
+     * @param  _description     The text description of this operating system.
+     * @param  _version         The version of this operating system.
      */
     public OS(Brand _brand, OSFamily _family, String _description, String _version) {
         family = _family;
@@ -52,19 +56,19 @@ public class OS {
         return res;
     }
 
-    /** The vendor, usually the company that ships (or shipped) the operating system. */
+    /** @return The vendor, usually the company that ships (or shipped) the operating system. */
     public Brand getVendor() {
         return vendor;
     }
-    /** The family of this OS, like WINDOWS, LINUX, ANDROID, etc... */
+    /** @return The family of this OS, like WINDOWS, LINUX, ANDROID, etc... */
     public OSFamily getFamily() {
         return family;
     }
-    /** The description is the name of the OS. For example: "Windows" or "Ubuntu" or "iOS" */
+    /** @return The description is the name of the OS. For example: "Windows" or "Ubuntu" or "iOS" */
     public String getDescription() {
         return description;
     }
-    /** The version is precising which version of the OS is used. It can be "Vista" or "XP SP2" (for windows) or "7.1.2" for iOS. */
+    /** @return The version is precising which version of the OS is used. It can be "Vista" or "XP SP2" (for windows) or "7.1.2" for iOS. */
     public String getVersion() {
         return version;
     }

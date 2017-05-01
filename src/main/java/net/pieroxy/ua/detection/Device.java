@@ -11,11 +11,22 @@ public class Device {
     String architecture;
     String device;
 
-    /** This constructor does not specify the <code>manufacturer</code> and assumes it is the same as the <code>brand</code>. */
+    /** This constructor does not specify the <code>manufacturer</code> and assumes it is the same as the <code>brand</code>.
+     * @param  _brand         The vendor of this device, and its manufacturer.
+     * @param  _type          The type of this device (desktop, laptop, tablet, ...).
+     * @param  _description   The text description of this device.
+     * @param  _architecture  The cpu architecture of this device (x86, arm, ...).
+     */
     public Device(String _architecture, DeviceType _type, Brand _brand, String _description) {
         this(_architecture,_type,_brand,_brand,_description);
     }
-    /** This constructor allows for every field to be defined. */
+    /** This constructor allows for every field to be defined.
+     * @param  _manufacturer  The manufacturer of this device.
+     * @param  _brand         The vendor of this device.
+     * @param  _type          The type of this device (desktop, laptop, tablet, ...).
+     * @param  _description   The text description of this device.
+     * @param  _architecture  The cpu architecture of this device (x86, arm, ...).
+     */
     public Device(String _architecture, DeviceType _type, Brand _brand, Brand _manufacturer, String _description) {
         brand = _brand;
         manufacturer = _manufacturer;
@@ -68,25 +79,25 @@ public class Device {
         return res;
     }
 
-    /** The type of the device. For example, COMPUTER, PHONE, TABLET, ... */
+    /** @return The type of the device. For example, COMPUTER, PHONE, TABLET, ... */
     public DeviceType getDeviceType() {
         return deviceType;
     }
-    /** The brand of the device. This is in general the manufacturer but can be different for example in the case of the Nexus line of Android devices.
+    /** @return The brand of the device. This is in general the manufacturer but can be different for example in the case of the Nexus line of Android devices.
      * For those, the brand will be GOOGLE. */
     public Brand getBrand() {
         return brand;
     }
-    /** The manufacturer of the device. This is in general the brand but can be different for example in the case of the Nexus line of Android devices.
+    /** @return The manufacturer of the device. This is in general the brand but can be different for example in the case of the Nexus line of Android devices.
      * For those, the manufacturer will be either ASUS, SAMSUNG, LG, whoever built the device. */
     public Brand getManufacturer() {
         return manufacturer;
     }
-    /** The architecture of the device. May be "i386", "arm", "x86_64", "Power PC" or any other architecture. */
+    /** @return The architecture of the device. May be "i386", "arm", "x86_64", "Power PC" or any other architecture. */
     public String getArchitecture() {
         return architecture;
     }
-    /** The description of the device, for example "Galaxy S4" or "iPhone", ... */
+    /** @return The description of the device, for example "Galaxy S4" or "iPhone", ... */
     public String getDevice() {
         return device;
     }

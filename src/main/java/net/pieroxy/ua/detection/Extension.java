@@ -7,11 +7,11 @@ import java.util.*;
 public class Extension {
     private String version,name;
 
-    /** The name of this extension */
+    /** @return The name of this extension */
     public String getName() {
         return name;
     }
-    /** The version of this extension, if applicable. */
+    /** @return The version of this extension, if applicable. */
     public String getVersion() {
         return version;
     }
@@ -27,6 +27,7 @@ public class Extension {
 
     /** Will try to find both name and version in the string, separated by a '#' character. If the separator is not found
      * sets the <code>version</code> to an empty string.
+     * @param  s The String containing the name and optionally the version.
      */
     public Extension(String s) {
         if (s.contains("#")) {

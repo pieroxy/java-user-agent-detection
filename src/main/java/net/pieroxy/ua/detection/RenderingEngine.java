@@ -40,7 +40,7 @@ public class RenderingEngine extends VersionedObject {
      * @param  _brand           The vendor of this browser.
      * @param  _family          The family of this browser.
      * @param  _oneVersion      The full version of this browser.
-     * @param  _nbChunks        How mnany chunks of numbers should the small version keep.
+     * @param  _nbChunks        How many chunks of numbers should the small version keep.
     */
     public RenderingEngine(Brand _brand, RenderingEngineFamily _family, String _oneVersion, int _nbChunks) {
         this(_brand, _family, "", "");
@@ -52,12 +52,13 @@ public class RenderingEngine extends VersionedObject {
      * @param  _brand           The vendor of this browser.
      * @param  _family          The family of this browser.
      * @param  _oneVersion      The full version of this browser, as a floating-point number.
+     * @param  _nbChunks        How many chunks of numbers should the small version keep.
     */
     public RenderingEngine(Brand _brand, RenderingEngineFamily _family, float _oneVersion, int _nbChunks) {
         this(_brand, _family, "", "");
         String version = String.valueOf(_oneVersion);
         if (version.indexOf(".")==-1) version += ".0";
-        setFullVersionOneShot(version, 2);
+        setFullVersionOneShot(version, _nbChunks);
     }
 
     public static RenderingEngine getUnknown() {
@@ -120,11 +121,11 @@ public class RenderingEngine extends VersionedObject {
         return res;
     }
 
-    /** The main company behind the browser */
+    /** @return The main company behind the browser */
     public Brand getVendor() {
         return vendor;
     }
-    /** The general family of the rendering engine. Could be GECKO, TRIDENT, WEBKIT, ... */
+    /** @return The general family of the rendering engine. Could be GECKO, TRIDENT, WEBKIT, ... */
     public RenderingEngineFamily getFamily() {
         return family;
     }
