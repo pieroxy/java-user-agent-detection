@@ -1120,6 +1120,12 @@ public class UserAgentDetector implements IUserAgentDetector {
                     app += " (with Google Search App "+ver+")";
                 }
                 res = new Browser(Brand.GOOGLE,BrowserFamily.CHROME,"Chrome", getWebkitVersion(context, cv, true, false), cv+app);
+                if (os.description.contains("Android")) {
+                    if (context.consume("Version/", MatchingType.BEGINS,MatchingRegion.REGULAR) || app.length()>0) {
+                        // https://mobiforge.com/research-analysis/webviews-and-user-agent-strings
+                        res.setInWebView(true);
+                    }
+                }
             } else if ((ver=context.getcVersionAfterPattern("Arora/", MatchingType.BEGINS,MatchingRegion.REGULAR))!=null) {
                 res = new Browser(Brand.OTHER,BrowserFamily.OTHER_WEBKIT,"Arora", getWebkitVersion(context), ver);
                 context.consume("KHTML, like Gecko, Safari/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
@@ -1162,7 +1168,9 @@ public class UserAgentDetector implements IUserAgentDetector {
                             app += " (with QQ Mobile Browser "+ver+")";
                         }
                         res = new Browser(Brand.GOOGLE,BrowserFamily.ANDROID,"Stock" + app,getWebkitVersion(context));
-                        context.consume("Version/", MatchingType.BEGINS,MatchingRegion.REGULAR);
+                        if (app.length()>0) {
+                            res.setInWebView(true);
+                        }
                     }
                 } else if (context.contains("BlackBerry/", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) {
                     res = new Browser(Brand.RIM,BrowserFamily.OTHER_WEBKIT,"Stock",getWebkitVersion(context));
@@ -1230,12 +1238,14 @@ public class UserAgentDetector implements IUserAgentDetector {
                         app = " (with Diigo browser)";
                     }
 
-                    if (app.length()>0) {
-
-                    }
                     res = new Browser(Brand.APPLE,BrowserFamily.IOS,"Stock",getWebkitVersion(context), app);
 
                     context.consume("Mobile/", MatchingType.BEGINS,MatchingRegion.REGULAR);
+
+                    if (!context.consume("Version/", MatchingType.BEGINS,MatchingRegion.REGULAR) || app.length()>0) {
+                        // https://mobiforge.com/research-analysis/webviews-and-user-agent-strings
+                        res.setInWebView(true);
+                    }
                 } else {
                     res = new Browser(Brand.UNKNOWN,BrowserFamily.OTHER_WEBKIT,"WebKit-based",getWebkitVersion(context));
                 }
