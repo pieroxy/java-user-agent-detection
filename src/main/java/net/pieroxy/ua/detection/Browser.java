@@ -9,6 +9,7 @@ public class Browser extends VersionedObject {
     BrowserFamily family;
     String description;
     RenderingEngine renderingEngine;
+    boolean inWebView;
 
     /**
      * This is the most detailed constructor of the Browser object, where everything can be specified.
@@ -130,6 +131,14 @@ public class Browser extends VersionedObject {
     /** @return The rendering engine */
     public RenderingEngine getRenderingEngine() {
         return renderingEngine;
+    }
+    /** @return true if the browser is a webview, false if not or unknown */
+    public boolean isInWebView() {
+        return inWebView;
+    }
+    /** @param value true if the browser is a webview, false if not or unknown */
+    public void setInWebView(boolean value) {
+        inWebView = value;
     }
 
 }

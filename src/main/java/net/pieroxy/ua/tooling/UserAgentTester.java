@@ -136,7 +136,9 @@ public class UserAgentTester {
     addErrorReport(result, "browser version", a.getBrowser().getVersion(),
         b.getBrowser().getVersion());
     addErrorReport(result, "browser fullVersion", a.getBrowser().getFullVersion(),
-        b.getBrowser().getFullVersion());
+            b.getBrowser().getFullVersion());
+    addErrorReport(result, "browser inWebView", a.getBrowser().isInWebView(),
+            b.getBrowser().isInWebView());
 
     addErrorReport(result, "device", a.getDevice(), b.getDevice());
     addErrorReport(result, "device architecture", a.getDevice().getArchitecture(),
@@ -197,11 +199,10 @@ public class UserAgentTester {
           .append("'\n");
     } else {
       if (expected != null && actual != null) {
-        if (expected instanceof String || expected instanceof Enum) {
+        if (expected instanceof String || expected instanceof Enum || expected instanceof Boolean) {
           errors.append("\texpected ").append(name).append(" to be '")
               .append(expected.toString()).append("' but was '")
               .append(actual.toString()).append("'\n");
-
         }
       }
     }
@@ -222,7 +223,7 @@ public class UserAgentTester {
         comment, ignored_tokens, unknown_tokens, device_arch, browser_vendor,
         os_vendor, bot_family, bot_vendor, bot_description, bot_version,
         bot_url, browser_version, browser_fullVersion, re_brand, re_family,
-        re_version, re_fullversion;
+        re_version, re_fullversion, browser_inwebview;
 
 
     public UserAgentDetection(String line) {
@@ -257,6 +258,7 @@ public class UserAgentTester {
       re_family = getStringOrNull(elements[30]);
       re_version  = getStringOrNull(elements[31]);
       re_fullversion = getStringOrNull(elements[32]);
+      browser_inwebview = getStringOrNull(elements[33]);
     }
 
     private String getStringOrNull(String s) {
@@ -274,7 +276,7 @@ public class UserAgentTester {
             bot_description, bot_version, bot_url);
       }
 
-      return new UserAgentDetectionResult(
+      UserAgentDetectionResult res = new UserAgentDetectionResult(
           new Device(device_arch, Enum.valueOf(DeviceType.class, device_type),
               Enum.valueOf(Brand.class, device_brand), Enum.valueOf(
                   Brand.class, device_manufacturer), device),
@@ -291,7 +293,8 @@ public class UserAgentTester {
               OSFamily.class, os_family), os_description, os_version),
           new Locale(lang, country), comment, ignored_tokens, unknown_tokens,
           bot);
-
+      res.getBrowser().setInWebView(browser_inwebview.equals("1"));
+      return res;
     }
   }
 }

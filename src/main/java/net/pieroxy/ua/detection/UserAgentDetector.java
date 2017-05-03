@@ -887,6 +887,12 @@ public class UserAgentDetector implements IUserAgentDetector {
         }
     }
 
+    static void setInternetExplorerWebview(UserAgentContext context, Browser b) {
+        if (context.consume("MSAppHost/",  MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) {
+            b.setInWebView(true);
+        }
+    }
+
     static Browser tryGetIE(UserAgentContext context, String possibleVersions, OS os) {
 
         Browser res=null;
@@ -920,6 +926,10 @@ public class UserAgentDetector implements IUserAgentDetector {
                 }
             } else {
                 res = new Browser(Brand.MICROSOFT,BrowserFamily.IE,"IE",new RenderingEngine(Brand.MICROSOFT, RenderingEngineFamily.TRIDENT, "for IE " + iever, 2), verie);
+            }
+
+            if (iever >= 10) {
+                setInternetExplorerWebview(context, res);
             }
 
             if (possibleVersions.indexOf(String.valueOf((int)Math.floor(iever))+",")==-1) res = null;
@@ -990,6 +1000,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                                                new Matcher("Gecko", MatchingType.REGEXP)
                     },
                     MatchingRegion.REGULAR);
+                    setInternetExplorerWebview(context, res);
                 }
             }
             if (res!=null) return res;

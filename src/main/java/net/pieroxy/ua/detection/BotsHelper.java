@@ -34,10 +34,9 @@ class BotsHelper {
     static private Map<String, Bot> genericBotsLiteral;
     static private Bot genericBotBase = new Bot(Brand.OTHER, BotFamily.ROBOT, "", "");
     static private GenericBot[]genericBotsPatterns = new GenericBot[] {
-        new GenericBot("Mozilla/5\\.0 \\(compatible; ?([^\\);/]+)/([0-9\\.]+); ?(MirrorDetector; )?(\\+? ?https?://[^\\)]+)\\)", new int[]{1,2,4}, true),
+        new GenericBot("Mozilla/5\\.0 \\(compatible; ?([^\\);/]+)/([0-9\\.]+[ab]?); ?(MirrorDetector; )?(\\+? ?https?://[^\\)]+)\\)", new int[]{1,2,4}, true),
         new GenericBot("Mozilla/5\\.0 \\(compatible; ([^\\);/]+)\\-([0-9\\.]+); (\\+? ?https?://[^\\)]+)\\)", new int[]{1,2,3}, true),
-        new GenericBot("Mozilla/5\\.0 \\(compatible; ([^\\);/]+); (\\+? ?https?://[^\\)]+)\\)", new int[]{1,0,2}, true),
-        new GenericBot("Mozilla/5\\.0 \\(compatible; ([^\\);/ ]+) (\\+? ?https?://[^\\)]+)\\)", new int[]{1,0,2}, true),
+        new GenericBot("Mozilla/5\\.0 \\(compatible; ([^\\);/]+);? (\\+? ?https?://[^\\)]+)\\)", new int[]{1,0,2}, true),
         new GenericBot("([^\\(\\);/]+)/([0-9RC\\.]+) \\((\\+?https?://[^\\);]+)\\)( .*)?", new int[]{1,2,3}, true),
         new GenericBot("([^\\(\\);]+) \\((\\+?https?://[^\\);]+)\\)( .*)?", new int[]{1,0,2}, true),
         new GenericBot("([^\\(\\);/]+)/([0-9RC\\.]+) \\(([A-Za-z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})\\)( .*)?", new int[]{1,2,0}, true),
@@ -274,7 +273,7 @@ class BotsHelper {
         } else if ((ver = context.getcVersionAfterPattern("Mail.RU_Bot/",  MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
             return new Bot(Brand.MAILRU,BotFamily.CRAWLER,"Mail.ru crawler", ver, consumeUrlAndMozilla(context, "http://go.mail.ru"));
         } else if ((ver = context.getcVersionAfterPattern("MJ12bot/",  MatchingType.BEGINS, MatchingRegion.PARENTHESIS))!=null) {
-            return new Bot(Brand.MAJESTIC12,BotFamily.CRAWLER,"Majestic 12", ver, consumeUrlAndMozilla(context, "http://www.majestic12"));
+            return new Bot(Brand.MAJESTIC12,BotFamily.CRAWLER,"Majestic 12", ver, consumeUrlAndMozilla(context, "http://"));
         } else if ((ver = context.getcVersionAfterPattern("GigablastOpenSource/",  MatchingType.BEGINS, MatchingRegion.REGULAR))!=null) {
             return new Bot(Brand.OTHER,BotFamily.CRAWLER,"GigaBlast Crawler", ver);
         } else if (context.getUA().equals("NetLyzer FastProbe")) {
