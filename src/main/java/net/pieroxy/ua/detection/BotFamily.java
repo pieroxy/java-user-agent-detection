@@ -29,7 +29,7 @@ public enum BotFamily {  /**
     */
     UNKNOWN("",false),
     /**
-    * Thie UserAgentDetectionResult does not depict a bot:
+    * This UserAgentDetectionResult does not depict a bot:
     */
     NOT_A_BOT("Not a bot",false);
 
