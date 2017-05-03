@@ -84,7 +84,8 @@ public class Browser extends VersionedObject {
             ( (d.vendor==null && vendor==null) || d.vendor.equals(vendor) ) &&
             ( (d.description==null && description==null) || d.description.equals(description) ) &&
             ( (d.fullVersion==null && fullVersion==null) || d.fullVersion.equals(fullVersion) ) &&
-            ( (d.renderingEngine==null && renderingEngine==null) || d.renderingEngine.equals(renderingEngine) );
+            ( (d.renderingEngine==null && renderingEngine==null) || d.renderingEngine.equals(renderingEngine) ) &&
+            d.inWebView == inWebView;
     }
 
     public int hashCode() {
