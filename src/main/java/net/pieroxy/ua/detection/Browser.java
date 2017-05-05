@@ -114,6 +114,9 @@ public class Browser extends VersionedObject {
             res *= 3;
             res += fullVersion.hashCode();
         }
+        if (inWebView) {
+            res ++;
+        }
         return res;
     }
 
