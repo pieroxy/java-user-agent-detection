@@ -10,6 +10,7 @@ public class Device {
     Brand manufacturer;
     String architecture;
     String device;
+    boolean touch;
 
     /** This constructor does not specify the <code>manufacturer</code> and assumes it is the same as the <code>brand</code>.
      * @param  _brand         The vendor of this device, and its manufacturer.
@@ -20,7 +21,8 @@ public class Device {
     public Device(String _architecture, DeviceType _type, Brand _brand, String _description) {
         this(_architecture,_type,_brand,_brand,_description);
     }
-    /** This constructor allows for every field to be defined.
+
+    /** This constructor allows for a manufacturer and a brand to be defined.
      * @param  _manufacturer  The manufacturer of this device.
      * @param  _brand         The vendor of this device.
      * @param  _type          The type of this device (desktop, laptop, tablet, ...).
@@ -33,6 +35,35 @@ public class Device {
         device = _description;
         deviceType = _type;
         architecture = _architecture;
+    }
+
+    /** This constructor allows for every field to be defined.
+     * @param  _manufacturer  The manufacturer of this device.
+     * @param  _brand         The vendor of this device.
+     * @param  _type          The type of this device (desktop, laptop, tablet, ...).
+     * @param  _description   The text description of this device.
+     * @param  _architecture  The cpu architecture of this device (x86, arm, ...).
+     * @param  _isTouch       Whether the device has touch capability or not.
+     */
+    public Device(String _architecture, DeviceType _type, Brand _brand, Brand _manufacturer, String _description, boolean _isTouch) {
+        brand = _brand;
+        manufacturer = _manufacturer;
+        device = _description;
+        deviceType = _type;
+        architecture = _architecture;
+        touch = _isTouch;
+    }
+
+    /** This constructor allows for touch to be defined.
+     * @param  _brand         The vendor of this device.
+     * @param  _type          The type of this device (desktop, laptop, tablet, ...).
+     * @param  _description   The text description of this device.
+     * @param  _architecture  The cpu architecture of this device (x86, arm, ...).
+     * @param  _isTouch       Whether the device has touch capability or not.
+     */
+    public Device(String _architecture, DeviceType _type, Brand _brand, String _description, boolean _isTouch) {
+        this(_architecture,_type,_brand,_brand,_description);
+        touch = _isTouch;
     }
 
     /**
@@ -52,7 +83,8 @@ public class Device {
             ( (d.brand==null && brand==null) || d.brand.equals(brand) ) &&
             ( (d.device==null && device==null) || d.device.equals(device) ) &&
             ( (d.architecture==null && architecture==null) || d.architecture.equals(architecture) ) &&
-            ( (d.manufacturer==null && manufacturer==null) || d.manufacturer.equals(manufacturer) );
+            ( (d.manufacturer==null && manufacturer==null) || d.manufacturer.equals(manufacturer) ) &&
+            ( d.touch == touch );
     }
     public int hashCode() {
         int res = 0;
@@ -75,6 +107,9 @@ public class Device {
         if (brand!= null) {
             res *= 3;
             res += brand.hashCode();
+        }
+        if (touch) {
+            res ++;
         }
         return res;
     }
@@ -100,6 +135,14 @@ public class Device {
     /** @return The description of the device, for example "Galaxy S4" or "iPhone", ... */
     public String getDevice() {
         return device;
+    }
+    /** @return Whether the device has touch capabilities or not */
+    public boolean isTouch() {
+        return touch;
+    }
+    /** @param t Whether the device has touch capabilities or not */
+    public void setTouch(boolean t) {
+        touch=t;
     }
 
 }

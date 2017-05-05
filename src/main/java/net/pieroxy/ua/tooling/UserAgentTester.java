@@ -149,6 +149,7 @@ public class UserAgentTester {
             b.getDevice().getDeviceType());
     addErrorReport(result, "device manufacturer", a.getDevice().getManufacturer(),
             b.getDevice().getManufacturer());
+    addErrorReport(result, "device touch", a.getDevice().isTouch(), b.getDevice().isTouch());
 
     addErrorReport(result, "OS", a.getOperatingSystem(), b.getOperatingSystem());
     addErrorReport(result, "OS", a.getOperatingSystem().getDescription(),
@@ -223,7 +224,7 @@ public class UserAgentTester {
         comment, ignored_tokens, unknown_tokens, device_arch, browser_vendor,
         os_vendor, bot_family, bot_vendor, bot_description, bot_version,
         bot_url, browser_version, browser_fullVersion, re_brand, re_family,
-        re_version, re_fullversion, browser_inwebview;
+        re_version, re_fullversion, browser_inwebview, device_touch;
 
 
     public UserAgentDetection(String line) {
@@ -259,6 +260,7 @@ public class UserAgentTester {
       re_version  = getStringOrNull(elements[31]);
       re_fullversion = getStringOrNull(elements[32]);
       browser_inwebview = getStringOrNull(elements[33]);
+      device_touch = getStringOrNull(elements[34]);
     }
 
     private String getStringOrNull(String s) {
@@ -279,7 +281,7 @@ public class UserAgentTester {
       UserAgentDetectionResult res = new UserAgentDetectionResult(
           new Device(device_arch, Enum.valueOf(DeviceType.class, device_type),
               Enum.valueOf(Brand.class, device_brand), Enum.valueOf(
-                  Brand.class, device_manufacturer), device),
+                  Brand.class, device_manufacturer), device, device_touch.equals("1")),
           new Browser(Enum.valueOf(Brand.class, browser_vendor),
                   Enum.valueOf(BrowserFamily.class, browser_family),
                   browser_description,
