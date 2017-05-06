@@ -3,18 +3,18 @@ import java.io.*;
 import java.util.*;
 class Matcher {
     String pattern;
-    MatchingType match;
+    MatchingType matchType;
 
     public Matcher(String s, MatchingType m) {
         pattern = s;
-        match = m;
+        matchType = m;
     }
 
     public boolean match(String token) {
-        return match.matches(token, pattern);
+        return matchType.matches(token, pattern);
     }
     @Override
     public String toString() {
-        return match.name() + "(" + pattern + ")";
+        return matchType.name() + "(" + pattern + ")";
     }
 }

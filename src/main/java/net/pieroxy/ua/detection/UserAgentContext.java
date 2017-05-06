@@ -12,7 +12,6 @@ class UserAgentContext {
     private List<String> consumedTokens = new ArrayList<String>();
 
     public UserAgentContext(String u) {
-        //System.out.println("\r\nBuilding context for: " + u);
         if (u != null) {
             if (u.length()>0 && u.charAt(0) == '"' && u.charAt(u.length()-1) == '"') {
                 u = u.substring(1,u.length()-1);
@@ -28,13 +27,13 @@ class UserAgentContext {
                     if (pos2<0) pos2 = work.length();
                     String parenContent = work.substring(pos+1,pos2);
                     addParenTokens(parenContent);
-                    //System.out.println("rebuilding work = " + pos + " " + pos2 + " " + work.length());
                     work = work.substring(0,pos) + ((pos2<work.length())?(" " + work.substring(pos2+1,work.length())) : "");
-                    //System.out.println("tmp work = " + work);
                 }
-                StringTokenizer stw = new StringTokenizer(work," ");
-                while (stw.hasMoreTokens()) {
-                    tokens.add(stw.nextToken().trim());
+                String[]stw = work.split(" ");
+                for (String ss:stw) {
+                    ss = ss.trim();
+                    if (ss.length()>0)
+                        tokens.add(ss);
                 }
             } else
                 ua=lcua="";
@@ -348,7 +347,7 @@ class UserAgentContext {
         Matcher matcher = new Matcher(pattern, match);
         String token = getAndConsumeToken(matcher, region, consumedTokens);
         if (token == null) return null;
-        return getVersionNumber(token,matcher.match.endOfMatchPosition(token, pattern));
+        return getVersionNumber(token,matcher.matchType.endOfMatchPosition(token, pattern));
     }
     public String getcVersionAfterPattern(String pattern, MatchingType match, MatchingRegion region, int nbPos) {
         return keepPos(getcVersionAfterPattern(pattern, match, region), nbPos);
