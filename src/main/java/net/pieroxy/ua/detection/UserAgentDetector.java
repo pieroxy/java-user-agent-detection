@@ -5,6 +5,7 @@ import java.util.*;
 * This is the documentation for the version _DEV_VERSION_ of the library.
 */
 public class UserAgentDetector implements IUserAgentDetector {
+
     public static final String VERSION = "_DEV_VERSION_";
 
     String keepPos(String version, int position) {

@@ -4,9 +4,11 @@ import java.util.*;
 /**
 * Describes the family of the bot, its nature.
 */
-public enum BotFamily {  /**
-  * A generic robot.
-  */
+public enum BotFamily {
+
+    /**
+    * A generic robot.
+    */
     ROBOT("Robot",false),
     /**
     * A spam bot.
@@ -35,21 +37,21 @@ public enum BotFamily {  /**
 
     private boolean nefarious;
     private String label;
-BotFamily(String _label, boolean _bad) {
-    nefarious=_bad;
-    label = _label;
-}
+    BotFamily(String _label, boolean _bad) {
+        nefarious=_bad;
+        label = _label;
+    }
 
-/**
-* @return true if the bot is of the nefarious type.
-*/
-public boolean isNefarious() {
-    return nefarious;
-}
-/**
-* @return the text-based description of this bot.
-*/
-public String getLabel() {
-    return label;
-}
+    /**
+    * @return true if the bot is of the nefarious type.
+    */
+    public boolean isNefarious() {
+        return nefarious;
+    }
+    /**
+    * @return the text-based description of this bot.
+    */
+    public String getLabel() {
+        return label;
+    }
 }

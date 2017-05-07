@@ -1,7 +1,8 @@
 package net.pieroxy.ua.detection;
 import java.io.*;
 import java.util.*;
-enum MatchingType {  BEGINS {
+enum MatchingType {
+    BEGINS {
         @Override
         public boolean matches(String token, String pattern) {
             return token.startsWith(pattern);

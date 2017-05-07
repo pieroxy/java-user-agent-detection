@@ -5,6 +5,7 @@ import java.util.*;
 * Describes the family of an Operating System. This is a category of OSes which will make it easier to categorize them.
 */
 public enum OSFamily {
+
     /**
     * An OS of the Windows NT Family (NT3.51, NT4, Windows 2000, XP, Vista, Seven, Windows 8...)
     */

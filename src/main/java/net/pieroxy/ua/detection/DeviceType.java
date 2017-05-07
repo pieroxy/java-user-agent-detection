@@ -4,9 +4,10 @@ import java.util.*;
 /**
 * Describes the type of the device. You will mostly meet PHONEs, TABLETs and COMPUTERs out there on the web, along with BOTs.
 */
-public enum DeviceType {  /**
-  * Smartphones or telephones (note that so-called Phablets are in this category).
-  */
+public enum DeviceType {
+    /**
+    * Smartphones or telephones (note that so-called Phablets are in this category).
+    */
     PHONE(true),
     /**
     * Tablets such as iPads, Galaxy Tabs.
@@ -34,22 +35,22 @@ public enum DeviceType {  /**
     UNKNOWN_MOBILE(true);
 
     private boolean mobile;
-DeviceType(boolean l) {
-    this.mobile = l;
-}
-/**
-* @return true if the device is a phone or a tablet.
-*/
-public boolean isMobile() {
-    return mobile;
-}
-public String toString() {
-    return name();
-}
-/**
-* @return the text representation of this DeviceType.
-*/
-public String getLabel() {
-    return name();
-}
+    DeviceType(boolean l) {
+        this.mobile = l;
+    }
+    /**
+    * @return true if the device is a phone or a tablet.
+    */
+    public boolean isMobile() {
+        return mobile;
+    }
+    public String toString() {
+        return name();
+    }
+    /**
+    * @return the text representation of this DeviceType.
+    */
+    public String getLabel() {
+        return name();
+    }
 }

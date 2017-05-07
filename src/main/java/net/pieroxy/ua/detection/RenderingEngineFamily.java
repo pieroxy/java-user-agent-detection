@@ -4,9 +4,10 @@ import java.util.*;
 /**
 * Describes the family of an Operating System. This is a category of OSes which will make it easier to categorize them.
 */
-public enum RenderingEngineFamily {  /**
-  * BLINK is the rendering engine of modenr Chrome and Opera browsers.
-  */
+public enum RenderingEngineFamily {
+    /**
+    * BLINK is the rendering engine of modenr Chrome and Opera browsers.
+    */
     BLINK("Blink",true,false),
     /**
     * Edge is the rendering engine of modern IEs, starting at version 12.
@@ -52,31 +53,31 @@ public enum RenderingEngineFamily {  /**
     private boolean webkitDerivative;
     private boolean tridentDerivative;
     private String label;
-RenderingEngineFamily(String _label, boolean _webkitlike, boolean _tridentlike) {
-    this.webkitDerivative = _webkitlike;
-    this.tridentDerivative = _tridentlike;
-    this.label = _label;
-}
+    RenderingEngineFamily(String _label, boolean _webkitlike, boolean _tridentlike) {
+        this.webkitDerivative = _webkitlike;
+        this.tridentDerivative = _tridentlike;
+        this.label = _label;
+    }
 
-/**
-* @return true if the rendering engine is based on WebKit. As of this writing, only WEBKIT and BLINK returns true.
-*/
-public boolean isWebkitBased() {
-    return webkitDerivative;
-}
-/**
-* @return true if the rendering engine is based on Trident. As of this writing, only TRIDENT and EDGE returns true.
-*/
-public boolean isTridentBased() {
-    return tridentDerivative;
-}
-public String toString() {
-    return name();
-}
-/**
-* @return the text representation of this family.
-*/
-public String getLabel() {
-    return label;
-}
+    /**
+    * @return true if the rendering engine is based on WebKit. As of this writing, only WEBKIT and BLINK returns true.
+    */
+    public boolean isWebkitBased() {
+        return webkitDerivative;
+    }
+    /**
+    * @return true if the rendering engine is based on Trident. As of this writing, only TRIDENT and EDGE returns true.
+    */
+    public boolean isTridentBased() {
+        return tridentDerivative;
+    }
+    public String toString() {
+        return name();
+    }
+    /**
+    * @return the text representation of this family.
+    */
+    public String getLabel() {
+        return label;
+    }
 }

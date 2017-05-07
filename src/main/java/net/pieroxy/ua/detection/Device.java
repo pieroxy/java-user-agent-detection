@@ -5,6 +5,7 @@ import java.util.*;
 * Describes the device that produced the user-agent string.
 */
 public class Device {
+
     DeviceType deviceType;
     Brand brand;
     Brand manufacturer;

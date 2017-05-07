@@ -31,9 +31,9 @@ class UserAgentContext {
                 }
                 String[]stw = work.split(" ");
                 for (String ss:stw) {
-                    ss = ss.trim();
-                    if (ss.length()>0)
-                        tokens.add(ss);
+                    String token = ss.trim();
+                    if (token.length()>0)
+                        tokens.add(token);
                 }
             } else
                 ua=lcua="";
@@ -44,10 +44,10 @@ class UserAgentContext {
     public String debugContext() {
         return "UA: " + ua + "\r\n" +
                "LCUA: " + lcua + "\r\n" +
-               "TOKENS: " + debug(tokens) + "\r\n" +
-               "(OKEN): " + debug(parenTokens);
+               "TOKENS: " + debugList(tokens) + "\r\n" +
+               "(OKEN): " + debugList(parenTokens);
     }
-    private static String debug(List<String> l) {
+    private static String debugList(List<String> l) {
         if (l==null) return "<null>";
         if (l.size() < 1) return "";
         StringBuilder sb = new StringBuilder(l.size() * 15);
@@ -57,7 +57,7 @@ class UserAgentContext {
         }
         return sb.substring(0,sb.length()-2) + "}";
     }
-    private static String debug(String[] l) {
+    private static String debugList(String[] l) {
         if (l == null) return "<null>";
         if (l.length < 1) return "";
         StringBuilder sb = new StringBuilder(l.length * 15);
@@ -67,7 +67,7 @@ class UserAgentContext {
         }
         return sb.substring(0,sb.length()-2) + "}";
     }
-    private static String debug(Matcher[] l) {
+    private static String debugList(Matcher[] l) {
         if (l == null) return "<null>";
         if (l.length < 1) return "";
         StringBuilder sb = new StringBuilder(l.length * 15);
@@ -78,26 +78,26 @@ class UserAgentContext {
         return sb.substring(0,sb.length()-2) + "}";
     }
 
-    private void addParenTokens(String s) {
+    private void addParenTokens(String tokens) {
         //System.out.println("paren token parsing: " + s);
-        StringTokenizer stw = new StringTokenizer(s,";");
-        while (stw.hasMoreTokens()) {
-            s = stw.nextToken().trim();
-            if (s.length()>0) {
-                if (s.matches("[0-9a-zA-Z\\.-]+/[0-9a-zA-Z\\.-]+(( )+[0-9a-zA-Z\\.-]+/[0-9a-zA-Z\\.-]+)+")) {
-                    StringTokenizer stw2 = new StringTokenizer(s," ");
-                    while (stw2.hasMoreTokens()) {
-                        s = stw2.nextToken().trim();
-                        parenTokens.add(s);
+        for (String s : tokens.split(";")) {
+            String token = s.trim();
+            if (token.length()>0) {
+                if (token.matches("[0-9a-zA-Z\\.-]+/[0-9a-zA-Z\\.-]+(( )+[0-9a-zA-Z\\.-]+/[0-9a-zA-Z\\.-]+)+")) {
+                    String[] subtokens = token.split(" ");
+                    for (String ss : subtokens) {
+                        String subtoken = ss.trim();
+                        if (subtoken.length()>0)
+                            parenTokens.add(subtoken);
                     }
                 } else {
-                    parenTokens.add(s);
+                    parenTokens.add(token);
                 }
             }
         }
     }
     private String[]getAndConsumeTokens(Matcher[]match, List<String> _tokens, List<String> consumeTo) {
-        if (DEBUG) System.out.println("getAndConsumeTokens " + debug(tokens) + " matching " + debug(match));
+        if (DEBUG) System.out.println("getAndConsumeTokens " + debugList(tokens) + " matching " + debugList(match));
         ListIterator<String> it = _tokens.listIterator();
         String[] res = new String[match.length];
         int i = 0;
@@ -112,7 +112,7 @@ class UserAgentContext {
                 consumeTo.add(token);
                 res[i++] = token;
                 if (i == match.length) {
-                    if (DEBUG) System.out.println("return " + debug(res));
+                    if (DEBUG) System.out.println("return " + debugList(res));
                     return res;
                 }
             } else {
@@ -229,7 +229,7 @@ class UserAgentContext {
 
     private static String getVersionNumber(String s, int a_position) {
         if (a_position<0) return "";
-        StringBuffer res = new StringBuffer();
+        StringBuilder res = new StringBuilder();
         int status = 0;
 
         while (a_position < s.length()) {
@@ -286,21 +286,21 @@ class UserAgentContext {
             new Matcher("h",MatchingType.EQUALS)
         }, MatchingRegion.REGULAR),
         new String[] {"g","h"})) {
-            throw new RuntimeException("Fail 7: " + debug(ss) + " remains " + context.getRegularTokens());
+            throw new RuntimeException("Fail 7: " + debugList(ss) + " remains " + context.getRegularTokens());
         }
         if (!context.getRegularTokens().equals("{ \"a\", \"b\", \"c\", \"i\"}")) throw new RuntimeException("Fail 8: " + context.getRegularTokens());
         if (null != (ss=context.getcNextTokens(new Matcher[] {new Matcher("a",MatchingType.EQUALS),
             new Matcher("b",MatchingType.EQUALS),
             new Matcher("i",MatchingType.EQUALS)
         }, MatchingRegion.REGULAR))) {
-            throw new RuntimeException("Fail 9: " + debug(ss) + " remains " + context.getRegularTokens());
+            throw new RuntimeException("Fail 9: " + debugList(ss) + " remains " + context.getRegularTokens());
         }
         if (!context.getRegularTokens().equals("{ \"a\", \"b\", \"c\", \"i\"}")) throw new RuntimeException("Fail 9: " + context.getRegularTokens());
         if (null != (ss=context.getcNextTokens(new Matcher[] {new Matcher("c",MatchingType.EQUALS),
             new Matcher("i",MatchingType.EQUALS),
             new Matcher("i",MatchingType.EQUALS)
         }, MatchingRegion.REGULAR))) {
-            throw new RuntimeException("Fail 10: " + debug(ss) + " remains " + context.getRegularTokens());
+            throw new RuntimeException("Fail 10: " + debugList(ss) + " remains " + context.getRegularTokens());
         }
         if (!context.getRegularTokens().equals("{ \"a\", \"b\", \"c\", \"i\"}")) throw new RuntimeException("Fail 11: " + context.getRegularTokens());
 
@@ -407,14 +407,14 @@ class UserAgentContext {
     }
 
     public String getIgnoredTokens() {
-        return debug(ignoredTokens);
+        return debugList(ignoredTokens);
     }
 
     public String getConsumedTokens() {
-        return debug(consumedTokens);
+        return debugList(consumedTokens);
     }
     public String getRegularTokens() {
-        return debug(tokens);
+        return debugList(tokens);
     }
     public Iterator<String> getRegularTokensIterator() {
         return Collections.unmodifiableList(tokens).iterator();
@@ -423,10 +423,6 @@ class UserAgentContext {
         return Collections.unmodifiableList(parenTokens).iterator();
     }
     public String getParenTokens() {
-        return debug(parenTokens);
-    }
-
-    public void debug(String s) {
-        debug += "\r\n" + s;
+        return debugList(parenTokens);
     }
 }

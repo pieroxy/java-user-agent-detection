@@ -2,6 +2,7 @@ package net.pieroxy.ua.detection;
 import java.io.*;
 import java.util.*;
 class UserAgentDetectionHelper {
+
     static void consumeMozilla(UserAgentContext context) {
         context.consume("compatible", MatchingType.CONTAINS, MatchingRegion.PARENTHESIS);
         context.consume("Mozilla/", MatchingType.BEGINS, MatchingRegion.REGULAR);
