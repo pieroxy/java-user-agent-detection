@@ -6,12 +6,12 @@ import java.util.*;
 */
 public class Device {
 
-    DeviceType deviceType;
-    Brand brand;
-    Brand manufacturer;
-    String architecture;
-    String device;
-    boolean touch;
+    private DeviceType deviceType;
+    private Brand brand;
+    private Brand manufacturer;
+    private String architecture;
+    private String device;
+    private boolean touch;
 
     /** This constructor does not specify the <code>manufacturer</code> and assumes it is the same as the <code>brand</code>.
      * @param  _brand         The vendor of this device, and its manufacturer.
@@ -119,6 +119,10 @@ public class Device {
     public DeviceType getDeviceType() {
         return deviceType;
     }
+    /** @param t The type of the device. For example, COMPUTER, PHONE, TABLET, ... */
+    public void setDeviceType(DeviceType t) {
+        deviceType = t;
+    }
     /** @return The brand of the device. This is in general the manufacturer but can be different for example in the case of the Nexus line of Android devices.
      * For those, the brand will be GOOGLE. */
     public Brand getBrand() {
@@ -133,9 +137,17 @@ public class Device {
     public String getArchitecture() {
         return architecture;
     }
+    /** @param a The architecture of the device. May be "i386", "arm", "x86_64", "Power PC" or any other architecture. */
+    public void setArchitecture(String a) {
+        architecture = a;
+    }
     /** @return The description of the device, for example "Galaxy S4" or "iPhone", ... */
     public String getDevice() {
         return device;
+    }
+    /** @param name The description of the device, for example "Galaxy S4" or "iPhone", ... */
+    public void setDevice(String name) {
+        device = name;
     }
     /** @return Whether the device has touch capabilities or not */
     public boolean isTouch() {

@@ -144,11 +144,11 @@ class BotsHelper {
         if (m.matches() && !userAgent.startsWith("Curl/PHP")) {
             String botName = m.group(gb.groups[0]);
             Bot base = genericBotsBrandAndType.get(botName);
-            String description = base == null ? botName : base.description;
+            String description = base == null ? botName : base.getDescription();
             if (base == null) base = genericBotBase;
             String version = gb.groups[1] == 0 ? "" : m.group(gb.groups[1]);
             String url = gb.groups[2] == 0 ? "" : m.group(gb.groups[2]);
-            return new Bot(base.vendor, base.family, description, version, sanitizeUrl(url));
+            return new Bot(base.getVendor(), base.getFamily(), description, version, sanitizeUrl(url));
         }
         return null;
     }
@@ -448,7 +448,7 @@ class BotsHelper {
 
 
             if (res !=null) {
-                res.url = consumeUrlAndMozilla(context,"http://");
+                res.setUrl( consumeUrlAndMozilla(context,"http://"));
                 return res;
             }
         } else
@@ -721,9 +721,9 @@ class BotsHelper {
         String key = cfver + "/" + dver;
         OS os = mapCfNetworkOS.get(key);
         String arch = mapCfNetworkArchitecture.get(key);
-        if (os != null) results.operatingSystem = os;
-        else results.operatingSystem = new OS(Brand.APPLE, OSFamily.UNKNOWN, "iOS or MacOS", "");
-        if (arch != null) results.device.architecture = arch;
+        if (os != null) results.setOperatingSystem(os);
+        else results.setOperatingSystem(new OS(Brand.APPLE, OSFamily.UNKNOWN, "iOS or MacOS", ""));
+        if (arch != null) results.getDevice().setArchitecture(arch);
     }
 
 
@@ -740,7 +740,7 @@ class BotsHelper {
         if (dev==null) dev = getDeviceFromCFNetwork(context, "MacBookPro");
         if (dev==null) dev = getDeviceFromCFNetwork(context, "MacPro");
         if (dev==null) dev = getDeviceFromCFNetwork(context, "MacBook");
-        if (dev != null) res.device.device = dev;
+        if (dev != null) res.getDevice().setDevice(dev);
 
     }
 
@@ -757,14 +757,14 @@ class BotsHelper {
 
 
         if ((groups = getGroups("Curl/PHP ([0-9\\.]+)(-[0-9]ubuntu[0-9\\.]+)? \\(http://github.com/shuber/curl\\)", context.getUA(), 1, 2)) != null) {
-            res.browser.setFullVersionOneShot(groups[0], 2);
-            res.browser.description = "curl";
-            res.browser.family = BrowserFamily.LIBRARY;
-            res.browser.vendor = Brand.OPENSOURCE_COMMUNITY;
+            res.getBrowser().setFullVersionOneShot(groups[0], 2);
+            res.getBrowser().setDescription("curl");
+            res.getBrowser().setFamily(BrowserFamily.LIBRARY);
+            res.getBrowser().setVendor(Brand.OPENSOURCE_COMMUNITY);
 
             if (groups[1] != null) {
-                res.operatingSystem.family = OSFamily.LINUX;
-                res.operatingSystem.description = "Ubuntu";
+                res.getOperatingSystem().setFamily(OSFamily.LINUX);
+                res.getOperatingSystem().setDescription("Ubuntu");
             }
 
             context.consumeAllTokens();
@@ -778,11 +778,11 @@ class BotsHelper {
             } else {
                 arch = "";
             }
-            res.device.architecture = arch;
-            res.browser.setFullVersionOneShot(ver, 2);
-            res.browser.description = "curl";
-            res.browser.family = BrowserFamily.LIBRARY;
-            res.browser.vendor = Brand.OPENSOURCE_COMMUNITY;
+            res.getDevice().setArchitecture(arch);
+            res.getBrowser().setFullVersionOneShot(ver, 2);
+            res.getBrowser().setDescription("curl");
+            res.getBrowser().setFamily(BrowserFamily.LIBRARY);
+            res.getBrowser().setVendor(Brand.OPENSOURCE_COMMUNITY);
 
             context.consume("curl/",MatchingType.BEGINS, MatchingRegion.REGULAR);
             context.consume("NSS/",MatchingType.BEGINS, MatchingRegion.REGULAR);
@@ -793,128 +793,128 @@ class BotsHelper {
             context.consume("librtmp/",MatchingType.BEGINS, MatchingRegion.REGULAR);
 
             if (archTotal.indexOf("-pc-")>-1) {
-                res.device.device = "PC";
+                res.getDevice().setDevice("PC");
             }
 
             if (archTotal.endsWith("-redhat-linux-gnu")) {
-                res.operatingSystem.version = ("Red Hat " + arch).trim();
+                res.getOperatingSystem().setVersion(("Red Hat " + arch).trim());
                 return res;
             } else if (archTotal.endsWith("-pc-win32")) {
-                res.device.setBrandAndManufacturer(Brand.UNKNOWN);
-                res.operatingSystem.family = OSFamily.WINDOWS;
-                res.operatingSystem.description = "Windows";
-                res.operatingSystem.version = arch;
+                res.getDevice().setBrandAndManufacturer(Brand.UNKNOWN);
+                res.getOperatingSystem().setFamily(OSFamily.WINDOWS);
+                res.getOperatingSystem().setDescription("Windows");
+                res.getOperatingSystem().setVersion(arch);
                 return res;
             } else if (archTotal.endsWith("pc-mingw32msvc")) {
-                res.device.setBrandAndManufacturer(Brand.UNKNOWN);
-                res.operatingSystem.family = OSFamily.WINDOWS;
-                res.operatingSystem.description = "Windows";
-                res.operatingSystem.version = (arch + " through MinGW").trim();
+                res.getDevice().setBrandAndManufacturer(Brand.UNKNOWN);
+                res.getOperatingSystem().setFamily(OSFamily.WINDOWS);
+                res.getOperatingSystem().setDescription("Windows");
+                res.getOperatingSystem().setVersion((arch + " through MinGW").trim());
                 return res;
             } else if ((pos=archTotal.indexOf("-apple-darwin"))>-1) {
-                res.device.setBrandAndManufacturer(Brand.APPLE);
-                res.device.device = "Macintosh";
-                res.operatingSystem.family = OSFamily.MACOSX;
-                res.operatingSystem.description = "Mac OS";
-                res.operatingSystem.version =  "darwin "+UserAgentDetectionHelper.getVersionNumber(archTotal,pos+13)+ (arch.equals("universal")?(""):(" " + arch));
+                res.getDevice().setBrandAndManufacturer(Brand.APPLE);
+                res.getDevice().setDevice("Macintosh");
+                res.getOperatingSystem().setFamily(OSFamily.MACOSX);
+                res.getOperatingSystem().setDescription("Mac OS");
+                res.getOperatingSystem().setVersion( "darwin "+UserAgentDetectionHelper.getVersionNumber(archTotal,pos+13)+ (arch.equals("universal")?(""):(" " + arch)));
                 return res;
             } else if (archTotal.endsWith("-linux-gnu")) {
-                res.operatingSystem.version = arch;
+                res.getOperatingSystem().setVersion(arch);
                 return res;
             } else if ((pos=archTotal.indexOf("-portbld-freebsd"))>-1) {
-                res.operatingSystem.family = OSFamily.BSD;
-                res.operatingSystem.description = "FreeBSD";
-                res.operatingSystem.version =  (UserAgentDetectionHelper.getVersionNumber(archTotal,pos+16) + " "+arch).trim();
+                res.getOperatingSystem().setFamily(OSFamily.BSD);
+                res.getOperatingSystem().setDescription("FreeBSD");
+                res.getOperatingSystem().setVersion( (UserAgentDetectionHelper.getVersionNumber(archTotal,pos+16) + " "+arch).trim());
                 return res;
             }
         } else if ((ver=context.getcVersionAfterPattern("curl/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-            res.browser.setFullVersionOneShot(ver, 2);
-            res.browser.description = "curl";
-            res.browser.family = BrowserFamily.LIBRARY;
-            res.browser.vendor = Brand.OPENSOURCE_COMMUNITY;
+            res.getBrowser().setFullVersionOneShot(ver, 2);
+            res.getBrowser().setDescription("curl");
+            res.getBrowser().setFamily(BrowserFamily.LIBRARY);
+            res.getBrowser().setVendor(Brand.OPENSOURCE_COMMUNITY);
             return res;
         } else if ((ver=context.getcVersionAfterPattern("CFNetwork/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
             // A library on MacOS and iOS to make network calls.
-            res.browser.family = BrowserFamily.LIBRARY;
-            res.browser.description = "CFNetwork";
-            res.browser.vendor = Brand.APPLE;
+            res.getBrowser().setFamily(BrowserFamily.LIBRARY);
+            res.getBrowser().setDescription("CFNetwork");
+            res.getBrowser().setVendor(Brand.APPLE);
             String cfnver = ver;
-            res.browser.setFullVersionOneShot(cfnver, 2);
+            res.getBrowser().setFullVersionOneShot(cfnver, 2);
             String dver = context.getcVersionAfterPattern("Darwin/",MatchingType.BEGINS, MatchingRegion.REGULAR);
             if (dver == null) dver = "";
             if ((ver=context.getcVersionAfterPattern("Flipboard/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.FLIPBOARD, BotFamily.ROBOT, "Flipboard", ver);
+                res.setBot(new Bot(Brand.FLIPBOARD, BotFamily.ROBOT, "Flipboard", ver));
             } else if ((ver=context.getcVersionAfterPattern("Puffin/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.CLOUDMOSA, BotFamily.ROBOT, "Puffin Browser", ver);
+                res.setBot(new Bot(Brand.CLOUDMOSA, BotFamily.ROBOT, "Puffin Browser", ver));
             } else if ((ver=context.getcVersionAfterPattern("Mercury/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.ILEGEND, BotFamily.ROBOT, "Mercury Browser", ver);
+                res.setBot(new Bot(Brand.ILEGEND, BotFamily.ROBOT, "Mercury Browser", ver));
             } else if ((ver=context.getcVersionAfterPattern("Instapaper/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.INSTAPAPER, BotFamily.ROBOT, "Instapaper", ver);
+                res.setBot(new Bot(Brand.INSTAPAPER, BotFamily.ROBOT, "Instapaper", ver));
             } else if ((ver=context.getcVersionAfterPattern("InstapaperPro/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.INSTAPAPER, BotFamily.ROBOT, "InstapaperPro", ver);
+                res.setBot(new Bot(Brand.INSTAPAPER, BotFamily.ROBOT, "InstapaperPro", ver));
             } else if ((ver=context.getcVersionAfterPattern("Readability/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.READABILITY, BotFamily.ROBOT, "Readability", ver);
+                res.setBot(new Bot(Brand.READABILITY, BotFamily.ROBOT, "Readability", ver));
             } else if ((ver=context.getcVersionAfterPattern("QQ/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.TENCENT, BotFamily.ROBOT, "QQ Messaging App", ver);
+                res.setBot(new Bot(Brand.TENCENT, BotFamily.ROBOT, "QQ Messaging App", ver));
             } else if ((ver=context.getcVersionAfterPattern("Reeder/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.REEDER, BotFamily.ROBOT, "Reeder", ver);
+                res.setBot(new Bot(Brand.REEDER, BotFamily.ROBOT, "Reeder", ver));
             } else if ((ver=context.getcVersionAfterPattern("EvernoteShare/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.MOBOTAP, BotFamily.ROBOT, "Evernote Share for Dolphin Browser", ver);
+                res.setBot(new Bot(Brand.MOBOTAP, BotFamily.ROBOT, "Evernote Share for Dolphin Browser", ver));
             } else if ((ver=context.getcVersionAfterPattern("ReadKit/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.WEBIN, BotFamily.ROBOT, "ReadKit", ver);
+                res.setBot(new Bot(Brand.WEBIN, BotFamily.ROBOT, "ReadKit", ver));
             } else if ((ver=context.getcVersionAfterPattern("Spillo/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.BANANAFISH, BotFamily.ROBOT, "Spillo", ver);
+                res.setBot(new Bot(Brand.BANANAFISH, BotFamily.ROBOT, "Spillo", ver));
             } else if ((ver=context.getcVersionAfterPattern("Pinner/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Pinner", ver);
+                res.setBot(new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Pinner", ver));
             } else if ((ver=context.getcVersionAfterPattern("LinkedIn/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.LINKEDIN, BotFamily.ROBOT, "LinkedIn", ver);
+                res.setBot(new Bot(Brand.LINKEDIN, BotFamily.ROBOT, "LinkedIn", ver));
             } else if ((ver=context.getcVersionAfterPattern("CloudyTabs/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Cloudy Tabs", ver);
+                res.setBot(new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Cloudy Tabs", ver));
             } else if ((ver=context.getcVersionAfterPattern("Opera%20Coast/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.OPERA, BotFamily.ROBOT, "Opera Coast", ver);
+                res.setBot(new Bot(Brand.OPERA, BotFamily.ROBOT, "Opera Coast", ver));
             } else if ((ver=context.getcVersionAfterPattern("iCabMobile/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "iCab Mobile", ver);
+                res.setBot(new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "iCab Mobile", ver));
             } else if ((ver=context.getcVersionAfterPattern("CLIPish%20Jr/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "CLIPish", ver);
+                res.setBot(new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "CLIPish", ver));
             } else if ((ver=context.getcVersionAfterPattern("Bing/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.MICROSOFT, BotFamily.ROBOT, "Bing App", ver);
+                res.setBot(new Bot(Brand.MICROSOFT, BotFamily.ROBOT, "Bing App", ver));
             } else if ((ver=context.getcVersionAfterPattern("InDesign/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.ADOBE, BotFamily.ROBOT, "InDesign App", ver);
+                res.setBot(new Bot(Brand.ADOBE, BotFamily.ROBOT, "InDesign App", ver));
             } else if ((ver=context.getcVersionAfterPattern("AlienBlue/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null ||
                        (ver=context.getcVersionAfterPattern("AlienBlueHD/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.REDDIT, BotFamily.ROBOT, "Reddit App", ver);
+                res.setBot(new Bot(Brand.REDDIT, BotFamily.ROBOT, "Reddit App", ver));
             } else if ((ver=context.getcVersionAfterPattern("Newsify/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Newsify App", ver);
+                res.setBot(new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Newsify App", ver));
             } else if ((ver=context.getcVersionAfterPattern("Ziner/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Ziner App", ver);
+                res.setBot(new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Ziner App", ver));
             } else if ((ver=context.getcVersionAfterPattern("Leaf/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.ROCKYSAND, BotFamily.ROBOT, "Leaf RSS reader App", ver);
+                res.setBot(new Bot(Brand.ROCKYSAND, BotFamily.ROBOT, "Leaf RSS reader App", ver));
             } else if ((ver=context.getcVersionAfterPattern("Newsflow/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.ROCKYSAND, BotFamily.ROBOT, "Newsflow RSS reader App", ver);
+                res.setBot(new Bot(Brand.ROCKYSAND, BotFamily.ROBOT, "Newsflow RSS reader App", ver));
             } else if ((ver=context.getcVersionAfterPattern("RSS%20Notifier/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.ROCKYSAND, BotFamily.ROBOT, "RSS Notifier App", ver);
+                res.setBot(new Bot(Brand.ROCKYSAND, BotFamily.ROBOT, "RSS Notifier App", ver));
             } else if ((ver=context.getcVersionAfterPattern("Redd/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Redd reddit client App", ver);
+                res.setBot(new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Redd reddit client App", ver));
             } else if ((ver=context.getcVersionAfterPattern("Hacker%20News/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Hacker News App", ver);
+                res.setBot(new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Hacker News App", ver));
             } else if ((ver=context.getcVersionAfterPattern("Buffer/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Buffer App", ver);
+                res.setBot(new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Buffer App", ver));
             } else if ((ver=context.getcVersionAfterPattern("Buffer/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Buffer App", ver);
+                res.setBot(new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Buffer App", ver));
             } else if ((ver=context.getcVersionAfterPattern("AtomicLite/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null ||
                        (ver=context.getcVersionAfterPattern("AtomicBrowser/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Atomic Web Browser", ver);
+                res.setBot(new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Atomic Web Browser", ver));
             } else if ((ver=context.getcVersionAfterPattern("Tweetbot/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null ||
                        (ver=context.getcVersionAfterPattern("TweetbotPad/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Tweetbot App", ver);
+                res.setBot(new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Tweetbot App", ver));
             } else if ((ver=context.getcVersionAfterPattern("onesafe%20iOS/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.LUNABEE, BotFamily.ROBOT, "OneSafe App", ver);
+                res.setBot(new Bot(Brand.LUNABEE, BotFamily.ROBOT, "OneSafe App", ver));
             } else if ((ver=context.getcVersionAfterPattern("Stache/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Stache Bookmarking App", ver);
+                res.setBot(new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Stache Bookmarking App", ver));
             } else if ((ver=context.getcVersionAfterPattern("Pins/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Pins App", ver);
+                res.setBot(new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Pins App", ver));
             } else if ((ver=context.getcVersionAfterPattern("Pinterest/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-                res.bot = new Bot(Brand.PINTEREST, BotFamily.ROBOT, "Pinterest", ver);
+                res.setBot(new Bot(Brand.PINTEREST, BotFamily.ROBOT, "Pinterest", ver));
             } else if (context.consume("MobileSafari/",MatchingType.BEGINS, MatchingRegion.REGULAR) ||
                        context.consume("Safari/",MatchingType.BEGINS, MatchingRegion.REGULAR) ||
                        context.consume("Safari[0-9\\.]+",MatchingType.REGEXP, MatchingRegion.REGULAR) ||
@@ -926,34 +926,34 @@ class BotsHelper {
                 if (fsp>-1 && fsl>-1 && fsl<fsp) {
                     String botName = context.getUA().substring(0, fsl);
                     ver=context.getcVersionAfterPattern(botName+"/",MatchingType.BEGINS, MatchingRegion.REGULAR);
-                    res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Unknown bot " + botName, ver==null ? "" : ver);
+                    res.setBot(new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Unknown bot " + botName, ver==null ? "" : ver));
                 } else {
-                    res.bot = new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Unknown bot", "");
+                    res.setBot(new Bot(Brand.UNKNOWN, BotFamily.ROBOT, "Unknown bot", ""));
                 }
             }
             setMacOSFromCFNetwork(res, cfnver, dver);
             setDeviceFromCFNetwork(context, res);
-            if (context.consume("x86_64", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) res.device.architecture = "x86_64";
-            if (context.consume("i386", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) res.device.architecture = "i386";
+            if (context.consume("x86_64", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) res.getDevice().setArchitecture("x86_64");
+            if (context.consume("i386", MatchingType.EQUALS, MatchingRegion.PARENTHESIS)) res.getDevice().setArchitecture("i386");
             UserAgentDetectionHelper.addExtensionsCommonForLibs(context, res);
             return res;
         } else if ((ver=context.getcVersionAfterPattern("HTTP_Request2/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-            res.browser.family = BrowserFamily.LIBRARY;
-            res.browser.vendor = Brand.OPENSOURCE_COMMUNITY;
-            res.browser.description = "PHP HttpRequest2";
-            res.browser.setFullVersionOneShot(ver, 2);
+            res.getBrowser().setFamily(BrowserFamily.LIBRARY);
+            res.getBrowser().setVendor(Brand.OPENSOURCE_COMMUNITY);
+            res.getBrowser().setDescription("PHP HttpRequest2");
+            res.getBrowser().setFullVersionOneShot(ver, 2);
 
             context.consume("http://",MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
             String phpVer = context.getcVersionAfterPattern("PHP/",MatchingType.BEGINS, MatchingRegion.REGULAR);
 
             if (phpVer.indexOf("-")>-1 && phpVer.indexOf("ubuntu")>-1) {
-                res.operatingSystem.description = "Ubuntu";
+                res.getOperatingSystem().setDescription("Ubuntu");
                 phpVer = phpVer.substring(0, phpVer.indexOf("-"));
             } else {
-                res.operatingSystem = new OS(Brand.UNKNOWN,OSFamily.UNKNOWN,"","");
+                res.setOperatingSystem(new OS(Brand.UNKNOWN,OSFamily.UNKNOWN,"",""));
             }
 
-            if (phpVer!=null) res.browser.fullVersion += " php " + phpVer;
+            if (phpVer!=null) res.getBrowser().fullVersion += " php " + phpVer;
 
             return res;
         } else if ((context.getUA().length() == 4 && context.consume("Ruby",MatchingType.EQUALS, MatchingRegion.REGULAR)) ||
@@ -963,83 +963,83 @@ class BotsHelper {
                 ver = ver.substring(ver.indexOf(" ruby ")+6);
             String rver = ver;
 
-            res.browser.family = BrowserFamily.LIBRARY;
-            res.browser.vendor = Brand.OPENSOURCE_COMMUNITY;
-            res.browser.description = "Ruby";
-            res.operatingSystem = new OS(Brand.UNKNOWN,OSFamily.UNKNOWN,"","");
+            res.getBrowser().setFamily(BrowserFamily.LIBRARY);
+            res.getBrowser().setVendor(Brand.OPENSOURCE_COMMUNITY);
+            res.getBrowser().setDescription("Ruby");
+            res.setOperatingSystem(new OS(Brand.UNKNOWN,OSFamily.UNKNOWN,"",""));
 
             if ((ver=context.getcVersionAfterPattern("Mechanize/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
                 context.consume("http://",MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
-                res.browser.description = "Mechanize (Ruby)";
+                res.getBrowser().setDescription("Mechanize (Ruby)");
             } else if ((ver=context.getcVersionAfterPattern("HTTPClient/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
                 context.consume("[0-9]{4}-[0-9]{2}-[0-9]{2}",MatchingType.REGEXP, MatchingRegion.PARENTHESIS);
-                res.browser.description = "HTTPClient (Ruby"+(rver!=null?" "+rver:"")+")";
+                res.getBrowser().setDescription("HTTPClient (Ruby"+(rver!=null?" "+rver:"")+")");
             } else if (context.consume("Atig::Http/",MatchingType.BEGINS, MatchingRegion.REGULAR)) {
                 if (context.consume("arm-linux.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) {
-                    res.device.architecture = "arm";
-                    res.operatingSystem.family = OSFamily.LINUX;
-                    res.operatingSystem.description = "Linux";
+                    res.getDevice().setArchitecture("arm");
+                    res.getOperatingSystem().setFamily(OSFamily.LINUX);
+                    res.getOperatingSystem().setDescription("Linux");
                 } else if (context.consume("i386-linux.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) {
-                    res.device.architecture = "i386";
-                    res.operatingSystem.family = OSFamily.LINUX;
-                    res.operatingSystem.description = "Linux";
+                    res.getDevice().setArchitecture("i386");
+                    res.getOperatingSystem().setFamily(OSFamily.LINUX);
+                    res.getOperatingSystem().setDescription("Linux");
                 } else if (context.consume("i686-linux.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) {
-                    res.device.architecture = "i686";
-                    res.operatingSystem.family = OSFamily.LINUX;
-                    res.operatingSystem.description = "Linux";
+                    res.getDevice().setArchitecture("i686");
+                    res.getOperatingSystem().setFamily(OSFamily.LINUX);
+                    res.getOperatingSystem().setDescription("Linux");
                 } else if (context.consume("x86_64-linux.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) {
-                    res.device.architecture = "x86_64";
-                    res.operatingSystem.family = OSFamily.LINUX;
-                    res.operatingSystem.description = "Linux";
+                    res.getDevice().setArchitecture("x86_64");
+                    res.getOperatingSystem().setFamily(OSFamily.LINUX);
+                    res.getOperatingSystem().setDescription("Linux");
                 }
-                res.browser.description = "Atig (Ruby)";
+                res.getBrowser().setDescription("Atig (Ruby)");
 
                 context.consume("http.rb", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
                 context.consume("net-irc", MatchingType.EQUALS, MatchingRegion.PARENTHESIS);
             }
-            if (ver != null) res.browser.setFullVersionOneShot(ver, 2);
-            else if (rver != null) res.browser.setFullVersionOneShot(rver, 2);
+            if (ver != null) res.getBrowser().setFullVersionOneShot(ver, 2);
+            else if (rver != null) res.getBrowser().setFullVersionOneShot(rver, 2);
 
             return res;
         } else if ((ver=context.getcVersionAfterPattern("Commons-HttpClient/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null ||
                    (ver=context.getcVersionAfterPattern("Apache-HttpClient/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
             context.consume("Jakarta",MatchingType.EQUALS, MatchingRegion.REGULAR);
             context.consume("java ",MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
-            res.browser.family = BrowserFamily.LIBRARY;
-            res.browser.vendor = Brand.APACHE;
-            res.browser.description = "Commons HttpClient";
-            res.browser.setFullVersionOneShot(ver, 2);
-            res.operatingSystem = new OS(Brand.UNKNOWN,OSFamily.UNKNOWN,"","");
+            res.getBrowser().setFamily(BrowserFamily.LIBRARY);
+            res.getBrowser().setVendor(Brand.APACHE);
+            res.getBrowser().setDescription("Commons HttpClient");
+            res.getBrowser().setFullVersionOneShot(ver, 2);
+            res.setOperatingSystem(new OS(Brand.UNKNOWN,OSFamily.UNKNOWN,"",""));
             return res;
         } else if ((ver=context.getcVersionAfterPattern("Wget/",MatchingType.BEGINS, MatchingRegion.REGULAR)) != null) {
-            res.browser.family = BrowserFamily.LIBRARY;
-            res.browser.vendor = Brand.OPENSOURCE_COMMUNITY;
-            res.browser.description = "wget";
-            res.browser.setFullVersionOneShot(ver, 2);
+            res.getBrowser().setFamily(BrowserFamily.LIBRARY);
+            res.getBrowser().setVendor(Brand.OPENSOURCE_COMMUNITY);
+            res.getBrowser().setDescription("wget");
+            res.getBrowser().setFullVersionOneShot(ver, 2);
 
             if (context.consume("Red Hat modified",MatchingType.EQUALS, MatchingRegion.PARENTHESIS) ||
             context.getcNextTokens(new Matcher[] {new Matcher("Red",MatchingType.EQUALS),
                                        new Matcher("Hat",MatchingType.EQUALS),
                                        new Matcher("modified",MatchingType.EQUALS)
             }, MatchingRegion.REGULAR)!=null) {
-                res.operatingSystem.version = "Red Hat";
+                res.getOperatingSystem().setVersion("Red Hat");
                 return res;
             }
             else if (context.consume("linux-gnu",MatchingType.EQUALS, MatchingRegion.BOTH)) {
                 return res;
             } else if ((ver=context.getcVersionAfterPattern("freebsd",MatchingType.BEGINS, MatchingRegion.BOTH))!=null) {
-                res.operatingSystem.family = OSFamily.BSD;
-                res.operatingSystem.description = "FreeBSD";
-                res.operatingSystem.version = ver;
+                res.getOperatingSystem().setFamily(OSFamily.BSD);
+                res.getOperatingSystem().setDescription("FreeBSD");
+                res.getOperatingSystem().setVersion(ver);
                 return res;
             } else if (context.consume("cygwin",MatchingType.EQUALS, MatchingRegion.BOTH)) {
-                res.device.setBrandAndManufacturer(Brand.UNKNOWN);
-                res.operatingSystem.family = OSFamily.WINDOWS;
-                res.operatingSystem.description = "Windows";
-                res.operatingSystem.version = "through cygwin";
+                res.getDevice().setBrandAndManufacturer(Brand.UNKNOWN);
+                res.getOperatingSystem().setFamily(OSFamily.WINDOWS);
+                res.getOperatingSystem().setDescription("Windows");
+                res.getOperatingSystem().setVersion("through cygwin");
                 return res;
             } else {
-                res.operatingSystem = new OS(Brand.UNKNOWN,OSFamily.UNKNOWN,"","");
+                res.setOperatingSystem(new OS(Brand.UNKNOWN,OSFamily.UNKNOWN,"",""));
                 return res;
             }
         } else if (context.getcNextTokens(new Matcher[] {new Matcher("Xenu",MatchingType.EQUALS),
@@ -1072,10 +1072,10 @@ class BotsHelper {
                 jv = ver;
             }
             if (jv != null) {
-                res.browser.family = BrowserFamily.LIBRARY;
-                res.browser.vendor = Brand.SUN;
-                res.browser.description = "Java";
-                res.browser.setFullVersionOneShot(jv, 2);
+                res.getBrowser().setFamily(BrowserFamily.LIBRARY);
+                res.getBrowser().setVendor(Brand.SUN);
+                res.getBrowser().setDescription("Java");
+                res.getBrowser().setFullVersionOneShot(jv, 2);
             }
         }
     }

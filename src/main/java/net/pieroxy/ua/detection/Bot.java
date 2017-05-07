@@ -5,11 +5,11 @@ import java.util.*;
 * Describe a bot, which is a program that access sites automatically rather than a human browsing the web.
 */
 public class Bot {
-    Brand vendor;
-    BotFamily family;
-    String description;
-    String version;
-    String url;
+    private Brand vendor;
+    private BotFamily family;
+    private String description;
+    private String version;
+    private String url;
 
     /**
      * This is the most detailed constructor of the Bot object. You can specifiy all of its fields.
@@ -43,12 +43,12 @@ public class Bot {
         if (! (o instanceof Bot)) return false;
         Bot d = (Bot) o;
         if (d.vendor==null && vendor!=d.vendor) return false;
-        if (d.family==null && family!=d.family) return false;
+        if (d.getFamily()==null && family!=d.getFamily()) return false;
         if (d.description==null && description!=d.description) return false;
         if (d.version==null && version!=d.version) return false;
         if (d.url==null && url!=d.url) return false;
         return
-            ( (d.family==null && family==null) || d.family.equals(family) ) &&
+            ( (d.getFamily()==null && family==null) || d.getFamily().equals(family) ) &&
             ( (d.description==null && description==null) || d.description.equals(description) ) &&
             ( (d.vendor==null && vendor==null) || d.vendor.equals(vendor) ) &&
             ( (d.url==null && url==null) || d.url.equals(url) ) &&
@@ -100,6 +100,10 @@ public class Bot {
     /** @return The URL the bot points at or a url describing the bot. */
     public String getUrl() {
         return url;
+    }
+    /** @param u The URL the bot points at or a url describing the bot. */
+    public void setUrl(String u) {
+        url = u;
     }
 
 }

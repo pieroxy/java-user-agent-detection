@@ -89,12 +89,12 @@ public class RenderingEngine extends VersionedObject {
         if (o == null) return false;
         if (! (o instanceof RenderingEngine)) return false;
         RenderingEngine d = (RenderingEngine) o;
-        if (d.family==null && family!=d.family) return false;
+        if (d.getFamily()==null && family!=d.getFamily()) return false;
         if (d.version==null && version!=d.version) return false;
         if (d.vendor==null && vendor!=d.vendor) return false;
         if (d.fullVersion==null && fullVersion!=d.fullVersion) return false;
         return
-            ( (d.family==null && family==null) || d.family.equals(family) ) &&
+            ( (d.getFamily()==null && family==null) || d.getFamily().equals(family) ) &&
             ( (d.version==null && version==null) || d.version.equals(version) ) &&
             ( (d.vendor==null && vendor==null) || d.vendor.equals(vendor) ) &&
             ( (d.fullVersion==null && fullVersion==null) || d.fullVersion.equals(fullVersion) ) ;

@@ -5,11 +5,11 @@ import java.util.*;
 * A Browser is made of a Brand, a BrowserFamily, a description and a rendering engine. Description is defined as a String as of today.
 */
 public class Browser extends VersionedObject {
-    Brand vendor;
-    BrowserFamily family;
-    String description;
-    RenderingEngine renderingEngine;
-    boolean inWebView;
+    private Brand vendor;
+    private BrowserFamily family;
+    private String description;
+    private RenderingEngine renderingEngine;
+    private boolean inWebView;
 
     /**
      * This is the most detailed constructor of the Browser object, where everything can be specified.
@@ -72,14 +72,14 @@ public class Browser extends VersionedObject {
         if (o == null) return false;
         if (! (o instanceof Browser)) return false;
         Browser d = (Browser) o;
-        if (d.family==null && family!=d.family) return false;
+        if (d.getFamily()==null && family!=d.getFamily()) return false;
         if (d.description==null && description!=d.description) return false;
         if (d.version==null && version!=d.version) return false;
         if (d.vendor==null && vendor!=d.vendor) return false;
         if (d.fullVersion==null && fullVersion!=d.fullVersion) return false;
         if (d.renderingEngine==null && renderingEngine!=d.renderingEngine) return false;
         return
-            ( (d.family==null && family==null) || d.family.equals(family) ) &&
+            ( (d.getFamily()==null && family==null) || d.getFamily().equals(family) ) &&
             ( (d.version==null && version==null) || d.version.equals(version) ) &&
             ( (d.vendor==null && vendor==null) || d.vendor.equals(vendor) ) &&
             ( (d.description==null && description==null) || d.description.equals(description) ) &&
@@ -124,17 +124,33 @@ public class Browser extends VersionedObject {
     public Brand getVendor() {
         return vendor;
     }
+    /** @param v The company shipping the browser */
+    public void setVendor(Brand v) {
+        vendor = v;
+    }
     /** @return The general family of the browser. Could be FIREFOX, IE, CHROME, LIBRARY (means a program not being a browser), ... */
     public BrowserFamily getFamily() {
         return family;
+    }
+    /** @param f The general family of the browser. Could be FIREFOX, IE, CHROME, LIBRARY (means a program not being a browser), ... */
+    public void setFamily(BrowserFamily f) {
+        family = f;
     }
     /** @return The precise description of the browser. Can be "Firefox" or "Galeon" or "Seamonkey", ... */
     public String getDescription() {
         return description;
     }
+    /** @param d The precise description of the browser. Can be "Firefox" or "Galeon" or "Seamonkey", ... */
+    public void setDescription(String d) {
+        description = d;
+    }
     /** @return The rendering engine */
     public RenderingEngine getRenderingEngine() {
         return renderingEngine;
+    }
+    /** @param re The rendering engine */
+    public void setRenderingEngine(RenderingEngine re) {
+        renderingEngine = re;
     }
     /** @return true if the browser is a webview, false if not or unknown */
     public boolean isInWebView() {

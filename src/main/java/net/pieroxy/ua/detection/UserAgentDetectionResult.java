@@ -5,17 +5,17 @@ import java.util.*;
 * This is the class returned by the detection API.
 */
 public class UserAgentDetectionResult {
-    String debug;
+    private String debug;
     private Set<Extension> extensions = new HashSet<Extension>();
 
-    String ignoredTokens;
-    String unknownTokens;
+    private String ignoredTokens;
+    private String unknownTokens;
 
-    Locale locale;
-    Device device;
-    Bot bot;
-    Browser browser;
-    OS operatingSystem;
+    private Locale locale;
+    private Device device;
+    private Bot bot;
+    private Browser browser;
+    private OS operatingSystem;
 
     private boolean objectEquals(Object a, Object b) {
         if (a == null && b == null) return true;
@@ -23,8 +23,8 @@ public class UserAgentDetectionResult {
         return a.equals(b);
     }
     private boolean botEquals(Bot a, Bot b) {
-        if ((a == null || a.family == null)  && (b == null || b.family == null)) return true;
-        if ((a == null || a.family == null)  || (b == null || b.family == null)) return false;
+        if ((a == null || a.getFamily() == null)  && (b == null || b.getFamily() == null)) return true;
+        if ((a == null || a.getFamily() == null)  || (b == null || b.getFamily() == null)) return false;
         return a.equals(b);
     }
 
@@ -174,17 +174,32 @@ public class UserAgentDetectionResult {
     public Bot getBot() {
         return bot;
     }
+    public void setBot(Bot b) {
+        bot=b;
+    }
     public Device getDevice() {
         return device;
+    }
+    public void setDevice(Device d) {
+        device = d;
     }
     public Browser getBrowser() {
         return browser;
     }
+    public void setBrowser(Browser b) {
+        browser = b;
+    }
     public OS getOperatingSystem() {
         return operatingSystem;
     }
+    public void setOperatingSystem(OS os) {
+        operatingSystem=os;
+    }
     public Locale getLocale() {
         return locale;
+    }
+    public void setLocale(Locale l) {
+        locale = l;
     }
     public String getIgnoredTokens() {
         return ignoredTokens;
