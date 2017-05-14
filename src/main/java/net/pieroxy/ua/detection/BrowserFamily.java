@@ -111,6 +111,7 @@ public enum BrowserFamily {
     public boolean isRobot() {
         return robot;
     }
+    @Override
     public String toString() {
         return name();
     }

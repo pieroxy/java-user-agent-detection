@@ -44,6 +44,7 @@ public enum DeviceType {
     public boolean isMobile() {
         return mobile;
     }
+    @Override
     public String toString() {
         return name();
     }

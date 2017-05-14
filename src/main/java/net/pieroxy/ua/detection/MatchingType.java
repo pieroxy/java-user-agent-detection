@@ -2,6 +2,7 @@ package net.pieroxy.ua.detection;
 import java.io.*;
 import java.util.*;
 enum MatchingType {
+
     BEGINS {
         @Override
         public boolean matches(String token, String pattern) {

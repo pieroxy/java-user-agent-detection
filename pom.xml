@@ -8,12 +8,14 @@
   <name>User Agent Detection Library</name>
   <description>A library to extract bot, browser, device and OS from a User-Agent in Java 6 or newer.</description>
   <url>https://github.com/pieroxy/java-user-agent-detection/</url>
+
   <licenses>
     <license>
         <name>WTFPL</name>
         <url>http://www.wtfpl.net/</url>
     </license>
   </licenses>
+
   <developers>
     <developer>
       <name>Pierre Grimaud</name>

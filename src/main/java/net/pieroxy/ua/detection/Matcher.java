@@ -4,6 +4,9 @@ import java.util.*;
 class Matcher {
     String pattern;
     MatchingType matchType;
+    public MatchingType getMatchType() {
+        return matchType;
+    }
 
     public Matcher(String s, MatchingType m) {
         pattern = s;

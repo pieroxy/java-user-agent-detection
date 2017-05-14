@@ -125,7 +125,7 @@ public class UserAgentDetectionResult {
         operatingSystem = _os;
     }
 
-    public UserAgentDetectionResult wrapUp (UserAgentContext context) {
+    UserAgentDetectionResult wrapUp (UserAgentContext context) {
         this.ignoredTokens = context.getIgnoredTokens();
         this.unknownTokens = context.getRemainingTokens();
         this.debug = context.getDebug();
@@ -144,7 +144,7 @@ public class UserAgentDetectionResult {
         return extensions;
     }
     private List<Extension> getSortedExtensions() {
-        List<Extension> le = new ArrayList<Extension>();
+        ArrayList<Extension> le = new ArrayList<Extension>();
         le.addAll(getExtensions());
         Collections.sort(le, new Comparator<Extension>() {
             public int compare(Extension a, Extension b) {

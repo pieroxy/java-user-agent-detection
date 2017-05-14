@@ -40,6 +40,7 @@ public class Extension {
         }
     }
 
+    @Override
     public String toString() {
         if (version == null || version.length()==0) {
             return name;
@@ -67,9 +68,10 @@ public class Extension {
     public static Set<Extension> deserialize(String exs) {
         Set<Extension> res = new HashSet<Extension>();
         String[]array = exs.split("\\^");
+
         for (String s : array) {
-            s = s.trim();
-            if (s.length()>0) res.add(new Extension(s));
+            String trimmed = s.trim();
+            if (trimmed.length()>0) res.add(new Extension(trimmed));
         }
         return res;
     }

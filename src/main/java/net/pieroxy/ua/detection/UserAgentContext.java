@@ -227,48 +227,6 @@ class UserAgentContext {
     }
 
 
-    private static String getVersionNumber(String s, int a_position) {
-        if (a_position<0) return "";
-        StringBuilder res = new StringBuilder();
-        int status = 0;
-
-        while (a_position < s.length()) {
-            char c = s.charAt(a_position);
-            switch (status) {
-            case 0: // No valid digits encountered yet
-                if (c == ' ' || c=='/') break;
-                if (c == ';' || c==')') return "";
-                status = 1;
-            case 1: // Version number in progress
-                if (c == ';' || c=='/' || c==')' || c=='(' || c=='[' || c=='%' || c==',') return res.toString().replace('_','.').trim();
-                if (c == ' ') status = 2;
-                res.append(c);
-                break;
-            case 2: // Space encountered - Might need to end the parsing
-                if (Character.isDigit(c)) {
-                    res.append(c);
-                    status=1;
-                } else
-                    return res.toString().replace('_','.').trim();
-                break;
-            }
-            a_position++;
-        }
-        return res.toString().replace('_','.').trim();
-    }
-    private String getFirstVersionNumber(String s, int a_position, int numDigits) {
-        String ver = getVersionNumber(s, a_position);
-        if (ver==null) return "";
-        int i = 0;
-        String res="";
-        while (i<ver.length() && i<numDigits) {
-            res+=String.valueOf(ver.charAt(i));
-            i++;
-        }
-        return res;
-    }
-
-
     /* Unit testing */
     public static void test() {
         UserAgentContext context = new UserAgentContext("a b c (d/3.3;e;f) g h i (j; k 2; l");
@@ -347,7 +305,7 @@ class UserAgentContext {
         Matcher matcher = new Matcher(pattern, match);
         String token = getAndConsumeToken(matcher, region, consumedTokens);
         if (token == null) return null;
-        return getVersionNumber(token,matcher.matchType.endOfMatchPosition(token, pattern));
+        return UserAgentDetectionHelper.getVersionNumber(token,matcher.getMatchType().endOfMatchPosition(token, pattern));
     }
     public String getcVersionAfterPattern(String pattern, MatchingType match, MatchingRegion region, int nbPos) {
         return keepPos(getcVersionAfterPattern(pattern, match, region), nbPos);
@@ -386,7 +344,7 @@ class UserAgentContext {
     public String getUA() {
         return ua;
     }
-    String getDebug() {
+    public String getDebug() {
         return debug;
     }
     public String getLCUA() {
@@ -417,10 +375,10 @@ class UserAgentContext {
         return debugList(tokens);
     }
     public Iterator<String> getRegularTokensIterator() {
-        return Collections.unmodifiableList(tokens).iterator();
+        return tokens.iterator();
     }
     public Iterator<String> getParenTokensIterator() {
-        return Collections.unmodifiableList(parenTokens).iterator();
+        return parenTokens.iterator();
     }
     public String getParenTokens() {
         return debugList(parenTokens);

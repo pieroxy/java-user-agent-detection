@@ -2,17 +2,6 @@ package net.pieroxy.ua.detection;
 import java.io.*;
 import java.util.*;
 class BotsHelper {
-    static private class GenericBot {
-        public java.util.regex.Pattern pattern;
-        public int[] groups;
-        public boolean discardAll;
-
-        public GenericBot(String pattern, int[]groups, boolean discardAll) {
-            this.pattern = java.util.regex.Pattern.compile(pattern);
-            this.groups = groups;
-            this.discardAll = discardAll;
-        }
-    }
 
     public static String[] getGroups(String regexp, String ua, int ... groups) {
         java.util.regex.Pattern pattern = java.util.regex.Pattern.compile(regexp);
@@ -42,6 +31,8 @@ class BotsHelper {
         new GenericBot("([^\\(\\);/]+)/([0-9RC\\.]+) \\(([A-Za-z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})\\)( .*)?", new int[]{1,2,0}, true),
         new GenericBot("([^<>\\(\\);]+) \\(([A-Za-z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})\\)", new int[]{1,0,0}, true),
     };
+    private static Map<String, OS> mapCfNetworkOS;
+    private static Map<String, String> mapCfNetworkArchitecture;
 
     static {
         hiddenBots = new HashSet<String>();
@@ -99,6 +90,118 @@ class BotsHelper {
         genericBotsBrandAndType.put("FeedlyBot", new Bot(Brand.OTHER,BotFamily.FEED_CRAWLER,"Feedly",""));
         genericBotsBrandAndType.put("Y!J-ASR/0.1 crawler", new Bot(Brand.YAHOO,BotFamily.CRAWLER,"Yahoo Japan",""));
         genericBotsBrandAndType.put("CCBot", new Bot(Brand.OTHER,BotFamily.CRAWLER,"Common Crawl",""));
+
+        mapCfNetworkOS = new HashMap<String, OS>();
+        mapCfNetworkOS.put("1.1/", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.2"));
+        mapCfNetworkOS.put("1.2.1/", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.3.2"));
+        mapCfNetworkOS.put("1.2.2/", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.3.9"));
+        mapCfNetworkOS.put("1.2.6/", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.3.9"));
+        mapCfNetworkOS.put("128/8.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.0"));
+        mapCfNetworkOS.put("128/8.1.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.1"));
+        mapCfNetworkOS.put("128.2/8.2.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.2"));
+        mapCfNetworkOS.put("129.5/8.3.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.3"));
+        mapCfNetworkOS.put("129.9/8.4.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.4"));
+        mapCfNetworkOS.put("129.9/8.5.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.5"));
+        mapCfNetworkOS.put("129.10/8.4.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.4"));
+        mapCfNetworkOS.put("129.10/8.5.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.5"));
+        mapCfNetworkOS.put("129.13/8.6.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.6"));
+        mapCfNetworkOS.put("129.16/8.7.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.7"));
+        mapCfNetworkOS.put("129.18/8.8.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.8"));
+        mapCfNetworkOS.put("129.20/8.9.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.9"));
+        mapCfNetworkOS.put("129.21/8.10.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.10"));
+        mapCfNetworkOS.put("129.22/8.11.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.11"));
+        mapCfNetworkOS.put("217/9.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.0"));
+        mapCfNetworkOS.put("220/9.1.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.1"));
+        mapCfNetworkOS.put("221.2/9.2.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.2 dev"));
+        mapCfNetworkOS.put("221.5/9.2.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.2"));
+        mapCfNetworkOS.put("330/9.3.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.3"));
+        mapCfNetworkOS.put("330.4/9.4.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.4"));
+        mapCfNetworkOS.put("339.5/9.5.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.5"));
+        mapCfNetworkOS.put("422.11/9.6.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.6"));
+        mapCfNetworkOS.put("438.12/9.7.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.7"));
+        mapCfNetworkOS.put("438.14/9.8.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.8"));
+        mapCfNetworkOS.put("454.4/10.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.6.0"));
+        mapCfNetworkOS.put("454.5/10.2.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.6.2"));
+        mapCfNetworkOS.put("454.9.4/10.3.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.6.3"));
+        mapCfNetworkOS.put("454.9.7/10.4.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.6.4"));
+        mapCfNetworkOS.put("454.11.5/10.5.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.6.5"));
+        mapCfNetworkOS.put("454.11.5/10.6.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.6.6"));
+        mapCfNetworkOS.put("454.11.12/10.7.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.6.7"));
+        mapCfNetworkOS.put("454.12.4/10.8.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.6.8"));
+        mapCfNetworkOS.put("459/10.0.0d3", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "3.1.3"));
+        mapCfNetworkOS.put("485.2/10.3.1", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "4"));
+        mapCfNetworkOS.put("485.10.2/10.3.1", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "4.1"));
+        mapCfNetworkOS.put("485.12.7/10.4.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "4.2.1"));
+        mapCfNetworkOS.put("485.12.30/10.4.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "4.2.8"));
+        mapCfNetworkOS.put("485.13.9/11.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "4.3.*"));
+        mapCfNetworkOS.put("520.0.13/11.1.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.7.1"));
+        mapCfNetworkOS.put("520.2.5/11.2.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.7.2"));
+        mapCfNetworkOS.put("520.3.2/11.3.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.7.3"));
+        mapCfNetworkOS.put("520.4.3/11.4.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.7.4"));
+        mapCfNetworkOS.put("520.5.1/11.4.2", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.7.5"));
+        mapCfNetworkOS.put("548.0.3/11.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "5"));
+        mapCfNetworkOS.put("548.0.4/11.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "5.0.1"));
+        mapCfNetworkOS.put("548.1.4/11.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "5.1"));
+        mapCfNetworkOS.put("596.0.1/12.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.8.0"));
+        mapCfNetworkOS.put("596.1/12.1.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.8.1"));
+        mapCfNetworkOS.put("596.2.3/12.2.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.8.2"));
+        mapCfNetworkOS.put("596.3.3/12.3.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.8.3"));
+        mapCfNetworkOS.put("596.4.3/12.4.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.8.4"));
+        mapCfNetworkOS.put("596.5/12.5.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.8.5"));
+        mapCfNetworkOS.put("596.6.2/12.5.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.8.5"));
+        mapCfNetworkOS.put("602/13.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "6.0-b3"));
+        mapCfNetworkOS.put("609/13.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "6.0.*"));
+        mapCfNetworkOS.put("609.1.4/13.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "6.1.*"));
+        mapCfNetworkOS.put("672.0.2/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "7.0.0-2"));
+        mapCfNetworkOS.put("672.0.8/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "7.0.3-6"));
+        mapCfNetworkOS.put("672.1.12/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "7.1-b5"));
+        mapCfNetworkOS.put("672.1.13/13.3.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "7.1"));
+        mapCfNetworkOS.put("672.1.13/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "7.1"));
+        mapCfNetworkOS.put("672.1.14/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "7.1.1"));
+        mapCfNetworkOS.put("672.1.15/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "7.1.2"));
+        mapCfNetworkOS.put("673.0.3/13.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.0"));
+        mapCfNetworkOS.put("673.0.3/13.0.2", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.1"));
+        mapCfNetworkOS.put("673.2.1/13.1.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.2"));
+        mapCfNetworkOS.put("673.3/13.2.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.3 beta"));
+        mapCfNetworkOS.put("673.3/13.3.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.3 beta"));
+        mapCfNetworkOS.put("673.3/13.4.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.3 beta"));
+        mapCfNetworkOS.put("673.4/13.2.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.3"));
+        mapCfNetworkOS.put("673.4/13.3.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.4"));
+        mapCfNetworkOS.put("673.4/13.4.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.5"));
+        mapCfNetworkOS.put("673.5/13.4.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.*"));
+        mapCfNetworkOS.put("696.0.2/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
+        mapCfNetworkOS.put("699/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
+        mapCfNetworkOS.put("703.1/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "7.0"));
+        mapCfNetworkOS.put("703.1.6/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "8.0"));
+        mapCfNetworkOS.put("708.1/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
+        mapCfNetworkOS.put("709.1/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
+        mapCfNetworkOS.put("707/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
+        mapCfNetworkOS.put("709/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
+        mapCfNetworkOS.put("711.0.6/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "8.0.0-2"));
+        mapCfNetworkOS.put("711.1.12/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "8.1.0"));
+        mapCfNetworkOS.put("711.1.16/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "8.1.1-3"));
+        mapCfNetworkOS.put("714/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
+        mapCfNetworkOS.put("718/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
+        mapCfNetworkOS.put("720.0.4/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
+        mapCfNetworkOS.put("720.0.7/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
+        mapCfNetworkOS.put("720.0.8/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
+        mapCfNetworkOS.put("720.0.9/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
+        mapCfNetworkOS.put("720.1.1/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.1"));
+        mapCfNetworkOS.put("720.2.2/14.1.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.2"));
+        mapCfNetworkOS.put("720.2.3/14.1.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.1"));
+        mapCfNetworkOS.put("720.2.4/14.1.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.2"));
+        mapCfNetworkOS.put("720.3.6/14.3.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.3"));
+        mapCfNetworkOS.put("720.3.9/14.3.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.3"));
+
+        mapCfNetworkArchitecture = new HashMap<String, String>();
+        mapCfNetworkArchitecture.put("128/8.0.0", "PowerPC");
+        mapCfNetworkArchitecture.put("128/8.1.0", "PowerPC");
+        mapCfNetworkArchitecture.put("128.2/8.2.0", "PowerPC");
+        mapCfNetworkArchitecture.put("129.5/8.3.0", "PowerPC");
+        mapCfNetworkArchitecture.put("129.9/8.4.0", "PowerPC");
+        mapCfNetworkArchitecture.put("129.9/8.5.0", "PowerPC");
+        mapCfNetworkArchitecture.put("129.10/8.4.0", "Intel");
+        mapCfNetworkArchitecture.put("129.10/8.5.0", "Intel");
     }
 
     static String getAndConsumeUrl(UserAgentContext context, MatchingRegion region, String pattern) {
@@ -143,17 +246,17 @@ class BotsHelper {
 
         if (m.matches() && !userAgent.startsWith("Curl/PHP")) {
             String botName = m.group(gb.groups[0]);
-            Bot base = genericBotsBrandAndType.get(botName);
-            String description = base == null ? botName : base.getDescription();
-            if (base == null) base = genericBotBase;
+            Bot baseBot = genericBotsBrandAndType.get(botName);
+            String description = baseBot == null ? botName : baseBot.getDescription();
+            if (baseBot == null) baseBot = genericBotBase;
             String version = gb.groups[1] == 0 ? "" : m.group(gb.groups[1]);
             String url = gb.groups[2] == 0 ? "" : m.group(gb.groups[2]);
-            return new Bot(base.getVendor(), base.getFamily(), description, version, sanitizeUrl(url));
+            return new Bot(baseBot.getVendor(), baseBot.getFamily(), description, version, sanitizeUrl(url));
         }
         return null;
     }
 
-    static Bot getBot(UserAgentContext context) {
+    public static Bot getBot(UserAgentContext context) {
         int pos=0;
         String ver;
         String[]multi;
@@ -599,124 +702,6 @@ class BotsHelper {
         return new Bot(Brand.UNKNOWN, BotFamily.NOT_A_BOT, "", "", "");
     }
 
-
-    private static Map<String, OS> mapCfNetworkOS;
-    private static Map<String, String> mapCfNetworkArchitecture;
-
-    static {
-        mapCfNetworkOS = new HashMap<String, OS>();
-        mapCfNetworkOS.put("1.1/", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.2"));
-        mapCfNetworkOS.put("1.2.1/", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.3.2"));
-        mapCfNetworkOS.put("1.2.2/", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.3.9"));
-        mapCfNetworkOS.put("1.2.6/", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.3.9"));
-        mapCfNetworkOS.put("128/8.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.0"));
-        mapCfNetworkOS.put("128/8.1.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.1"));
-        mapCfNetworkOS.put("128.2/8.2.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.2"));
-        mapCfNetworkOS.put("129.5/8.3.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.3"));
-        mapCfNetworkOS.put("129.9/8.4.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.4"));
-        mapCfNetworkOS.put("129.9/8.5.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.5"));
-        mapCfNetworkOS.put("129.10/8.4.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.4"));
-        mapCfNetworkOS.put("129.10/8.5.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.5"));
-        mapCfNetworkOS.put("129.13/8.6.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.6"));
-        mapCfNetworkOS.put("129.16/8.7.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.7"));
-        mapCfNetworkOS.put("129.18/8.8.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.8"));
-        mapCfNetworkOS.put("129.20/8.9.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.9"));
-        mapCfNetworkOS.put("129.21/8.10.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.10"));
-        mapCfNetworkOS.put("129.22/8.11.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.4.11"));
-        mapCfNetworkOS.put("217/9.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.0"));
-        mapCfNetworkOS.put("220/9.1.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.1"));
-        mapCfNetworkOS.put("221.2/9.2.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.2 dev"));
-        mapCfNetworkOS.put("221.5/9.2.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.2"));
-        mapCfNetworkOS.put("330/9.3.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.3"));
-        mapCfNetworkOS.put("330.4/9.4.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.4"));
-        mapCfNetworkOS.put("339.5/9.5.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.5"));
-        mapCfNetworkOS.put("422.11/9.6.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.6"));
-        mapCfNetworkOS.put("438.12/9.7.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.7"));
-        mapCfNetworkOS.put("438.14/9.8.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.5.8"));
-        mapCfNetworkOS.put("454.4/10.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.6.0"));
-        mapCfNetworkOS.put("454.5/10.2.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.6.2"));
-        mapCfNetworkOS.put("454.9.4/10.3.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.6.3"));
-        mapCfNetworkOS.put("454.9.7/10.4.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.6.4"));
-        mapCfNetworkOS.put("454.11.5/10.5.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.6.5"));
-        mapCfNetworkOS.put("454.11.5/10.6.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.6.6"));
-        mapCfNetworkOS.put("454.11.12/10.7.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.6.7"));
-        mapCfNetworkOS.put("454.12.4/10.8.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.6.8"));
-        mapCfNetworkOS.put("459/10.0.0d3", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "3.1.3"));
-        mapCfNetworkOS.put("485.2/10.3.1", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "4"));
-        mapCfNetworkOS.put("485.10.2/10.3.1", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "4.1"));
-        mapCfNetworkOS.put("485.12.7/10.4.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "4.2.1"));
-        mapCfNetworkOS.put("485.12.30/10.4.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "4.2.8"));
-        mapCfNetworkOS.put("485.13.9/11.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "4.3.*"));
-        mapCfNetworkOS.put("520.0.13/11.1.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.7.1"));
-        mapCfNetworkOS.put("520.2.5/11.2.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.7.2"));
-        mapCfNetworkOS.put("520.3.2/11.3.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.7.3"));
-        mapCfNetworkOS.put("520.4.3/11.4.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.7.4"));
-        mapCfNetworkOS.put("520.5.1/11.4.2", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.7.5"));
-        mapCfNetworkOS.put("548.0.3/11.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "5"));
-        mapCfNetworkOS.put("548.0.4/11.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "5.0.1"));
-        mapCfNetworkOS.put("548.1.4/11.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "5.1"));
-        mapCfNetworkOS.put("596.0.1/12.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.8.0"));
-        mapCfNetworkOS.put("596.1/12.1.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.8.1"));
-        mapCfNetworkOS.put("596.2.3/12.2.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.8.2"));
-        mapCfNetworkOS.put("596.3.3/12.3.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.8.3"));
-        mapCfNetworkOS.put("596.4.3/12.4.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.8.4"));
-        mapCfNetworkOS.put("596.5/12.5.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.8.5"));
-        mapCfNetworkOS.put("596.6.2/12.5.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.8.5"));
-        mapCfNetworkOS.put("602/13.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "6.0-b3"));
-        mapCfNetworkOS.put("609/13.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "6.0.*"));
-        mapCfNetworkOS.put("609.1.4/13.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "6.1.*"));
-        mapCfNetworkOS.put("672.0.2/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "7.0.0-2"));
-        mapCfNetworkOS.put("672.0.8/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "7.0.3-6"));
-        mapCfNetworkOS.put("672.1.12/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "7.1-b5"));
-        mapCfNetworkOS.put("672.1.13/13.3.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "7.1"));
-        mapCfNetworkOS.put("672.1.13/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "7.1"));
-        mapCfNetworkOS.put("672.1.14/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "7.1.1"));
-        mapCfNetworkOS.put("672.1.15/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "7.1.2"));
-        mapCfNetworkOS.put("673.0.3/13.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.0"));
-        mapCfNetworkOS.put("673.0.3/13.0.2", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.1"));
-        mapCfNetworkOS.put("673.2.1/13.1.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.2"));
-        mapCfNetworkOS.put("673.3/13.2.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.3 beta"));
-        mapCfNetworkOS.put("673.3/13.3.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.3 beta"));
-        mapCfNetworkOS.put("673.3/13.4.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.3 beta"));
-        mapCfNetworkOS.put("673.4/13.2.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.3"));
-        mapCfNetworkOS.put("673.4/13.3.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.4"));
-        mapCfNetworkOS.put("673.4/13.4.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.5"));
-        mapCfNetworkOS.put("673.5/13.4.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.9.*"));
-        mapCfNetworkOS.put("696.0.2/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
-        mapCfNetworkOS.put("699/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
-        mapCfNetworkOS.put("703.1/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "7.0"));
-        mapCfNetworkOS.put("703.1.6/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "8.0"));
-        mapCfNetworkOS.put("708.1/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
-        mapCfNetworkOS.put("709.1/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
-        mapCfNetworkOS.put("707/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
-        mapCfNetworkOS.put("709/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
-        mapCfNetworkOS.put("711.0.6/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "8.0.0-2"));
-        mapCfNetworkOS.put("711.1.12/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "8.1.0"));
-        mapCfNetworkOS.put("711.1.16/14.0.0", new OS(Brand.APPLE, OSFamily.IOS, "iOS", "8.1.1-3"));
-        mapCfNetworkOS.put("714/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
-        mapCfNetworkOS.put("718/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
-        mapCfNetworkOS.put("720.0.4/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
-        mapCfNetworkOS.put("720.0.7/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
-        mapCfNetworkOS.put("720.0.8/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
-        mapCfNetworkOS.put("720.0.9/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.0"));
-        mapCfNetworkOS.put("720.1.1/14.0.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.1"));
-        mapCfNetworkOS.put("720.2.2/14.1.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.2"));
-        mapCfNetworkOS.put("720.2.3/14.1.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.1"));
-        mapCfNetworkOS.put("720.2.4/14.1.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.2"));
-        mapCfNetworkOS.put("720.3.6/14.3.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.3"));
-        mapCfNetworkOS.put("720.3.9/14.3.0", new OS(Brand.APPLE, OSFamily.MACOSX, "MacOSX", "10.10.3"));
-
-        mapCfNetworkArchitecture = new HashMap<String, String>();
-        mapCfNetworkArchitecture.put("128/8.0.0", "PowerPC");
-        mapCfNetworkArchitecture.put("128/8.1.0", "PowerPC");
-        mapCfNetworkArchitecture.put("128.2/8.2.0", "PowerPC");
-        mapCfNetworkArchitecture.put("129.5/8.3.0", "PowerPC");
-        mapCfNetworkArchitecture.put("129.9/8.4.0", "PowerPC");
-        mapCfNetworkArchitecture.put("129.9/8.5.0", "PowerPC");
-        mapCfNetworkArchitecture.put("129.10/8.4.0", "Intel");
-        mapCfNetworkArchitecture.put("129.10/8.5.0", "Intel");
-    }
-
     static void setMacOSFromCFNetwork(UserAgentDetectionResult results, String cfver, String dver) {
         String key = cfver + "/" + dver;
         OS os = mapCfNetworkOS.get(key);
@@ -744,7 +729,7 @@ class BotsHelper {
 
     }
 
-    static UserAgentDetectionResult getLibraries(UserAgentContext context) {
+    public static UserAgentDetectionResult getLibraries(UserAgentContext context) {
         String ua = context.getUA();
         int pos=0;
         String ver,token;

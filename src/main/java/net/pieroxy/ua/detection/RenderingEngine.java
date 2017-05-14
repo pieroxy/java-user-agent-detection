@@ -77,6 +77,7 @@ public class RenderingEngine extends VersionedObject {
         return new RenderingEngine(Brand.UNKNOWN, RenderingEngineFamily.NONE);
     }
 
+    @Override
     public String toString() {
         String res = family + " " + version;
         if (fullVersion != null && fullVersion.length()>0) {

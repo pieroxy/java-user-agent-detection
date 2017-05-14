@@ -151,6 +151,7 @@ public enum Brand {
     public String getWebsite() {
         return website;
     }
+    @Override
     public String toString() {
         return getLabel();
     }

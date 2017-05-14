@@ -116,6 +116,7 @@ public enum OSFamily {
     public boolean isLinuxKernel() {
         return linuxKernel;
     }
+    @Override
     public String toString() {
         return name();
     }

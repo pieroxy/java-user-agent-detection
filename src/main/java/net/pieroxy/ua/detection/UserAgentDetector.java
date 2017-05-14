@@ -60,7 +60,6 @@ public class UserAgentDetector implements IUserAgentDetector {
     static OS getOS(UserAgentContext context) {
         String userAgent = context.getUA();
         OS res = null;
-        int pos;
         String ver;
         String[] mt=null;
         if (context.contains("Series40", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) {
@@ -664,7 +663,7 @@ public class UserAgentDetector implements IUserAgentDetector {
     static RenderingEngine getWebkitVersion(UserAgentContext context, String chromeVersion, boolean couldBeBlink, boolean isBlink) {
         try {
             Brand brand = Brand.APPLE;
-            RenderingEngineFamily ref = RenderingEngineFamily.WEBKIT;
+            RenderingEngineFamily refam = RenderingEngineFamily.WEBKIT;
             // Blink
             String ver = chromeVersion;
 
@@ -683,51 +682,22 @@ public class UserAgentDetector implements IUserAgentDetector {
 
             if (isBlink) {
                 brand = Brand.GOOGLE;
-                ref = RenderingEngineFamily.BLINK;
+                refam = RenderingEngineFamily.BLINK;
             }
 
             // Webkit
             ver = context.getcVersionAfterPattern("AppleWebKit/", MatchingType.BEGINS, MatchingRegion.REGULAR);
-            if (ver != null) return new RenderingEngine(brand, ref, ver, 2);
+            if (ver != null) return new RenderingEngine(brand, refam, ver, 2);
             ver = context.getcVersionAfterPattern("Safari/", MatchingType.BEGINS, MatchingRegion.REGULAR);
-            if (ver != null) return new RenderingEngine(brand, ref, ver, 2);
+            if (ver != null) return new RenderingEngine(brand, refam, ver, 2);
             ver = context.getcVersionAfterPattern("KHTML/", MatchingType.BEGINS, MatchingRegion.REGULAR);
-            if (ver != null) return new RenderingEngine(brand, ref, ver, 2);
-            return new RenderingEngine(brand, ref);
+            if (ver != null) return new RenderingEngine(brand, refam, ver, 2);
+            return new RenderingEngine(brand, refam);
         } finally {
             consumeWebKitBullshit(context);
         }
     }
 
-    static class GeckoSpinoff {
-        private String name;
-        private String[]toRemove;
-        private Brand brand;
-        public GeckoSpinoff() {
-            this(null, new String[0]);
-        }
-        public GeckoSpinoff(Brand b) {
-            this(null, new String[0]);
-            brand = b;
-        }
-        public GeckoSpinoff(String n) {
-            this(n, new String[0]);
-        }
-        public GeckoSpinoff(String n, String[]tr) {
-            name = n;
-            toRemove = tr;
-        }
-
-        public String getName() {
-            return name;
-        }
-        public String[]getToRemove() {
-            return toRemove;
-        }
-        public Brand getBrand() {
-            return brand;
-        }
-    }
     static Map<String, GeckoSpinoff> geckoSpinOffs = new HashMap<String, GeckoSpinoff>();
     static {
         geckoSpinOffs.put("Chimera", new GeckoSpinoff());
@@ -771,7 +741,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                 context.consume("like Firefox", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
                 context.consume("Mozilla",  MatchingType.EQUALS, MatchingRegion.REGULAR);
                 context.consume("Firefox/",  MatchingType.BEGINS, MatchingRegion.REGULAR);
-                for (String tr : so.getValue().toRemove)
+                for (String tr : so.getValue().getToRemove())
                     context.consume(tr,  MatchingType.BEGINS, MatchingRegion.BOTH);
                 found = true;
                 break;
@@ -1022,7 +992,7 @@ public class UserAgentDetector implements IUserAgentDetector {
 
     }
 
-    static Browser getBrowser(UserAgentContext context, OS os, OS[]override) {
+    static Browser getBrowser(UserAgentContext context, OS os, OS[]overrideOS) {
         String userAgent = context.getUA();
         Browser res = null;
         int pos;
@@ -1162,7 +1132,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                 } else {
                     res = new Browser(Brand.AMAZON,BrowserFamily.OTHER_WEBKIT,"Silk", getWebkitVersion(context, null, false, true), ver);
                     if (os.getVendor() == Brand.APPLE) {
-                        override[0] = new OS(Brand.AMAZON, OSFamily.ANDROID, "Amazon Android", "");
+                        overrideOS[0] = new OS(Brand.AMAZON, OSFamily.ANDROID, "Amazon Android", "");
                     }
                 }
             } else if ((ver=context.getcVersionAfterPattern("BrowserNG/", MatchingType.BEGINS,MatchingRegion.REGULAR))!=null) {
@@ -1494,7 +1464,6 @@ public class UserAgentDetector implements IUserAgentDetector {
         String arm = "ARM";
         String atom = "Intel Atom";
 
-        int pos;
         String ver;
         String[]vers;
         // Bots & SDKs
@@ -2168,8 +2137,9 @@ public class UserAgentDetector implements IUserAgentDetector {
                         dev = "iPhone 4S";
                     else if (context.consume("iPhone5", MatchingType.BEGINS, MatchingRegion.PARENTHESIS))
                         dev = "iPhone 5";
-                    else if (context.consume("iPhoneUnknown", MatchingType.BEGINS, MatchingRegion.PARENTHESIS))
-                        ;
+                    else
+                        context.consume("iPhoneUnknown", MatchingType.BEGINS, MatchingRegion.PARENTHESIS);
+
                 }
                 return new Device(arm, DeviceType.PHONE,Brand.APPLE,dev,true);
             }
@@ -2806,8 +2776,8 @@ public class UserAgentDetector implements IUserAgentDetector {
             String[]langs = s.split(",");
             boolean ok = true;
             int pos = 0, curPos = 0;
-            for (String lang : langs) {
-                lang = lang.trim();
+            for (String l : langs) {
+                String lang = l.trim();
                 switch(lang.length()) {
                 case 0:
                     if (curPos == 0 && langs.length>pos+1) pos++;
@@ -3028,8 +2998,6 @@ public class UserAgentDetector implements IUserAgentDetector {
     }
 
     static boolean consumeEntityFromIEAndFirefoxBuggy(String entity, String ver, UserAgentContext context, UserAgentDetectionResult result) {
-        String sep;
-        MatchingRegion region;
         if (result.getBrowser().getFamily() == BrowserFamily.OTHER_TRIDENT || result.getBrowser().getFamily() == BrowserFamily.IE) {
             String regexp = entity+" "+ver;
             return context.ignore(regexp, MatchingType.REGEXP, MatchingRegion.PARENTHESIS);
@@ -3538,12 +3506,12 @@ public class UserAgentDetector implements IUserAgentDetector {
         res.setLocale(getLocale(context));
 
         res.setOperatingSystem(getOS(context));
-        OS[]override = new OS[1];
+        OS[]overrideOS = new OS[1];
         //res.operatingSystem = new OS(Brand.UNKNOWN,OSFamily.UNKNOWN,"browser", "browser");
 
-        res.setBrowser(getBrowser(context, res.getOperatingSystem(), override));
-        if (override[0] != null) {
-            res.setOperatingSystem(override[0]);
+        res.setBrowser(getBrowser(context, res.getOperatingSystem(), overrideOS));
+        if (overrideOS[0] != null) {
+            res.setOperatingSystem(overrideOS[0]);
         }
 
         res.setDevice(getDevice(context,res.getBrowser(),res.getOperatingSystem()));
