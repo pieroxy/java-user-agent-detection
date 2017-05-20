@@ -747,7 +747,7 @@ class BotsHelper {
             res.getBrowser().setFamily(BrowserFamily.LIBRARY);
             res.getBrowser().setVendor(Brand.OPENSOURCE_COMMUNITY);
 
-            if (groups[1] != null) {
+            if (!StringUtils.isNullOrEmpty(groups[1])) {
                 res.getOperatingSystem().setFamily(OSFamily.LINUX);
                 res.getOperatingSystem().setDescription("Ubuntu");
             }

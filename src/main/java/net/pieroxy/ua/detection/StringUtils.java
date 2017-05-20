@@ -2,6 +2,12 @@ package net.pieroxy.ua.detection;
 import java.io.*;
 import java.util.*;
 class StringUtils {
+    public static boolean isNullOrEmpty(String s) {
+        return s==null || s.length()==0;
+    }
+    public static String format(float f) {
+        return String.valueOf(f);
+    }
     /**
     * Gets a more concise version number. For example, getShortVersion("1.2.3", 2) gives "1.2" while getShortVersion("1.2.3", 1) gives "1".
     */

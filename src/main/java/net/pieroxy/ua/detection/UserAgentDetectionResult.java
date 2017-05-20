@@ -50,6 +50,7 @@ public class UserAgentDetectionResult {
         if (!botEquals(d.bot,bot)) return "bot";
         if (!objectEquals(d.browser,browser)) return "browser";
         if (!objectEquals(d.locale,locale)) return "locale";
+        if (!objectEquals(d.unknownTokens,unknownTokens)) return "unknownTokens";
         if (!objectEquals(d.getExtensions().size(),getExtensions().size())) return "extensions " + d.getExtensions().size() + " " +  getExtensions().size();
         if (!objectEquals(d.getExtensions(),getExtensions())) return "extensions " + d.getExtensions().size() + " " +  getExtensions().size() + " " + getExtensions().iterator().next().getName() + " " + d.getExtensions().iterator().next().getVersion() + " " + getExtensions().iterator().next().getVersion();
         if (!objectEquals(d.operatingSystem,operatingSystem)) return "os";

@@ -907,7 +907,7 @@ public class UserAgentDetector implements IUserAgentDetector {
                     res.setDescription("IE 10 in compatibility mode " + res.getDescription() + verie);
                 }
             } else {
-                res = new Browser(Brand.MICROSOFT,BrowserFamily.IE,"IE",new RenderingEngine(Brand.MICROSOFT, RenderingEngineFamily.TRIDENT, "for IE " + iever, 2), verie);
+                res = new Browser(Brand.MICROSOFT,BrowserFamily.IE,"IE",new RenderingEngine(Brand.MICROSOFT, RenderingEngineFamily.TRIDENT, "for IE " + StringUtils.format(iever), 2), verie);
             }
 
             if (iever >= 10) {

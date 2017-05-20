@@ -40,13 +40,14 @@ public class UserAgentTester {
   public static void test(String fileName) throws IOException {
     UserAgentDetector.test();
 
-    File f = new File(fileName);
-    InputStream is = new GZIPInputStream(new FileInputStream(f));
-    Reader r = new InputStreamReader(is);
-    BufferedReader br = new BufferedReader(r);
     int lineNumber = 1;
-
+    BufferedReader br = null;
     try {
+      File f = new File(fileName);
+      InputStream is = new GZIPInputStream(new FileInputStream(f));
+      Reader r = new InputStreamReader(is, "UTF-8");
+      br = new BufferedReader(r);
+
       br.readLine(); // Discard header
       String line;
 
@@ -66,14 +67,14 @@ public class UserAgentTester {
     } catch (Exception e) {
       throw new RuntimeException("at line " + lineNumber, e);
     } finally {
-      br.close();
+      if (br != null) br.close();
     }
   }
 
   public static void perf(String fileName) throws IOException {
     File f = new File(fileName);
     InputStream is = new GZIPInputStream(new FileInputStream(f));
-    Reader r = new InputStreamReader(is);
+    Reader r = new InputStreamReader(is, "UTF-8");
     BufferedReader br = new BufferedReader(r);
     List<String> allElements = new ArrayList<String>();
 

@@ -51,21 +51,21 @@ class UserAgentContext {
         if (l==null) return "<null>";
         if (l.size() < 1) return "";
         StringBuilder sb = new StringBuilder(l.size() * 15);
-        sb.append("{ ");
+        sb.append("[ ");
         for (String s : l) {
-            sb.append("\"").append(s.replaceAll("\"","\\\"")).append("\", ");
+            sb.append("\"").append(s.replace("\\", "\\\\").replace("\"","\\\"")).append("\", ");
         }
-        return sb.substring(0,sb.length()-2) + "}";
+        return sb.substring(0,sb.length()-2) + "]";
     }
     private static String debugList(String[] l) {
         if (l == null) return "<null>";
         if (l.length < 1) return "";
         StringBuilder sb = new StringBuilder(l.length * 15);
-        sb.append("{ ");
+        sb.append("[ ");
         for (String s : l) {
-            sb.append("\"").append(s.replaceAll("\"","\\\"")).append("\", ");
+            sb.append("\"").append(s.replace("\\", "\\\\").replace("\"","\\\"")).append("\", ");
         }
-        return sb.substring(0,sb.length()-2) + "}";
+        return sb.substring(0,sb.length()-2) + "]";
     }
     private static String debugList(Matcher[] l) {
         if (l == null) return "<null>";
@@ -233,12 +233,12 @@ class UserAgentContext {
         String s;
         String[]ss;
 
-        if (!context.getRegularTokens().equals("{ \"a\", \"b\", \"c\", \"g\", \"h\", \"i\"}")) throw new RuntimeException("Fail 1: " + context.getRegularTokens());
-        if (!context.getParenTokens().equals("{ \"j\", \"k 2\", \"l\", \"d/3.3\", \"e\", \"f\"}")) throw new RuntimeException("Fail 2: " + context.getParenTokens());
+        if (!context.getRegularTokens().equals("[ \"a\", \"b\", \"c\", \"g\", \"h\", \"i\"]")) throw new RuntimeException("Fail 1: " + context.getRegularTokens());
+        if (!context.getParenTokens().equals("[ \"j\", \"k 2\", \"l\", \"d/3.3\", \"e\", \"f\"]")) throw new RuntimeException("Fail 2: " + context.getParenTokens());
         if (!String.valueOf(s=context.getcVersionAfterPattern("d/",MatchingType.BEGINS,MatchingRegion.REGULAR)).equals("null")) throw new RuntimeException("Fail 3: " + s);
         if (!String.valueOf(s=context.getcVersionAfterPattern("d/",MatchingType.BEGINS,MatchingRegion.PARENTHESIS)).equals("3.3")) throw new RuntimeException("Fail 4: " + s + " " + context.getDebug());
         if (!String.valueOf(s=context.getcVersionAfterPattern("d/",MatchingType.BEGINS,MatchingRegion.PARENTHESIS)).equals("null")) throw new RuntimeException("Fail 5: " + s);
-        if (!context.getParenTokens().equals("{ \"j\", \"k 2\", \"l\", \"e\", \"f\"}")) throw new RuntimeException("Fail 6: " + context.getParenTokens());
+        if (!context.getParenTokens().equals("[ \"j\", \"k 2\", \"l\", \"e\", \"f\"]")) throw new RuntimeException("Fail 6: " + context.getParenTokens());
 
         if (!Arrays.equals(ss=context.getcNextTokens(new Matcher[] {new Matcher("g",MatchingType.EQUALS),
             new Matcher("h",MatchingType.EQUALS)
@@ -246,26 +246,26 @@ class UserAgentContext {
         new String[] {"g","h"})) {
             throw new RuntimeException("Fail 7: " + debugList(ss) + " remains " + context.getRegularTokens());
         }
-        if (!context.getRegularTokens().equals("{ \"a\", \"b\", \"c\", \"i\"}")) throw new RuntimeException("Fail 8: " + context.getRegularTokens());
+        if (!context.getRegularTokens().equals("[ \"a\", \"b\", \"c\", \"i\"]")) throw new RuntimeException("Fail 8: " + context.getRegularTokens());
         if (null != (ss=context.getcNextTokens(new Matcher[] {new Matcher("a",MatchingType.EQUALS),
             new Matcher("b",MatchingType.EQUALS),
             new Matcher("i",MatchingType.EQUALS)
         }, MatchingRegion.REGULAR))) {
             throw new RuntimeException("Fail 9: " + debugList(ss) + " remains " + context.getRegularTokens());
         }
-        if (!context.getRegularTokens().equals("{ \"a\", \"b\", \"c\", \"i\"}")) throw new RuntimeException("Fail 9: " + context.getRegularTokens());
+        if (!context.getRegularTokens().equals("[ \"a\", \"b\", \"c\", \"i\"]")) throw new RuntimeException("Fail 9: " + context.getRegularTokens());
         if (null != (ss=context.getcNextTokens(new Matcher[] {new Matcher("c",MatchingType.EQUALS),
             new Matcher("i",MatchingType.EQUALS),
             new Matcher("i",MatchingType.EQUALS)
         }, MatchingRegion.REGULAR))) {
             throw new RuntimeException("Fail 10: " + debugList(ss) + " remains " + context.getRegularTokens());
         }
-        if (!context.getRegularTokens().equals("{ \"a\", \"b\", \"c\", \"i\"}")) throw new RuntimeException("Fail 11: " + context.getRegularTokens());
+        if (!context.getRegularTokens().equals("[ \"a\", \"b\", \"c\", \"i\"]")) throw new RuntimeException("Fail 11: " + context.getRegularTokens());
 
 
         context = new UserAgentContext("Mozilla/5.0 (Linux; U; Android 4.0.4; fr-fr; GT-I9300-ORANGE/I9300BVBLH2 Build/IMM76D) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30");
-        if (!context.getRegularTokens().equals("{ \"Mozilla/5.0\", \"AppleWebKit/534.30\", \"Version/4.0\", \"Mobile\", \"Safari/534.30\"}")) throw new RuntimeException("Fail 12: " + context.getRegularTokens());
-        if (!context.getParenTokens().equals("{ \"KHTML, like Gecko\", \"Linux\", \"U\", \"Android 4.0.4\", \"fr-fr\", \"GT-I9300-ORANGE/I9300BVBLH2\", \"Build/IMM76D\"}")) throw new RuntimeException("Fail 13: " + context.getParenTokens());
+        if (!context.getRegularTokens().equals("[ \"Mozilla/5.0\", \"AppleWebKit/534.30\", \"Version/4.0\", \"Mobile\", \"Safari/534.30\"]")) throw new RuntimeException("Fail 12: " + context.getRegularTokens());
+        if (!context.getParenTokens().equals("[ \"KHTML, like Gecko\", \"Linux\", \"U\", \"Android 4.0.4\", \"fr-fr\", \"GT-I9300-ORANGE/I9300BVBLH2\", \"Build/IMM76D\"]")) throw new RuntimeException("Fail 13: " + context.getParenTokens());
 
         context = new UserAgentContext("Mozilla/5.0");
         if (!(s=context.getcRegion("Mozilla/([0-9\\.]+)", MatchingRegion.REGULAR, 1)).equals("5.0")) throw new RuntimeException("Fail 14: " + s);
@@ -356,10 +356,10 @@ class UserAgentContext {
         StringBuilder sb = new StringBuilder((tokens.size() + parenTokens.size())*15);
         sb.append("{ ");
         for (String s : tokens) {
-            sb.append("\"").append(s.replaceAll("\"","\\\"")).append("\", ");
+            sb.append("\"").append(s.replace("\\", "\\\\").replace("\"","\\\"")).append("\", ");
         }
         for (String s : parenTokens) {
-            sb.append("\"").append(s.replaceAll("\"","\\\"")).append("\", ");
+            sb.append("\"").append(s.replace("\\", "\\\\").replace("\"","\\\"")).append("\", ");
         }
         return sb.substring(0,sb.length()-2) + "}";
     }
