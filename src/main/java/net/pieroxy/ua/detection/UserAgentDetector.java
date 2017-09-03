@@ -3494,8 +3494,17 @@ public class UserAgentDetector implements IUserAgentDetector {
      * @return   The result of the detection
      */
     public UserAgentDetectionResult parseUserAgent(String ua) {
-        UserAgentContext context = new UserAgentContext(ua);
         UserAgentDetectionResult res = null;
+        if (ua == null || ua.length()<3) {
+            res = new UserAgentDetectionResult();
+            res.setDevice(new Device("",DeviceType.UNKNOWN,Brand.UNKNOWN,""));
+            res.setBot(new Bot(Brand.UNKNOWN, BotFamily.NOT_A_BOT, "", "", ""));
+            res.setLocale(new Locale());
+            res.setOperatingSystem(new OS(Brand.UNKNOWN,OSFamily.UNKNOWN,"",""));
+            res.setBrowser(new Browser(Brand.UNKNOWN,BrowserFamily.UNKNOWN,"",RenderingEngine.getUnknown()));
+            return res;
+        }
+        UserAgentContext context = new UserAgentContext(ua);
         res = BotsHelper.getLibraries(context);
         if (res!=null) return res.wrapUp(context);
 
