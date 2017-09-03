@@ -23,7 +23,7 @@ class BotsHelper {
     static private Map<String, Bot> genericBotsLiteral;
     static private Bot genericBotBase = new Bot(Brand.OTHER, BotFamily.ROBOT, "", "");
     static private GenericBot[]genericBotsPatterns = new GenericBot[] {
-        new GenericBot("Mozilla/5\\.0 \\(compatible; ?([^\\);/]+)/([0-9\\.]+[ab]?); ?(MirrorDetector; )?(\\+? ?https?://[^\\)]+)\\)", new int[]{1,2,4}, true),
+        new GenericBot("Mozilla/5\\.0 \\(compatible; ?([^\\);/]+)/([0-9\\.]+[ab]?); ?(MirrorDetector; )?(\\+? ?https?://[^\\)]+)\\)( AppleWebKit/[0-9\\.]+)?", new int[]{1,2,4}, true),
         new GenericBot("Mozilla/5\\.0 \\(compatible; ([^\\);/]+)\\-([0-9\\.]+); (\\+? ?https?://[^\\)]+)\\)", new int[]{1,2,3}, true),
         new GenericBot("Mozilla/5\\.0 \\(compatible; ([^\\);/]+);? (\\+? ?https?://[^\\)]+)\\)", new int[]{1,0,2}, true),
         new GenericBot("([^\\(\\);/]+)/([0-9RC\\.]+) \\((\\+?https?://[^\\);]+)\\)( .*)?", new int[]{1,2,3}, true),
@@ -53,6 +53,8 @@ class BotsHelper {
         genericBotsBrandAndType.put("bingbot", new Bot(Brand.MICROSOFT, BotFamily.CRAWLER, "Bing Bot", ""));
 
         // Cleaned up:
+        genericBotsBrandAndType.put("CloudFlare-AlwaysOnline", new Bot(Brand.CLOUDFLARE, BotFamily.CRAWLER, "Always Online", ""));
+        genericBotsBrandAndType.put("Cloudflare-AMP", new Bot(Brand.CLOUDFLARE, BotFamily.CRAWLER, "AMP Discovery Fetcher", ""));
         genericBotsBrandAndType.put("YodaoBot-Image", new Bot(Brand.NETEASE, BotFamily.CRAWLER, "Yodao Image Bot", ""));
         genericBotsBrandAndType.put("Googlebot", new Bot(Brand.GOOGLE, BotFamily.CRAWLER, "Google Bot", ""));
         genericBotsBrandAndType.put("Yahoo! Slurp", new Bot(Brand.YAHOO, BotFamily.CRAWLER, "Yahoo! Slurp", ""));

@@ -5,6 +5,7 @@ import java.util.*;
 * The brand can apply to Browsers, Devices or OSes.
 */
 public enum Brand {
+    CLOUDFLARE("Cloudflare", "https://www.cloudflare.com"),
     COMODO("Comodo", "https://www.comodo.com"),
     POSHMOBILE("Posh Mobile", "http://www.poshmobile.com"),
     XIAOMI("Xiaomi", "http://www.mi.com/"),
