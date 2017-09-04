@@ -1110,8 +1110,11 @@ public class UserAgentDetector implements IUserAgentDetector {
                 }
                 res = new Browser(Brand.GOOGLE,BrowserFamily.CHROME,"Chrome", getWebkitVersion(context, cv, true, false), cv+app);
                 if (os.getDescription().contains("Android")) {
-                    if (context.consume("Version/", MatchingType.BEGINS,MatchingRegion.REGULAR) || app.length()>0) {
+                    if (!UserAgentDetectionHelper.greaterThan(os.getVersion(), 4) && (context.consume("Version/", MatchingType.BEGINS,MatchingRegion.REGULAR) || app.length()>0)) {
                         // https://mobiforge.com/research-analysis/webviews-and-user-agent-strings
+                        res.setInWebView(true);
+                    } else if (UserAgentDetectionHelper.greaterThan(os.getVersion(), 4) && context.consume("wv", MatchingType.EQUALS,MatchingRegion.PARENTHESIS)) {
+                        // https://developer.chrome.com/multidevice/user-agent
                         res.setInWebView(true);
                     }
                 }
@@ -1748,6 +1751,7 @@ public class UserAgentDetector implements IUserAgentDetector {
             if (context.consume("(SAMSUNG )?SM-G850F.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Alpha", true);
             if (context.consume("(SAMSUNG[ -])?SM-G920([TAF]|W8)(-ORANGE| |/[A-Z0-9]+).*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy S6", true);
             if (context.consume("(SAMSUNG[ -])?SM-G357FZ.*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy Ace 4", true);
+            if (context.consume("(SAMSUNG[ -])?SM-G950[UF].*", MatchingType.REGEXP, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.SAMSUNG,"Galaxy S8", true);
 
             // KTTECH
             if (context.consume("KM-E100", MatchingType.BEGINS, MatchingRegion.PARENTHESIS)) return new Device(arm,DeviceType.PHONE,Brand.KTTECH,"KM-E100", true);

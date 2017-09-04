@@ -53,6 +53,15 @@ class UserAgentDetectionHelper {
 
     }
 
-
+    public static boolean greaterThan(String integer, int target) {
+        String beginning = integer;
+        for (int i=0 ; i<integer.length() ; i++) {
+            if (Character.isDigit(integer.charAt(i))) continue;
+            if (i==0) return false;
+            beginning = integer.substring(0,i);
+            break;
+        }
+        return Integer.parseInt(beginning) > target;
+    }
 
 }
