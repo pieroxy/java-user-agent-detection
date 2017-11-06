@@ -1,6 +1,5 @@
 package net.pieroxy.ua.detection;
-import java.io.*;
-import java.util.*;
+
 class UserAgentDetectionHelper {
 
     public static void consumeMozilla(UserAgentContext context) {
@@ -54,6 +53,8 @@ class UserAgentDetectionHelper {
     }
 
     public static boolean greaterThan(String integer, int target) {
+        if (integer == null || integer.length() == 0)
+            return false;
         String beginning = integer;
         for (int i=0 ; i<integer.length() ; i++) {
             if (Character.isDigit(integer.charAt(i))) continue;
